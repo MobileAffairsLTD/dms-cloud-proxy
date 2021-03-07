@@ -1,0 +1,6 @@
+{
+    "name": "dms-clouid-proxy",
+    "sideEffects": false,
+    "version": "0.0.1",
+    "private": true
+}
