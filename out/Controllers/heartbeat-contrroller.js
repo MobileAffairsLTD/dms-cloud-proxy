@@ -118,7 +118,7 @@ var HeartbeatController = /** @class */ (function (_super) {
                     cfg.appArea[req.params.appArea] = {};
                 if (!cfg.appArea[req.params.appArea].settings)
                     cfg.appArea[req.params.appArea].settings = {};
-                cfg.appArea[req.params.appArea].settings = newSettings;
+                cfg.appArea[req.params.appArea].settings.backend = newSettings.backend;
                 configuration_1.Configuration.save(cfg);
                 _this.returnResponseSucces(res, { success: true });
             }

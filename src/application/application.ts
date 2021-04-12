@@ -1,15 +1,16 @@
 import { internalServerError, notFound } from "../api/errors";
 import { LiveLinkEntityController } from "../controllers/livelink-entity-controller";
 import { route } from '../api/route';
-import { ApplicationCommandController } from '../controllers/app-command-controller';
+import { ALFController } from '../controllers/alf/alf-controller';
 
 
 
 import *  as express from 'express';
 import * as bodyParser from 'body-parser';
 import { Configuration, ConfigurationObject } from "./configuration";
-import { auth } from "../api/auth";
+import { authApiKey, authJWT } from "../api/auth";
 import { HeartbeatController } from "../controllers/heartbeat-contrroller";
+import { EventLog } from "../utils/event-log";
 
 const header_APIKEY = 'dms-api-key'
 const msg_ApiKeyMissing = 'api-key header is missing in the request'
@@ -30,8 +31,8 @@ export class Application {
 
         //exress plugins
         this._express.use(bodyParser.urlencoded({ extended: true }));
-        this._express.use(bodyParser.json());
-
+        this._express.use(bodyParser.json({limit: '5mb',type:'application/json' }));
+        
         //setup routes
         this.setupRoutes();
 
@@ -47,35 +48,34 @@ export class Application {
 
         const liveLinkEntityController = new LiveLinkEntityController(this.configuration);
         const heartbeatController = new HeartbeatController(this.configuration);
-        const applicationCommandController= new ApplicationCommandController(this.configuration);
+        const alfController= new ALFController(this.configuration);
 
         router.get('/ping', (req, res, next): void => {
             res.json({ message: 'pong' })
         });
 
 
-        router.get('/init', [], route(auth(heartbeatController.downloadCloudConfiguration)));
+        router.get('/init', [], route(authApiKey(heartbeatController.downloadCloudConfiguration)));
 
-        router.get('/config', [], route(auth(heartbeatController.getAllConfig)));
-        router.patch('/config/:appArea', [], route(auth(heartbeatController.updateConfigAppArea)));
-        router.delete('/config/:appArea', [], route(auth(heartbeatController.deleteConfigAppArea)));
-        router.delete('/config', [], route(auth(heartbeatController.deleteAllConfig)));
+        router.get('/config', [], route(authApiKey(heartbeatController.getAllConfig)));
+        router.patch('/config/:appArea', [], route(authApiKey(heartbeatController.updateConfigAppArea)));
+        router.delete('/config/:appArea', [], route(authApiKey(heartbeatController.deleteConfigAppArea)));
+        router.delete('/config', [], route(authApiKey(heartbeatController.deleteAllConfig)));
 
 
-        router.get('/livelink/:appArea/:entity', [], route(auth(liveLinkEntityController.get)));
+        router.get('/livelink/:appArea/:entity', [], route(authApiKey(liveLinkEntityController.get)));
 
-        router.post('/livelink/:appArea/:entity', [], route(auth(liveLinkEntityController.create)));
+        router.post('/livelink/:appArea/:entity', [], route(authApiKey(liveLinkEntityController.create)));
 
-        router.patch('/livelink/:appArea/:entity', [], route(auth(liveLinkEntityController.update)));
+        router.patch('/livelink/:appArea/:entity', [], route(authApiKey(liveLinkEntityController.update)));
 
-        router.delete('/livelink/:appArea/:entity', [], route(auth(liveLinkEntityController.delete)));
+        router.delete('/livelink/:appArea/:entity', [], route(authApiKey(liveLinkEntityController.delete)));
 
-        router.post('/livelink/:appArea/$command', [], route(auth(liveLinkEntityController.execCommand)));
+        router.post('/livelink/:appArea/$command', [], route(authApiKey(liveLinkEntityController.execCommand)));
 
-        router.get('/livelink/:appArea/:entity/$metadata', [], route(auth(liveLinkEntityController.getMetadata)));
+        router.get('/livelink/:appArea/:entity/$metadata', [], route(authApiKey(liveLinkEntityController.getMetadata)));
                    
-
-        router.post('/application/:appArea/:appCode/:command', [], route(auth(applicationCommandController.execute)));
+        router.post('/plugins/alf/fiscalizationservice/:requestType', [], route(authApiKey(alfController.fiscalizationServiceSubmit)));
 
 
         this._express.use(function (req, res, next) {
@@ -89,7 +89,8 @@ export class Application {
 
     run() {
         this._express.listen(this.configuration.port);
-        console.log(`Dynamics Mobile Cloud Proxy (c) 2009-2021 www.dynamicsmobile.com \n -listengin on port ${this.configuration.port}`);
+        EventLog.logInfoStr(`Dynamics Mobile Cloud Proxy (c) 2009-2021 www.dynamicsmobile.com, on port ${this.configuration.port}`);
+     
     }
 
 
