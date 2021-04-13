@@ -30,6 +30,7 @@ function executeRequest(signedXml) {
             headers: {
                 'Content-Type': 'text/xml'
             },
+            timeout: 10000,
             maxRedirects: 20
         }, callback);
         req.on('error', function (err) {

@@ -51,7 +51,6 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var api_controller_base_1 = require("../api-controller-base");
 var alf_requestSignature_1 = require("./alf-requestSignature");
-var path = require("path");
 var alf_request_1 = require("./alf-request");
 var alf_requestType_response_1 = require("./alf-requestType-response");
 var alf_requestType_request_1 = require("./alf-requestType-request");
@@ -61,11 +60,12 @@ var ALFController = /** @class */ (function (_super) {
     function ALFController(configuraiton) {
         var _this = _super.call(this, configuraiton) || this;
         _this.fiscalizationServiceSubmit = function (req, res) { return __awaiter(_this, void 0, void 0, function () {
-            var requestType, xml, contentType, transformedXml, certificatePath, publicKeyPath, signedRequest, response, transformedResponse, err_1, parser, faultstring, faultcode, requestUUID;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
+            var appArea, requestType, xml, contentType, _a, transformedRequest, skipUplinkRequest, successResponse, response, signedRequest, requestError_1, parsedError, parsedRequest, requestId, transformedResponse, err_1, parser, faultstring, faultcode, requestUUID, iic;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
                     case 0:
-                        _a.trys.push([0, 2, , 3]);
+                        _b.trys.push([0, 7, , 8]);
+                        appArea = req.params.appArea;
                         requestType = req.params.requestType;
                         if (!req.body) {
                             throw new Error('Payload is required!');
@@ -84,40 +84,68 @@ var ALFController = /** @class */ (function (_super) {
                         if (xml.indexOf(requestType) != 1) {
                             throw new Error('RequestType does not correspond to the request payload');
                         }
-                        transformedXml = alf_requestType_request_1.processByRequestType(requestType, xml);
-                        certificatePath = path.resolve("./ISA.pem");
-                        publicKeyPath = path.resolve("./ISA-public.pem");
-                        signedRequest = alf_requestSignature_1.computeSignedRequest(requestType, transformedXml, certificatePath, publicKeyPath);
-                        return [4 /*yield*/, alf_request_1.executeRequest(signedRequest)];
+                        _a = alf_requestType_request_1.processByRequestType(appArea, requestType, xml), transformedRequest = _a.transformedRequest, skipUplinkRequest = _a.skipUplinkRequest;
+                        successResponse = false;
+                        response = void 0;
+                        if (!!skipUplinkRequest) return [3 /*break*/, 5];
+                        signedRequest = alf_requestSignature_1.computeSignedRequest(requestType, transformedRequest, appArea);
+                        _b.label = 1;
                     case 1:
-                        response = _a.sent();
-                        transformedResponse = alf_requestType_response_1.processResponseByRequestType(requestType, response);
-                        res.set('Content-Type', 'appplicaion/json').status(200).send(transformedResponse);
-                        return [3 /*break*/, 3];
+                        _b.trys.push([1, 3, , 4]);
+                        return [4 /*yield*/, alf_request_1.executeRequest(signedRequest)];
                     case 2:
-                        err_1 = _a.sent();
+                        response = _b.sent();
+                        successResponse = true;
+                        return [3 /*break*/, 4];
+                    case 3:
+                        requestError_1 = _b.sent();
+                        parsedError = new DOMParser().parseFromString(requestError_1, 'text/xml');
+                        if (parsedError) {
+                            response = requestError_1;
+                        }
+                        else {
+                            parsedRequest = new DOMParser().parseFromString(transformedRequest, 'text/xml');
+                            requestId = parsedRequest.getElementsByTagName('Header')[0].getAttribute('UUID');
+                            response = "<env:Envelop><env:Header/><env:Body><env:Fault><faultcode>dms:REQFAIL</faultcode><faultstring>" + (requestError_1.message ? requestError_1.message : requestError_1) + "</faultstring><requestUUID>" + requestId + "</requestUUID></env:Fault></env:Body></env:Envelop>";
+                        }
+                        successResponse = false;
+                        return [3 /*break*/, 4];
+                    case 4: return [3 /*break*/, 6];
+                    case 5:
+                        successResponse = true;
+                        response = transformedRequest;
+                        _b.label = 6;
+                    case 6:
+                        transformedResponse = alf_requestType_response_1.processResponseByRequestType(appArea, requestType, transformedRequest, response, successResponse);
+                        transformedResponse.success = successResponse;
+                        res.set('Content-Type', 'appplicaion/json').status(200).send(transformedResponse);
+                        return [3 /*break*/, 8];
+                    case 7:
+                        err_1 = _b.sent();
                         parser = new DOMParser().parseFromString(err_1, 'text/xml');
                         if (parser) {
                             faultstring = parser.documentElement.getElementsByTagName('faultstring');
                             faultcode = parser.documentElement.getElementsByTagName('faultcode');
                             requestUUID = parser.documentElement.getElementsByTagName('requestUUID');
+                            iic = parser.documentElement.getElementsByTagName('IIC');
                             this.returnResponseError(res, 400, {
-                                faultCode: faultcode && faultcode.length > 0 ? faultcode[0].textContent : '',
-                                faultstring: faultstring && faultstring.length > 0 ? faultstring[0].textContent : '',
-                                requestUUID: requestUUID && requestUUID.length > 0 ? requestUUID[0].textContent : '',
+                                faultCode: faultcode && faultcode.length > 0 ? faultcode[0].textContent : undefined,
+                                faultstring: faultstring && faultstring.length > 0 ? faultstring[0].textContent : undefined,
+                                requestUUID: requestUUID && requestUUID.length > 0 ? requestUUID[0].textContent : undefined,
+                                iic: iic && iic.length > 0 ? iic[0].textContent : undefined,
                                 rawErrror: err_1
                             });
                         }
                         else {
                             this.returnResponseError(res, 400, {
-                                faultCode: '89219',
+                                faultCode: 'dms:General',
                                 faultstring: err_1.message ? err_1.message : err_1,
                                 requestUUID: '',
                                 rawErrror: err_1.message ? err_1.message : err_1
                             });
                         }
-                        return [3 /*break*/, 3];
-                    case 3: return [2 /*return*/];
+                        return [3 /*break*/, 8];
+                    case 8: return [2 /*return*/];
                 }
             });
         }); };

@@ -31,6 +31,7 @@ export function executeRequest(signedXml: string): Promise<string> {
                 headers: {
                   'Content-Type': 'text/xml'
                 },
+                timeout: 10000,
                 maxRedirects: 20                     
         }, callback);
         

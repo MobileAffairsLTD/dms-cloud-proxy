@@ -1,53 +1,109 @@
+import { getPrivateCertificate } from "./alf-certificate-storage";
+import { calculateISC } from "./alf-requestSignature";
 
 const DOMParser = require('xmldom').DOMParser;
 
 
-function handleRegisterTCR(parser: Document): Record<string, any> {
-    const RegisterTCRResponse = parser.documentElement.getElementsByTagName('RegisterTCRResponse');
+function handleRegisterTCRResponse(appArea: string, requestXml: string, parsedResponse: Document, isSuccessReponse: boolean): Record<string, any> {
+    const RegisterTCRResponse = parsedResponse.documentElement.getElementsByTagName('RegisterTCRResponse');
+    if(!isSuccessReponse){
+        throw parsedResponse.documentElement.toString();
+    } 
     if (!RegisterTCRResponse || RegisterTCRResponse.length != 1) {
         throw new Error('Invalid response for RegisterTCRRequest');
     }
-    const Header = parser.documentElement.getElementsByTagName('Header');
-    const TCRCode = parser.documentElement.getElementsByTagName('TCRCode');
+    const Header = parsedResponse.documentElement.getElementsByTagName('Header');
+    const TCRCode = parsedResponse.documentElement.getElementsByTagName('TCRCode');
     return {
         tcrCode: TCRCode && TCRCode.length > 0 ? TCRCode[0].textContent : '',
         requestUUID: Header && Header.length > 0 ? Header[0].getAttribute('RequestUUID') : '',
     }
 }
 
-function handleRegisterCashDeposit(parser: Document): Record<string, any> {
-    const RegisterCashDepositResponse = parser.documentElement.getElementsByTagName('RegisterCashDepositResponse');
+function handleRegisterCashDepositResponse(appArea: string, requestXml: string, parsedResponse: Document, isSuccessReponse: boolean): Record<string, any> {
+    const RegisterCashDepositResponse = parsedResponse.documentElement.getElementsByTagName('RegisterCashDepositResponse');
+    if(!isSuccessReponse){
+        throw parsedResponse.documentElement.toString();
+    } 
     if (!RegisterCashDepositResponse || RegisterCashDepositResponse.length != 1) {
         throw new Error('Invalid response for RegisterCashDepositResponse');
     }
-    const Header = parser.documentElement.getElementsByTagName('Header');
-    const FCDC = parser.documentElement.getElementsByTagName('FCDC'); 
+    const Header = parsedResponse.documentElement.getElementsByTagName('Header');
+    const FCDC = parsedResponse.documentElement.getElementsByTagName('FCDC');
     return {
-        fcdc: FCDC && FCDC.length>0?FCDC[0].textContent:null,
+        fcdc: FCDC && FCDC.length > 0 ? FCDC[0].textContent : null,
         requestUUID: Header && Header.length > 0 ? Header[0].getAttribute('RequestUUID') : '',
     }
 }
 
-function handleRegisterInvoice(parser: Document): Record<string, any> {
-    const RegisterInvoiceResponse = parser.documentElement.getElementsByTagName('RegisterInvoiceResponse');
-    if (!RegisterInvoiceResponse || RegisterInvoiceResponse.length != 1) {
-        throw new Error('Invalid response for RegisterInvoiceResponse');
+function handleRegisterInvoiceResponse(appArea: string, requestXml: string, parsedResponse: Document, isSuccessReponse: boolean): Record<string, any> {
+    const parsedRequest = new DOMParser().parseFromString(requestXml, 'text/xml');
+
+    const RegisterInvoiceResponse = parsedResponse.documentElement.getElementsByTagName('RegisterInvoiceResponse');
+    if (!isSuccessReponse) {
+        const iic = parsedResponse.createElement('IIC')
+        iic.innerText = parsedRequest.documentElement.getElementsByTagName('Invoice')[0].getAttribute('IIC');
+        iic.textContent = parsedRequest.documentElement.getElementsByTagName('Invoice')[0].getAttribute('IIC');
+        const c = parsedResponse.documentElement.toString();
+        parsedResponse.documentElement.getElementsByTagName('env:Fault')[0].appendChild(iic)
+        throw parsedResponse.documentElement.toString();
     }
-    const Header = parser.documentElement.getElementsByTagName('Header');
+    else
+        if (!RegisterInvoiceResponse || RegisterInvoiceResponse.length != 1) {
+
+            throw new Error('Invalid response for RegisterInvoiceResponse');
+        }
+    const Header = parsedResponse.documentElement.getElementsByTagName('Header');
+    const FIC = parsedResponse.documentElement.getElementsByTagName('FIC');
+
+    if (!FIC || FIC.length == 0) {
+        throw 'FIC was not returned'
+    }
+
+
+
+
     return {
+        fic: FIC && FIC.length > 0 ? FIC[0].textContent : '',
+        iic: parsedRequest.documentElement.getElementsByTagName('Invoice')[0].getAttribute('IIC'),
         requestUUID: Header && Header.length > 0 ? Header[0].getAttribute('RequestUUID') : '',
     }
 }
 
-export function processResponseByRequestType(requestType: string, response: string): any {
-    const parser = new DOMParser().parseFromString(response, 'text/xml');
+function handleDmsCalculateISCResponse(appArea: string, requestXml: string, parsedResponse: Document, isSuccessReponse: boolean): Record<string, any> {
+    const parsedRequest = new DOMParser().parseFromString(requestXml, 'text/xml');
+    let iicInput = '';
+    //issuerNuis
+    iicInput +=  parsedRequest.documentElement.getAttribute('IssuerNuis');
+    //dateTimeCreated
+    iicInput += "|" + parsedRequest.documentElement.getAttribute('IssueDateTime');
+    //invoiceNumber
+    iicInput += "|" + parsedRequest.documentElement.getAttribute('InvOrdNum');
+    //busiUnitCode
+    iicInput += "|" + parsedRequest.documentElement.getAttribute('BusinUnitCode');
+    //tcrCode
+    iicInput += "|" + parsedRequest.documentElement.getAttribute('TCRCode');
+    //softCode
+    iicInput += "|" + parsedRequest.documentElement.getAttribute('SoftCode');
+    //totalPrice
+    iicInput += "|" + parsedRequest.documentElement.getAttribute('TotPrice');
+    const { iscHash, iscSignature } = calculateISC(getPrivateCertificate(appArea), iicInput);
+       return {       
+        iic: iscHash,
+        iscSignature: iscSignature
+    }
+}
+
+export function processResponseByRequestType(appArea: string, requestType: string, transformedRequestXml: string, response: string, isSuccessReponse: boolean): any {
+    const parsedResponse = new DOMParser().parseFromString(response, 'text/xml');
     let transformedTesponse = null;
-    if (parser) {
+    if (parsedResponse) {
 
         switch (requestType) {
-            case 'RegisterTCRRequest': transformedTesponse = handleRegisterTCR(parser); break;
-            case 'RegisterCashDepositRequest': transformedTesponse = handleRegisterCashDeposit(parser); break;
-            case 'RegisterInvoiceRequest': transformedTesponse = handleRegisterInvoice(parser); break;
+            case 'RegisterTCRRequest': transformedTesponse = handleRegisterTCRResponse(appArea, transformedRequestXml, parsedResponse, isSuccessReponse); break;
+            case 'RegisterCashDepositRequest': transformedTesponse = handleRegisterCashDepositResponse(appArea, transformedRequestXml, parsedResponse, isSuccessReponse); break;
+            case 'RegisterInvoiceRequest': transformedTesponse = handleRegisterInvoiceResponse(appArea, transformedRequestXml, parsedResponse, isSuccessReponse); break;
+            case 'DmsCalculateISC': transformedTesponse = handleDmsCalculateISCResponse(appArea, transformedRequestXml, parsedResponse, isSuccessReponse); break;
             default: throw new Error('Unkown request type');
         }
 
