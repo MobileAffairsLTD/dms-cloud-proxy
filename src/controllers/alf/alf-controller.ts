@@ -60,7 +60,7 @@ export class ALFController extends ApiControlerBase {
                         //simulate error returned from the fiscalization endpoint in order to use the same generic error handler
                         const parsedRequest = new DOMParser().parseFromString(transformedRequest, 'text/xml') as Document;
                         const requestId = parsedRequest.getElementsByTagName('Header')[0].getAttribute('UUID');
-                        response = `<env:Envelop><env:Header/><env:Body><env:Fault><faultcode>dms:REQFAIL</faultcode><faultstring>${requestError.message ? requestError.message : requestError}</faultstring><requestUUID>${requestId}</requestUUID></env:Fault></env:Body></env:Envelop>`;
+                        response = `<env:Envelop><env:Header/><env:Body><env:Fault><faultcode>dms:REQFAIL</faultcode><detail><code>89219</code></detail><faultstring>${requestError.message ? requestError.message : requestError}</faultstring><requestUUID>${requestId}</requestUUID></env:Fault></env:Body></env:Envelop>`;
                     }
                     successResponse = false;
                 }
@@ -77,25 +77,33 @@ export class ALFController extends ApiControlerBase {
         }
         catch (err) {
             const parser = new DOMParser().parseFromString(err, 'text/xml');
-            if (parser) {
+            if (parser) {                
+                const errorCode = parser.documentElement.getElementsByTagName('code');
                 const faultstring = parser.documentElement.getElementsByTagName('faultstring');
                 const faultcode = parser.documentElement.getElementsByTagName('faultcode');
                 const requestUUID = parser.documentElement.getElementsByTagName('requestUUID');
                 const iic = parser.documentElement.getElementsByTagName('IIC');
+                const wtnic = parser.documentElement.getElementsByTagName('WTNIC');
+
                 this.returnResponseError(res, 400, {
+                    success: false,
+                    errorCode: errorCode && errorCode.length > 0 ? errorCode[0].textContent : undefined,
                     faultCode: faultcode && faultcode.length > 0 ? faultcode[0].textContent : undefined,
                     faultstring: faultstring && faultstring.length > 0 ? faultstring[0].textContent : undefined,
                     requestUUID: requestUUID && requestUUID.length > 0 ? requestUUID[0].textContent : undefined,
                     iic: iic && iic.length > 0 ? iic[0].textContent : undefined,
+                    wtnic: wtnic && wtnic.length > 0 ? wtnic[0].textContent : undefined,
                     rawErrror: err
                 })
             }
             else {
                 this.returnResponseError(res, 400, {
+                    success: false,
                     faultCode: 'dms:GENERALERROR',
                     faultstring: err.message ? err.message : err,
                     requestUUID: '',
-                    rawErrror: err.message ? err.message : err
+                    rawErrror: err.message ? err.message : err,
+                    errorCode: 89219,
                 })
             }
         }
