@@ -1,10 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var httpntlm = require("../libs/httpntlm/httpntlm");
-var parser = require("fast-xml-parser").default;
-var he_1 = require("he");
-var DynamicsBusinessCentralClient = /** @class */ (function () {
-    function DynamicsBusinessCentralClient(authType, protocol, host, port, path, username, password, domain, workstation) {
+const httpntlm = require("../libs/httpntlm/httpntlm");
+const parser = require("fast-xml-parser").default;
+const he_1 = require("he");
+class DynamicsBusinessCentralClient {
+    constructor(authType, protocol, host, port, path, username, password, domain, workstation) {
         this.authType = authType;
         this.protocol = protocol;
         this.host = host;
@@ -15,7 +15,7 @@ var DynamicsBusinessCentralClient = /** @class */ (function () {
         this.domain = domain;
         this.workstation = workstation;
     }
-    DynamicsBusinessCentralClient.prototype.executeGet = function (company, entityName, filter, sort, max, page, apply) {
+    executeGet(company, entityName, filter, sort, max, page, apply) {
         if (!entityName)
             throw 'entityName parameter is required for BC LiveLink';
         if (!this.authType)
@@ -24,23 +24,23 @@ var DynamicsBusinessCentralClient = /** @class */ (function () {
             throw '"host" role setting is required for BC LiveLink';
         if (!this.path)
             throw '"path" role setting is required for BC LiveLink';
-        var me = this;
-        return new Promise(function (resolve, reject) {
-            var url;
+        const me = this;
+        return new Promise((resolve, reject) => {
+            let url;
             if (!company)
-                url = (me.protocol ? me.protocol : 'http') + "://" + me.host + ":" + (me.port ? me.port : '80') + "/" + me.path + "/" + entityName + "?$format=json";
+                url = `${me.protocol ? me.protocol : 'http'}://${me.host}:${me.port ? me.port : '80'}/${me.path}/${entityName}?$format=json`;
             else
-                url = (me.protocol ? me.protocol : 'http') + "://" + me.host + ":" + (me.port ? me.port : '80') + "/" + me.path + "/Company('" + encodeURIComponent(company) + "')/" + entityName + "?$format=json";
+                url = `${me.protocol ? me.protocol : 'http'}://${me.host}:${me.port ? me.port : '80'}/${me.path}/Company('${encodeURIComponent(company)}')/${entityName}?$format=json`;
             if (filter)
-                url += "&$filter=" + filter;
+                url += `&$filter=${filter}`;
             if (sort)
-                url += "&$orderby=" + sort;
+                url += `&$orderby=${sort}`;
             if (max)
-                url += "&$top=" + max;
+                url += `&$top=${max}`;
             if (page)
-                url += "&$skip=" + page;
+                url += `&$skip=${page}`;
             if (apply)
-                url += "&$apply=" + apply;
+                url += `&$apply=${apply}`;
             // console.log('Dynamics Business Central Client authType: ' + this.authType);
             // console.log('service url:', url);
             httpntlm.get({
@@ -60,9 +60,8 @@ var DynamicsBusinessCentralClient = /** @class */ (function () {
                     resolve(JSON.parse(res.body).value);
             });
         });
-    };
-    DynamicsBusinessCentralClient.prototype.executeCreate = function (company, entityName, body) {
-        var _this = this;
+    }
+    executeCreate(company, entityName, body) {
         if (!entityName)
             throw 'entityName parameter is required for BC LiveLink';
         if (!body)
@@ -73,21 +72,21 @@ var DynamicsBusinessCentralClient = /** @class */ (function () {
             throw '"host" role setting is required for BC LiveLink';
         if (!this.path)
             throw '"path" role setting is required for BC LiveLink';
-        return new Promise(function (resolve, reject) {
-            var url;
+        return new Promise((resolve, reject) => {
+            let url;
             if (!company)
-                url = (_this.protocol ? _this.protocol : 'http') + "://" + _this.host + ":" + (_this.port ? _this.port : '80') + "/" + _this.path + "/" + entityName;
+                url = `${this.protocol ? this.protocol : 'http'}://${this.host}:${this.port ? this.port : '80'}/${this.path}/${entityName}`;
             else
-                url = (_this.protocol ? _this.protocol : 'http') + "://" + _this.host + ":" + (_this.port ? _this.port : '80') + "/" + _this.path + "/Company('" + encodeURIComponent(company) + "')/" + entityName;
-            console.log('Dynamics Business Central Client authType: ' + _this.authType);
+                url = `${this.protocol ? this.protocol : 'http'}://${this.host}:${this.port ? this.port : '80'}/${this.path}/Company('${encodeURIComponent(company)}')/${entityName}`;
+            console.log('Dynamics Business Central Client authType: ' + this.authType);
             console.log('url: ', url);
             console.log('post: ', body);
             httpntlm.post({
                 url: url,
-                username: _this.username,
-                password: _this.password,
-                workstation: _this.workstation,
-                domain: _this.domain,
+                username: this.username,
+                password: this.password,
+                workstation: this.workstation,
+                domain: this.domain,
                 body: JSON.stringify(body),
                 headers: { 'Content-Type': 'application/json' }
             }, function (err, res) {
@@ -98,16 +97,15 @@ var DynamicsBusinessCentralClient = /** @class */ (function () {
                 else if (res.statusCode != 200 && res.statusCode != 201)
                     reject(res.statusCode);
                 else {
-                    var r = JSON.parse(res.body);
+                    const r = JSON.parse(res.body);
                     delete r["@odata.context"];
                     delete r["@odata.etag"];
                     resolve(r);
                 }
             });
         });
-    };
-    DynamicsBusinessCentralClient.prototype.executeUpdate = function (company, entityName, pkValues, body) {
-        var _this = this;
+    }
+    executeUpdate(company, entityName, pkValues, body) {
         if (!entityName)
             throw 'entityName parameter is required for BC LiveLink';
         if (!body)
@@ -120,23 +118,23 @@ var DynamicsBusinessCentralClient = /** @class */ (function () {
             throw '"host" role setting is required for BC LiveLink';
         if (!this.path)
             throw '"path" role setting is required for BC LiveLink';
-        return new Promise(function (resolve, reject) {
-            var url;
+        return new Promise((resolve, reject) => {
+            let url;
             if (!company)
-                url = (_this.protocol ? _this.protocol : 'http') + "://" + _this.host + ":" + (_this.port ? _this.port : '80') + "/" + _this.path + "/" + entityName + "(" + pkValues + ")";
+                url = `${this.protocol ? this.protocol : 'http'}://${this.host}:${this.port ? this.port : '80'}/${this.path}/${entityName}(${pkValues})`;
             else
-                url = (_this.protocol ? _this.protocol : 'http') + "://" + _this.host + ":" + (_this.port ? _this.port : '80') + "/" + _this.path + "/Company('" + encodeURIComponent(company) + "')/" + entityName + "(" + pkValues + ")";
-            console.log('Dynamics Business Central Client authType: ' + _this.authType);
+                url = `${this.protocol ? this.protocol : 'http'}://${this.host}:${this.port ? this.port : '80'}/${this.path}/Company('${encodeURIComponent(company)}')/${entityName}(${pkValues})`;
+            console.log('Dynamics Business Central Client authType: ' + this.authType);
             console.log('service url:', url);
             delete body["@odata.context"];
             delete body["@odata.etag"];
             httpntlm.patch({
                 url: url,
                 body: JSON.stringify(body),
-                username: _this.username,
-                password: _this.password,
-                workstation: _this.workstation,
-                domain: _this.domain,
+                username: this.username,
+                password: this.password,
+                workstation: this.workstation,
+                domain: this.domain,
                 headers: { 'Content-Type': 'application/json', 'If-Match': '*' }
             }, function (err, res) {
                 if (err)
@@ -146,16 +144,15 @@ var DynamicsBusinessCentralClient = /** @class */ (function () {
                 else if (res.statusCode != 200 && res.statusCode != 201)
                     reject(res.statusCode);
                 else {
-                    var r = JSON.parse(res.body);
+                    const r = JSON.parse(res.body);
                     delete r["@odata.context"];
                     delete r["@odata.etag"];
                     resolve(r);
                 }
             });
         });
-    };
-    DynamicsBusinessCentralClient.prototype.executeDelete = function (company, entityName, pkValues, body) {
-        var _this = this;
+    }
+    executeDelete(company, entityName, pkValues, body) {
         if (!entityName)
             throw 'entityName parameter is required for BC LiveLink';
         if (!body)
@@ -168,21 +165,21 @@ var DynamicsBusinessCentralClient = /** @class */ (function () {
             throw '"host" role setting is required for BC LiveLink';
         if (!this.path)
             throw '"path" role setting is required for BC LiveLink';
-        return new Promise(function (resolve, reject) {
-            var url;
+        return new Promise((resolve, reject) => {
+            let url;
             if (!company)
-                url = (_this.protocol ? _this.protocol : 'http') + "://" + _this.host + ":" + (_this.port ? _this.port : '80') + "/" + _this.path + "/" + entityName + "(" + pkValues + ")";
+                url = `${this.protocol ? this.protocol : 'http'}://${this.host}:${this.port ? this.port : '80'}/${this.path}/${entityName}(${pkValues})`;
             else
-                url = (_this.protocol ? _this.protocol : 'http') + "://" + _this.host + ":" + (_this.port ? _this.port : '80') + "/" + _this.path + "/Company('" + encodeURIComponent(company) + "')/" + entityName + "(" + pkValues + ")";
-            console.log('Dynamics Business Central Client authType: ' + _this.authType);
+                url = `${this.protocol ? this.protocol : 'http'}://${this.host}:${this.port ? this.port : '80'}/${this.path}/Company('${encodeURIComponent(company)}')/${entityName}(${pkValues})`;
+            console.log('Dynamics Business Central Client authType: ' + this.authType);
             console.log('service url:', url);
             httpntlm.delete({
                 url: url,
                 body: JSON.stringify(body),
-                username: _this.username,
-                password: _this.password,
-                workstation: _this.workstation,
-                domain: _this.domain,
+                username: this.username,
+                password: this.password,
+                workstation: this.workstation,
+                domain: this.domain,
                 headers: { 'Content-Type': 'application/json', "If-Match": "*" }
             }, function (err, res) {
                 if (err)
@@ -196,9 +193,8 @@ var DynamicsBusinessCentralClient = /** @class */ (function () {
                 }
             });
         });
-    };
-    DynamicsBusinessCentralClient.prototype.executeMetadata = function (company, entityName) {
-        var _this = this;
+    }
+    executeMetadata(company, entityName) {
         if (!entityName)
             throw 'entityName parameter is required for BC LiveLink';
         if (!this.authType)
@@ -207,16 +203,16 @@ var DynamicsBusinessCentralClient = /** @class */ (function () {
             throw '"host" role setting is required for BC LiveLink';
         if (!this.path)
             throw '"path" role setting is required for BC LiveLink';
-        return new Promise(function (resolve, reject) {
-            var url = (_this.protocol ? _this.protocol : 'http') + "://" + _this.host + ":" + (_this.port ? _this.port : '80') + "/" + _this.path + "/$metadata";
-            console.log('Get Metadata: Dynamics Business Central Client, authType: ' + _this.authType);
+        return new Promise((resolve, reject) => {
+            const url = `${this.protocol ? this.protocol : 'http'}://${this.host}:${this.port ? this.port : '80'}/${this.path}/$metadata`;
+            console.log('Get Metadata: Dynamics Business Central Client, authType: ' + this.authType);
             console.log('service url:', url);
             httpntlm.get({
                 url: url,
-                username: _this.username,
-                password: _this.password,
-                workstation: _this.workstation,
-                domain: _this.domain
+                username: this.username,
+                password: this.password,
+                workstation: this.workstation,
+                domain: this.domain
             }, function (err, res) {
                 if (err)
                     reject(err);
@@ -226,7 +222,7 @@ var DynamicsBusinessCentralClient = /** @class */ (function () {
                     reject(res.statusCode);
                 else {
                     try {
-                        var options = {
+                        const options = {
                             attributeNamePrefix: "@_",
                             attrNodeName: "attr",
                             textNodeName: "#text",
@@ -240,25 +236,25 @@ var DynamicsBusinessCentralClient = /** @class */ (function () {
                             cdataPositionChar: "\\c",
                             parseTrueNumberOnly: false,
                             arrayMode: false,
-                            attrValueProcessor: function (val, attrName) { return he_1.default.decode(val, { isAttributeValue: true }); },
-                            tagValueProcessor: function (val, tagName) { return he_1.default.decode(val); },
+                            attrValueProcessor: (val, attrName) => he_1.default.decode(val, { isAttributeValue: true }),
+                            tagValueProcessor: (val, tagName) => he_1.default.decode(val),
                             stopNodes: ["parse-me-as-string"]
                         };
-                        var jsonObj = parser.parse(res.body, options);
-                        var entities = jsonObj['edmx:Edmx']['edmx:DataServices']['Schema']['EntityType'];
-                        var theEntityArray = void 0;
+                        const jsonObj = parser.parse(res.body, options);
+                        const entities = jsonObj['edmx:Edmx']['edmx:DataServices']['Schema']['EntityType'];
+                        let theEntityArray;
                         if (entityName == '*')
                             theEntityArray = entities;
                         else
-                            theEntityArray = entities.filter(function (e) { return e.attr['@_Name'] == entityName; });
+                            theEntityArray = entities.filter(e => e.attr['@_Name'] == entityName);
                         if (!theEntityArray) {
                             resolve([]);
                             return;
                         }
-                        var reMappedEntities_1 = {};
-                        theEntityArray.forEach(function (theEntity) {
+                        const reMappedEntities = {};
+                        theEntityArray.forEach(theEntity => {
                             console.log(theEntity);
-                            var reMappedEntity = {
+                            const reMappedEntity = {
                                 origin: 'd365bc',
                                 name: theEntity.attr['@_Name'],
                                 label: theEntity.attr['@_Name'],
@@ -275,8 +271,8 @@ var DynamicsBusinessCentralClient = /** @class */ (function () {
                                     }
                                 }
                             };
-                            theEntity["Property"].forEach(function (p) {
-                                var newMappedProp = {
+                            theEntity["Property"].forEach(p => {
+                                const newMappedProp = {
                                     label: p.attr["@_Name"],
                                     type: p.attr["@_Type"].split('.')[1],
                                     required: p.attr["@_Nullable"] == "false",
@@ -293,7 +289,7 @@ var DynamicsBusinessCentralClient = /** @class */ (function () {
                                     }
                                     else {
                                         console.log('arr: ', theEntity.Key.PropertyRef[0]);
-                                        newMappedProp['isPK'] = theEntity.Key.PropertyRef.find(function (k) { return k.attr['@_Name'] == p.attr['@_Name']; }) != null;
+                                        newMappedProp['isPK'] = theEntity.Key.PropertyRef.find(k => k.attr['@_Name'] == p.attr['@_Name']) != null;
                                     }
                                 }
                                 if (newMappedProp.type === 'Guid') {
@@ -304,9 +300,9 @@ var DynamicsBusinessCentralClient = /** @class */ (function () {
                                 reMappedEntity.views.list.properties.push({ name: p.attr["@_Name"] });
                                 reMappedEntity.views.default.properties.push({ name: p.attr["@_Name"] });
                             });
-                            reMappedEntities_1[reMappedEntity.name] = reMappedEntity;
+                            reMappedEntities[reMappedEntity.name] = reMappedEntity;
                         });
-                        resolve(reMappedEntities_1);
+                        resolve(reMappedEntities);
                     }
                     catch (error) {
                         reject(error.message);
@@ -314,8 +310,7 @@ var DynamicsBusinessCentralClient = /** @class */ (function () {
                 }
             });
         });
-    };
-    return DynamicsBusinessCentralClient;
-}());
+    }
+}
 exports.DynamicsBusinessCentralClient = DynamicsBusinessCentralClient;
 //# sourceMappingURL=ms-business-central-adapter.js.map

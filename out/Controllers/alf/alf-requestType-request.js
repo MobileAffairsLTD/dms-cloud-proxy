@@ -1,15 +1,15 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var alf_certificate_storage_1 = require("./alf-certificate-storage");
-var alf_requestSignature_1 = require("./alf-requestSignature");
-var DOMParser = require('xmldom').DOMParser;
+const alf_certificate_storage_1 = require("./alf-certificate-storage");
+const alf_requestSignature_1 = require("./alf-requestSignature");
+const DOMParser = require('xmldom').DOMParser;
 function handleRegisterInvoiceRequest(appArea, parser) {
-    var Invoice = parser.documentElement.getElementsByTagName('Invoice');
+    const Invoice = parser.documentElement.getElementsByTagName('Invoice');
     if (!Invoice || Invoice.length != 1) {
         throw new Error('Invalid RegisterInvoiceRequest: Invoice element is missing');
     }
-    var issuerNuis = 'L01714012M';
-    var iicInput = '';
+    const issuerNuis = 'L01714012M';
+    let iicInput = '';
     //issuerNuis
     iicInput += issuerNuis;
     //dateTimeCreated
@@ -24,15 +24,15 @@ function handleRegisterInvoiceRequest(appArea, parser) {
     iicInput += "|" + Invoice[0].getAttribute('SoftCode');
     //totalPrice
     iicInput += "|" + Invoice[0].getAttribute('TotPrice');
-    var _a = alf_requestSignature_1.calculateISC(alf_certificate_storage_1.getPrivateCertificate(appArea), iicInput), iscHash = _a.iscHash, iscSignature = _a.iscSignature;
+    const { iscHash, iscSignature } = alf_requestSignature_1.calculateISC(alf_certificate_storage_1.getPrivateCertificate(appArea), iicInput);
     parser.getElementsByTagName('Invoice')[0].setAttribute('IIC', iscHash);
     parser.getElementsByTagName('Invoice')[0].setAttribute('IICSignature', iscSignature);
     return parser.documentElement.toLocaleString();
 }
 function handleRegisterDmsCalculateISCRequest(appArea, parser) {
-    var parsedRequest = parser;
+    const parsedRequest = parser;
     //issuerNuis
-    var errors = [];
+    const errors = [];
     if (!parsedRequest.documentElement.getAttribute('IssuerNuis')) {
         errors.push('Attribute IssuerNuis is required');
     }
@@ -60,7 +60,7 @@ function handleRegisterDmsCalculateISCRequest(appArea, parser) {
     return "<response></response>";
 }
 function processByRequestType(appArea, requestType, xml) {
-    var parser = new DOMParser().parseFromString(xml, 'text/xml');
+    const parser = new DOMParser().parseFromString(xml, 'text/xml');
     if (parser) {
         switch (requestType) {
             case 'RegisterTCRRequest': return { transformedRequest: xml, skipUplinkRequest: false };

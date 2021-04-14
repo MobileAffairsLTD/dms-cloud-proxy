@@ -1,24 +1,28 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var errors_1 = require("../api/errors");
-var livelink_entity_controller_1 = require("../controllers/livelink-entity-controller");
-var route_1 = require("../api/route");
-var alf_controller_1 = require("../controllers/alf/alf-controller");
-var express = require("express");
-var bodyParser = require("body-parser");
-var configuration_1 = require("./configuration");
-var auth_1 = require("../api/auth");
-var heartbeat_contrroller_1 = require("../controllers/heartbeat-contrroller");
-var event_log_1 = require("../utils/event-log");
-var header_APIKEY = 'dms-api-key';
-var msg_ApiKeyMissing = 'api-key header is missing in the request';
-var Application = /** @class */ (function () {
+const errors_1 = require("../api/errors");
+const livelink_entity_controller_1 = require("../controllers/livelink-entity-controller");
+const route_1 = require("../api/route");
+const alf_controller_1 = require("../controllers/alf/alf-controller");
+const express = require("express");
+const bodyParser = require("body-parser");
+const configuration_1 = require("./configuration");
+const auth_1 = require("../api/auth");
+const heartbeat_contrroller_1 = require("../controllers/heartbeat-contrroller");
+const event_log_1 = require("../utils/event-log");
+5;
+const swaggerUi = require("swagger-ui-express");
+const YAML = require('yamljs');
+const swaggerDocument = YAML.load('./src/swagger.yaml');
+const header_APIKEY = 'dms-api-key';
+const msg_ApiKeyMissing = 'api-key header is missing in the request';
+class Application {
     // private readonly _publisher: DomainEventPublisher
     // private readonly _appServices: Map<string, ApplicationService>;
-    function Application() {
+    constructor() {
         this._express = express();
     }
-    Application.prototype.init = function () {
+    init() {
         //exress plugins
         this._express.use(bodyParser.urlencoded({ extended: true }));
         this._express.use(bodyParser.json({ limit: '5mb', type: 'application/json' }));
@@ -27,14 +31,14 @@ var Application = /** @class */ (function () {
         //catch global errors
         this._express.use(errors_1.notFound);
         this._express.use(errors_1.internalServerError);
-    };
-    Application.prototype.setupRoutes = function () {
+    }
+    setupRoutes() {
         this.configuration = configuration_1.Configuration.load();
-        var router = express.Router();
-        var liveLinkEntityController = new livelink_entity_controller_1.LiveLinkEntityController(this.configuration);
-        var heartbeatController = new heartbeat_contrroller_1.HeartbeatController(this.configuration);
-        var alfController = new alf_controller_1.ALFController(this.configuration);
-        router.get('/ping', function (req, res, next) {
+        const router = express.Router();
+        const liveLinkEntityController = new livelink_entity_controller_1.LiveLinkEntityController(this.configuration);
+        const heartbeatController = new heartbeat_contrroller_1.HeartbeatController(this.configuration);
+        const alfController = new alf_controller_1.ALFController(this.configuration);
+        router.get('/ping', (req, res, next) => {
             res.json({ message: 'pong' });
         });
         router.get('/init', [], route_1.route(auth_1.authApiKey(heartbeatController.downloadCloudConfiguration)));
@@ -48,19 +52,32 @@ var Application = /** @class */ (function () {
         router.delete('/livelink/:appArea/:entity', [], route_1.route(auth_1.authApiKey(liveLinkEntityController.delete)));
         router.post('/livelink/:appArea/$command', [], route_1.route(auth_1.authApiKey(liveLinkEntityController.execCommand)));
         router.get('/livelink/:appArea/:entity/$metadata', [], route_1.route(auth_1.authApiKey(liveLinkEntityController.getMetadata)));
-        router.post('/plugins/alf/fiscalizationservice/:requestType', [], route_1.route(auth_1.authApiKey(alfController.fiscalizationServiceSubmit)));
+        /**
+ * @openapi
+ * /:
+ *   get:
+ *     description: Welcome to swagger-jsdoc!
+ *     responses:
+ *       200:
+ *         description: Returns a mysterious string.
+ */
+        router.post('/plugins/alf/request/:appArea/:requestType', [], route_1.route(auth_1.authApiKey(alfController.fiscalizationServiceSubmit)));
         this._express.use(function (req, res, next) {
             res.header("Access-Control-Allow-Origin", "*");
             res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
             next();
         });
         this._express.use('/api', router);
-    };
-    Application.prototype.run = function () {
+        var options = {
+            openapi: '3.0.0',
+            explorer: false
+        };
+        this._express.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument, options));
+    }
+    run() {
         this._express.listen(this.configuration.port);
-        event_log_1.EventLog.logInfoStr("Dynamics Mobile Cloud Proxy (c) 2009-2021 www.dynamicsmobile.com, on port " + this.configuration.port);
-    };
-    return Application;
-}());
+        event_log_1.EventLog.logInfoStr(`Dynamics Mobile Cloud Proxy (c) 2009-2021 www.dynamicsmobile.com, on port ${this.configuration.port}`);
+    }
+}
 exports.Application = Application;
 //# sourceMappingURL=application.js.map

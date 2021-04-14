@@ -1,16 +1,15 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var ApiControlerBase = /** @class */ (function () {
-    function ApiControlerBase(configuraiton) {
+class ApiControlerBase {
+    constructor(configuraiton) {
         this.configuraiton = configuraiton;
     }
-    ApiControlerBase.prototype.returnResponseSucces = function (res, obj) {
+    returnResponseSucces(res, obj) {
         res.json(obj);
-    };
-    ApiControlerBase.prototype.returnResponseError = function (res, httpStatusCode, obj) {
+    }
+    returnResponseError(res, httpStatusCode, obj) {
         res.status(httpStatusCode).json(obj);
-    };
-    return ApiControlerBase;
-}());
+    }
+}
 exports.ApiControlerBase = ApiControlerBase;
 //# sourceMappingURL=api-controller-base.js.map

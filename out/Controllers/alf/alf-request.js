@@ -1,9 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var https = require('follow-redirects').https;
+const https = require('follow-redirects').https;
 function executeRequest(signedXml) {
-    return new Promise(function (resolve, reject) {
-        var callback = function (response) {
+    return new Promise((resolve, reject) => {
+        const callback = function (response) {
             var str = '';
             response.on('data', function (chunk) {
                 str += chunk;
@@ -20,8 +20,8 @@ function executeRequest(signedXml) {
                 }
             });
         };
-        var soapRequest = "<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\"><SOAP-ENV:Header/><SOAP-ENV:Body>" + signedXml + "</SOAP-ENV:Body></SOAP-ENV:Envelope>";
-        var req = https.request({
+        const soapRequest = `<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"><SOAP-ENV:Header/><SOAP-ENV:Body>${signedXml}</SOAP-ENV:Body></SOAP-ENV:Envelope>`;
+        const req = https.request({
             rejectUnauthorized: false,
             method: 'POST',
             hostname: 'efiskalizimi-test.tatime.gov.al',
