@@ -2,7 +2,7 @@
 import {Request, Response} from 'express'
 import {validationResult} from 'express-validator'
 import {INTERNAL_SERVER_ERROR, UNPROCESSABLE_ENTITY, NOT_FOUND} from 'http-status'
-import {ResponseBuilder} from "../../out/response.builder";
+import {ResponseBuilder} from "./response.builder";
 
 enum ValidationErrors {
     VALUE_DOES_NOT_EXIST = 'Value does not exist',

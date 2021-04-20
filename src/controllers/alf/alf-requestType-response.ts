@@ -3,6 +3,7 @@ import { calculateISC } from "./alf-requestSignature";
 
 const DOMParser = require('xmldom').DOMParser;
 
+type Document = any;
 
 function handleRegisterTCRResponse(appArea: string, requestXml: string, parsedResponse: Document, isSuccessReponse: boolean): Record<string, any> {
     const RegisterTCRResponse = parsedResponse.documentElement.getElementsByTagName('RegisterTCRResponse');

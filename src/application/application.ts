@@ -11,7 +11,7 @@ import { EventLog } from "../utils/event-log";5
 import * as swaggerUi from 'swagger-ui-express';
 import * as path from 'path';
 const YAML = require('yamljs');
-const swaggerDocument = YAML.load('./src/swagger.yaml');
+const swaggerDocument = YAML.load('./swagger.yaml');
 
 
 
@@ -31,7 +31,7 @@ export class Application {
 
     init() {
 
-
+        console.log('*** DMS is initializing ...')
         //exress plugins
         this._express.use(bodyParser.urlencoded({ extended: true }));
         this._express.use(bodyParser.json({ limit: '5mb', type: 'application/json' }));
@@ -110,8 +110,10 @@ export class Application {
     }
 
     run() {
+        
         this._express.listen(this.configuration.port);
-        EventLog.logInfoStr(`Dynamics Mobile Cloud Proxy (c) 2009-2021 www.dynamicsmobile.com, on port ${this.configuration.port}`);
+        console.log('*** DMS is listening on port ',this.configuration.port)
+        //EventLog.logInfoStr(`Dynamics Mobile Cloud Proxy (c) 2009-2021 www.dynamicsmobile.com, on port ${this.configuration.port}`);
 
     }
 

@@ -1,0 +1,22 @@
+branch-defaults:
+  default:
+    environment: dms-agent-env
+    group_suffix: null
+  main:
+    environment: dms-agent-env
+global:
+  application_name: dms-agent
+  branch: null
+  default_ec2_keyname: null
+  default_platform: Node.js 14 running on 64bit Amazon Linux 2
+  default_region: us-east-1
+  include_git_submodules: true
+  instance_profile: null
+  platform_name: null
+  platform_version: null
+  profile: prod
+  repository: null
+  sc: null
+  workspace_type: Application
+deploy:
+  artifact: ./deploy.zip
