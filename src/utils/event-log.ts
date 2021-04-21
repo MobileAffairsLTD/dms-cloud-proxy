@@ -6,7 +6,7 @@
 
 const moment = require('moment')
 import * as fs from 'fs';
-import { Client as ElasticSearchClient } from '@elastic/elasticsearch';
+//import { Client as ElasticSearchClient } from '@elastic/elasticsearch';
 
 /*
  
@@ -170,37 +170,37 @@ async function flushToCloud(): Promise<void> {
     try {              
         if (EventLog.logEntries.length > 0) {
 
-            const client = new ElasticSearchClient({ auth: { username: 'dms-api', password: 'ABVabv123@#dmsapi202101' }, node: 'https://search-dms-eventlog-c5z66rz7wlq525ywntgyzeomnm.us-east-1.es.amazonaws.com' })
+            // const client = new ElasticSearchClient({ auth: { username: 'dms-api', password: 'ABVabv123@#dmsapi202101' }, node: 'https://search-dms-eventlog-c5z66rz7wlq525ywntgyzeomnm.us-east-1.es.amazonaws.com' })
            
-            EventLog.logEntries.forEach(r => {
-                _body.push({ create: { _index: 'dms' } });
-                _body.push(r);
-            })
+            // EventLog.logEntries.forEach(r => {
+            //     _body.push({ create: { _index: 'dms' } });
+            //     _body.push(r);
+            // })
 
-            const { body: bulkResponse } = await client.bulk({ body: _body as any }) as any;
-            console.log('ES repsonse: ', bulkResponse);
-            if (bulkResponse.errors) {
-                const erroredDocuments: Array<any> = [];
-                // The items array has the same order of the dataset we just indexed.
-                // The presence of the `error` key indicates that the operation
-                // that we did for the document has failed.
-                bulkResponse.items.forEach((action: any, i) => {
-                    const operation = Object.keys(action)[0]
-                    if (action[operation].error) {
-                        erroredDocuments.push({
-                            // If the status is 429 it means that you can retry the document,
-                            // otherwise it's very likely a mapping error, and you should
-                            // fix the document before to try it again.
-                            status: action[operation].status,
-                            error: action[operation].error,
-                            operation: EventLog.logEntries[i * 2],
-                            document: EventLog.logEntries[i * 2 + 1]
-                        })
-                    }
-                })
-                console.log(erroredDocuments)
-                throw erroredDocuments[0].toString();
-            }
+            // const { body: bulkResponse } = await client.bulk({ body: _body as any }) as any;
+            // console.log('ES repsonse: ', bulkResponse);
+            // if (bulkResponse.errors) {
+            //     const erroredDocuments: Array<any> = [];
+            //     // The items array has the same order of the dataset we just indexed.
+            //     // The presence of the `error` key indicates that the operation
+            //     // that we did for the document has failed.
+            //     bulkResponse.items.forEach((action: any, i) => {
+            //         const operation = Object.keys(action)[0]
+            //         if (action[operation].error) {
+            //             erroredDocuments.push({
+            //                 // If the status is 429 it means that you can retry the document,
+            //                 // otherwise it's very likely a mapping error, and you should
+            //                 // fix the document before to try it again.
+            //                 status: action[operation].status,
+            //                 error: action[operation].error,
+            //                 operation: EventLog.logEntries[i * 2],
+            //                 document: EventLog.logEntries[i * 2 + 1]
+            //             })
+            //         }
+            //     })
+            //     console.log(erroredDocuments)
+            //     throw erroredDocuments[0].toString();
+            // }
         }
         // if (appArea.name != 'delita') {
         //     await entityModel.addEntityWithPromise("EventLog", appArea.records);

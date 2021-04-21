@@ -54,7 +54,7 @@ export class DynamicsBusinessCentralClient {
 
             // console.log('Dynamics Business Central Client authType: ' + this.authType);
             // console.log('service url:', url);
-            httpntlm.get({
+            (httpntlm as any).get({
                 url: url,
                 username: me.username,
                 password: me.password,
@@ -101,7 +101,7 @@ export class DynamicsBusinessCentralClient {
             console.log('Dynamics Business Central Client authType: ' + this.authType);
             console.log('url: ', url);
             console.log('post: ', body);
-            httpntlm.post({
+            (httpntlm as any).post({
                 url: url,
                 username: this.username,
                 password: this.password,
@@ -159,7 +159,7 @@ export class DynamicsBusinessCentralClient {
             delete body["@odata.context"];
             delete body["@odata.etag"];
 
-            httpntlm.patch({
+            (httpntlm as any).patch({
                 url: url,
                 body: JSON.stringify(body),
                 username: this.username,
@@ -215,7 +215,7 @@ export class DynamicsBusinessCentralClient {
 
             console.log('Dynamics Business Central Client authType: ' + this.authType);
             console.log('service url:', url);
-            httpntlm.delete({
+            (httpntlm as any).delete({
                 url: url,
                 body: JSON.stringify(body),
                 username: this.username,
@@ -259,7 +259,7 @@ export class DynamicsBusinessCentralClient {
 
             console.log('Get Metadata: Dynamics Business Central Client, authType: ' + this.authType);
             console.log('service url:', url);
-            httpntlm.get({
+            (httpntlm as any).get({
                 url: url,
                 username: this.username,
                 password: this.password,

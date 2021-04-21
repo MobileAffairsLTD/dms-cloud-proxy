@@ -1,81 +1,81 @@
-/* eslint-disable */
 const path = require('path');
-const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
-const DmsAppWebPackPlugin = require('dynamicsmobile/templates/mobile-app/dms/dms-webpack-plugin');
-const dmsAppWebPackPlugin = new DmsAppWebPackPlugin();
-const TerserPlugin = require('terser-webpack-plugin')
-const webpack = require('webpack'); // to access built-in plugins
+const webpack = require('webpack'); 
+const CopyPlugin = require('copy-webpack-plugin');
+const nodeExternals = require('webpack-node-externals')
 
 module.exports = {
-	mode: 'production',
-	entry: dmsAppWebPackPlugin.entries(path.resolve(__dirname, "src")),
+	target:'node',
+	mode: 'development',
+	devtool: 'inline-source-map',
+	entry: './src/app.ts',
 	module: {
 		rules: [
-			{
-				test: /\.css$/i,
-				use: ['style-loader', 'css-loader'],
-			},
+			// {
+			// 	test: /\.css$/i,
+			// 	use: ['style-loader', 'css-loader'],
+			// },
 			{
 				test: /\.tsx?$/,
-				exclude: /node_modules/,
-				use: [
-					{
-						loader: 'ts-loader'
+				use: [{
+					loader: 'ts-loader', options: {
+						transpileOnly: true,
+						experimentalWatchApi: true				
 					}
-				],
+				}],
 				exclude: /node_modules/
+
 			},
 			{
-				test: /\.(woff|woff2|eot|ttf|png|jpg|jpeg|svg)$/,
-				use: [{
-					loader: 'url-loader',
-					options: {
-						limit: 3192,
-						name: 'images/[hash]-[name].[ext]'
-					}
-				}]
-			}
+				test: /\.js$/,
+				use: 'babel-loader',
+				exclude: /node_modules/
+			  }
+			// {
+			// 	test: /\.(woff|woff2|eot|ttf|png|jpg|jpeg|svg)$/,
+			// 	use: [{
+			// 		loader: 'url-loader',
+			// 		options: {
+			// 			limit: 3192,
+			// 			name: 'images/[hash]-[name].[ext]'
+			// 		}
+			// 	}]
+			// }
 		],
 	},
 	resolve: {
-		symlinks: false,
-		plugins: [
-			new TsconfigPathsPlugin({
-				configFile: './tsconfig.json',
-				extensions: ['.ts', '.js']
-			})
+		plugins: [new TsconfigPathsPlugin({
+			configFile: './tsconfig.json',
+			extensions: ['.tsx', '.ts', '.js']
+		})
 		],
-		extensions: ['.ts', '.js'],
+		extensions: ['.tsx', '.ts', '.js'],
 	},
 	output: {
-		filename: '[name].js',
-		path: path.resolve(__dirname, '.bin/user/apparea/sandbox/app/en'),
+		pathinfo: false,
+		filename: 'app.js',
+		path: path.resolve(__dirname, './out/'),
 	},
-	optimization: {
-		splitChunks: {
-			cacheGroups: {
-				vendor: {
-					test: /[\\/]node_modules[\\/]/,
-					name: 'framework.bundle',
-					chunks: 'all'
-				}
-			}
-		},
-		minimize: true,
-		minimizer: [
-			new TerserPlugin({
-				terserOptions: {
-					mangle: false
-				}
-			})
-		]
+	// externals: [nodeExternals({
+	// 	allowlist:[/^(?!.*express|swagger-ui-dist).*$/gi]
+	// }
+	externals: {
+		//'express':'commonjs express',
+		'swagger-ui-dist':'commonjs swagger-ui-dist'		
 	},
 	plugins: [
 		new webpack.ProgressPlugin(),
-		dmsAppWebPackPlugin
-	],
-	node:{
-		fs:'empty'
-	}
-}
+		// new CopyPlugin({
+		// 	patterns: [
+		// 		{ from: path.resolve(__dirname, 'node_modules/express'), to: 'node_modules/express' },
+		// 		{ from: path.resolve(__dirname, 'node_modules/swagger-ui-dist/'), to: 'node_modules/swagger-ui-dist' },
+		// 		{ from: path.resolve(__dirname, 'package.json'), to: 'package.json' },
+		// 		{ from: path.resolve(__dirname, 'config.json'), to: 'config.json' },
+		// 		{ from: path.resolve(__dirname, './src/swagger.yaml'), to: 'swagger.yaml' },
+		// 		{ from: path.resolve(__dirname, './src/.ebextentions/node.yml'), to: 'node.yml' },
+				
+		// 	  ]
+		// 	}
+		// )
+	]
+}	

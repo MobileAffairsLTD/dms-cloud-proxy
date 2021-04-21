@@ -2,7 +2,7 @@ import { ApiControlerBase } from "../api-controller-base";
 import { ConfigurationObject } from "../../application/configuration";
 import { computeSignedRequest } from "./alf-requestSignature";
 import * as path from 'path'
-import { executeRequest } from "./alf-request";
+import { executeRequest, executeRequestEinvoice } from "./alf-request";
 import { processResponseByRequestType } from "./alf-requestType-response";
 import { processByRequestType } from "./alf-requestType-request";
 const DOMParser = require('xmldom').DOMParser;
@@ -48,7 +48,13 @@ export class ALFController extends ApiControlerBase {
             if (!skipUplinkRequest) {
                 const signedRequest = computeSignedRequest(requestType, transformedRequest, appArea);                              
                 try {
-                    response = await executeRequest(signedRequest);
+                    if(requestType.toUpperCase()=='RegisterEinvoiceRequest'.toUpperCase()){
+                       console.log(signedRequest);
+                        response = await executeRequestEinvoice(signedRequest);
+                    }
+                    else {
+                        response = await executeRequest(signedRequest);
+                    }
                     successResponse = true;
                 }
                 catch (requestError) {
@@ -58,7 +64,7 @@ export class ALFController extends ApiControlerBase {
                     }
                     else {
                         //simulate error returned from the fiscalization endpoint in order to use the same generic error handler
-                        const parsedRequest = new DOMParser().parseFromString(transformedRequest, 'text/xml') as Document;
+                        const parsedRequest = new DOMParser().parseFromString(transformedRequest, 'text/xml') as any;
                         const requestId = parsedRequest.getElementsByTagName('Header')[0].getAttribute('UUID');
                         response = `<env:Envelop><env:Header/><env:Body><env:Fault><faultcode>dms:REQFAIL</faultcode><detail><code>89219</code></detail><faultstring>${requestError.message ? requestError.message : requestError}</faultstring><requestUUID>${requestId}</requestUUID></env:Fault></env:Body></env:Envelop>`;
                     }

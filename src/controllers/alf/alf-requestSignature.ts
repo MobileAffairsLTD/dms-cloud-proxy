@@ -8,7 +8,7 @@ import { getPrivateCertificate, getPublicKey } from './alf-certificate-storage';
 
 function X509KeyInfo(appArea: string) {
 
-    this.getKeyInfo = function (key, prefix) {
+    this.getKeyInfo = function (key: string, prefix: string) {
         let publicKey = getPublicKey(appArea)
         let certInfo = publicKey.replace('-----BEGIN CERTIFICATE-----', '').replace('-----END CERTIFICATE-----', '').replace(/\s/g, '').replace(/(\r\n\t|\n|\r\t)/gm, '');
         prefix = prefix || ''

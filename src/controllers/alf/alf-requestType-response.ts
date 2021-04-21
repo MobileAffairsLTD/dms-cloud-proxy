@@ -147,18 +147,53 @@ function handleDmsCalculateWTNICResponse(appArea: string, requestXml: string, pa
     }
 }
 
+
+function handleRegisterEInvoiceResponse(appArea: string, requestXml: string, parsedResponse: Document, isSuccessReponse: boolean): Record<string, any> {
+    const parsedRequest = new DOMParser().parseFromString(requestXml, 'text/xml');
+
+    const RegisterEInvoiceResponse = parsedResponse.documentElement.getElementsByTagName('RegisterInvoiceResponse');
+    if (!isSuccessReponse) {
+        // const iic = parsedResponse.createElement('IIC')
+        // iic.innerText = parsedRequest.documentElement.getElementsByTagName('Invoice')[0].getAttribute('IIC');
+        // iic.textContent = parsedRequest.documentElement.getElementsByTagName('Invoice')[0].getAttribute('IIC');
+        // const c = parsedResponse.documentElement.toString();
+        // parsedResponse.documentElement.getElementsByTagName('env:Fault')[0].appendChild(iic)
+        // throw parsedResponse.documentElement.toString();
+    }
+    else
+        if (!RegisterEInvoiceResponse || RegisterEInvoiceResponse.length != 1) {
+            throw new Error('Invalid response for RegisterEInvoiceResponse');
+        }
+    const Header = parsedResponse.documentElement.getElementsByTagName('Header');
+    //const FIC = parsedResponse.documentElement.getElementsByTagName('FIC');
+
+    // if (!FIC || FIC.length == 0) {
+    //     throw 'FIC was not returned'
+    // }
+
+
+
+
+    return {
+        //fic: FIC && FIC.length > 0 ? FIC[0].textContent : '',
+        //iic: parsedRequest.documentElement.getElementsByTagName('Invoice')[0].getAttribute('IIC'),
+        requestUUID: Header && Header.length > 0 ? Header[0].getAttribute('RequestUUID') : '',
+    }
+}
+
 export function processResponseByRequestType(appArea: string, requestType: string, transformedRequestXml: string, response: string, isSuccessReponse: boolean): any {
     const parsedResponse = new DOMParser().parseFromString(response, 'text/xml');
     let transformedResponse = null;
     if (parsedResponse) {
 
-        switch (requestType) {
-            case 'RegisterTCRRequest': transformedResponse = handleRegisterTCRResponse(appArea, transformedRequestXml, parsedResponse, isSuccessReponse); break;
-            case 'RegisterCashDepositRequest': transformedResponse = handleRegisterCashDepositResponse(appArea, transformedRequestXml, parsedResponse, isSuccessReponse); break;
-            case 'RegisterInvoiceRequest': transformedResponse = handleRegisterInvoiceResponse(appArea, transformedRequestXml, parsedResponse, isSuccessReponse); break;
-            case 'RegisterWTNRequest': transformedResponse = handleRegisterWTNResponse(appArea, transformedRequestXml, parsedResponse, isSuccessReponse); break;
-            case 'DmsCalculateIIC': transformedResponse = handleDmsCalculateIICResponse(appArea, transformedRequestXml, parsedResponse, isSuccessReponse); break;
-            case 'DmsCalculateWTNIC': transformedResponse = handleDmsCalculateWTNICResponse(appArea, transformedRequestXml, parsedResponse, isSuccessReponse); break;
+        switch (requestType.toUpperCase()) {
+            case 'RegisterTCRRequest'.toUpperCase(): transformedResponse = handleRegisterTCRResponse(appArea, transformedRequestXml, parsedResponse, isSuccessReponse); break;
+            case 'RegisterCashDepositRequest'.toUpperCase(): transformedResponse = handleRegisterCashDepositResponse(appArea, transformedRequestXml, parsedResponse, isSuccessReponse); break;
+            case 'RegisterInvoiceRequest'.toUpperCase(): transformedResponse = handleRegisterInvoiceResponse(appArea, transformedRequestXml, parsedResponse, isSuccessReponse); break;
+            case 'RegisterWTNRequest'.toUpperCase(): transformedResponse = handleRegisterWTNResponse(appArea, transformedRequestXml, parsedResponse, isSuccessReponse); break;
+            case 'DmsCalculateIIC'.toUpperCase(): transformedResponse = handleDmsCalculateIICResponse(appArea, transformedRequestXml, parsedResponse, isSuccessReponse); break;
+            case 'DmsCalculateWTNIC'.toUpperCase(): transformedResponse = handleDmsCalculateWTNICResponse(appArea, transformedRequestXml, parsedResponse, isSuccessReponse); break;
+            case 'RegisterEInvoiceRequest'.toUpperCase(): transformedResponse = handleRegisterEInvoiceResponse(appArea, transformedRequestXml, parsedResponse, isSuccessReponse); break;            
             default: throw new Error('Unkown request type');
         }
 

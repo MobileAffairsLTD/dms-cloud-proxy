@@ -6,8 +6,10 @@ info:
   termsOfService: http://example.com/terms/
 
 servers:
-  - url: http://maisso04.dynamicsmobile.isystems.bg:8081/api
-  - url: http://localhost:5002/api
+  - url: http://dynamicsmobile-agent-east1.us-east-1.elasticbeanstalk.com/api
+  #- url: http://maisso04.dynamicsmobile.isystems.bg:8081/api
+  #- url: http://localhost:5002/api
+
 
 consumes:
   - application/json
@@ -418,7 +420,7 @@ paths:
                   type: string
                   description: This method works offline- e.g. the service does not execute uplink request. It allows the clients to submit WTNICS calculation request. The service returns WTNIC hash and WTNIC signature.
               example:
-                request: <DmsCalculateWTNIC IssuerNuis=\"12344\" BusinUnitCode=\"bb123bb123\" IssueDateTime=\"2021-04-13T15:02:00+02:00\" WTNOrdNum=\"3\" SoftCode=\"cc476bs902\" TCRCode=\"wk592ag291\">"
+                request: <DmsCalculateWTNIC IssuerNuis="12344" BusinUnitCode="bb123bb123" IssueDateTime="2021-04-13T15:02:00+02:00" WTNOrdNum="3" SoftCode="cc476bs902" TCRCode="wk592ag291">"
       responses:
         200:
           description: Successful WTNIC registration
