@@ -1,6 +1,6 @@
 "use strict";
 exports.__esModule = true;
-exports.calculateISC = exports.computeSignedRequest = void 0;
+exports.calculateISC = exports.computeSignatureOnly = exports.computeSignedRequest = void 0;
 var xml_crypto_1 = require("xml-crypto");
 var crypto = require("crypto");
 var alf_certificate_storage_1 = require("./alf-certificate-storage");
@@ -32,6 +32,18 @@ function computeSignedRequest(requestName, requestXml, appArea) {
     return sig.getSignedXml();
 }
 exports.computeSignedRequest = computeSignedRequest;
+function computeSignatureOnly(requestName, requestXml, appArea) {
+    var sig = new xml_crypto_1.SignedXml();
+    sig.keyInfoProvider = new X509KeyInfo(appArea);
+    sig.signingKey = alf_certificate_storage_1.getPrivateCertificate(appArea);
+    sig.signatureAlgorithm = 'http://www.w3.org/2001/04/xmldsig-more#rsa-sha256';
+    sig.canonicalizationAlgorithm = 'http://www.w3.org/2001/10/xml-exc-c14n#';
+    sig.addReference("//*[local-name(.)='" + requestName + "']", ['http://www.w3.org/2000/09/xmldsig#enveloped-signature',
+        'http://www.w3.org/2001/10/xml-exc-c14n#'], "http://www.w3.org/2001/04/xmlenc#sha256");
+    sig.computeSignature(requestXml, { prefix: 'ds' });
+    return sig.getSignatureXml();
+}
+exports.computeSignatureOnly = computeSignatureOnly;
 function calculateISC(privateKey, rawISC) {
     var sign = crypto.createSign('SHA256');
     sign.update(rawISC);

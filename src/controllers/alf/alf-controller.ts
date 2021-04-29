@@ -49,7 +49,6 @@ export class ALFController extends ApiControlerBase {
                 const signedRequest = computeSignedRequest(requestType, transformedRequest, appArea);                              
                 try {
                     if(requestType.toUpperCase()=='RegisterEinvoiceRequest'.toUpperCase()){
-                       console.log(signedRequest);
                         response = await executeRequestEinvoice(signedRequest);
                     }
                     else {
@@ -82,6 +81,9 @@ export class ALFController extends ApiControlerBase {
 
         }
         catch (err) {
+            console.error(err);
+            console.log(err.stackTrace)
+            console.log(err.stack)
             const parser = new DOMParser().parseFromString(err, 'text/xml');
             if (parser) {                
                 const errorCode = parser.documentElement.getElementsByTagName('code');

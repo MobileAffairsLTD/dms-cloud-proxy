@@ -1,6 +1,6 @@
 "use strict";
 exports.__esModule = true;
-exports.processResponseByRequestType = void 0;
+exports.processResponseByRequestType = exports.handleDmsCalculateIICResponse = void 0;
 var alf_certificate_storage_1 = require("./alf-certificate-storage");
 var alf_requestSignature_1 = require("./alf-requestSignature");
 var DOMParser = require('xmldom').DOMParser;
@@ -84,11 +84,45 @@ function handleRegisterWTNResponse(appArea, requestXml, parsedResponse, isSucces
         requestUUID: Header && Header.length > 0 ? Header[0].getAttribute('RequestUUID') : ''
     };
 }
-function handleDmsCalculateIICResponse(appArea, requestXml, parsedResponse, isSuccessReponse) {
+function handleDmsCalculateIICResponse(appArea, requestXml) {
     var parsedRequest = new DOMParser().parseFromString(requestXml, 'text/xml');
+    var nuis = parsedRequest.documentElement.getAttribute('NUIS');
+    if (!nuis) {
+        nuis = parsedRequest.documentElement.getAttribute('IssuerNuis');
+    }
+    if (!nuis) {
+        nuis = parsedRequest.documentElement.getAttribute('IssuerNuis');
+    }
+    if (!nuis) {
+        var seller = parsedRequest.documentElement.getElementsByTagName('Seller');
+        if (seller && seller.length > 0) {
+            nuis = seller[0].getAttribute('IDNum');
+        }
+    }
+    if (!nuis) {
+        throw new Error('IIC calculation erorr: One of Invoice.NUIS, Invoice.IssuerNuis, Seller.IDNum attribute are required');
+    }
+    if (!parsedRequest.documentElement.getAttribute('IssueDateTime')) {
+        throw new Error('IIC calculation erorr: Invoice.IssueDateTime attribute is required');
+    }
+    if (!parsedRequest.documentElement.getAttribute('InvOrdNum')) {
+        throw new Error('IIC calculation erorr: Invoice.InvOrdNum attribute is required');
+    }
+    if (!parsedRequest.documentElement.getAttribute('BusinUnitCode')) {
+        throw new Error('IIC calculation erorr: Invoice.BusinUnitCode attribute is required');
+    }
+    if (!parsedRequest.documentElement.getAttribute('TCRCode')) {
+        throw new Error('IIC calculation erorr: Invoice.TCRCode attribute is required');
+    }
+    if (!parsedRequest.documentElement.getAttribute('SoftCode')) {
+        throw new Error('IIC calculation erorr: Invoice.SoftCode attribute is required');
+    }
+    if (!parsedRequest.documentElement.getAttribute('TotPrice')) {
+        throw new Error('IIC calculation erorr: Invoice.TotPrice attribute is required');
+    }
     var iicInput = '';
     //issuerNuis
-    iicInput += parsedRequest.documentElement.getAttribute('NUIS');
+    iicInput += nuis; //'L01714012M';
     //dateTimeCreated
     iicInput += "|" + parsedRequest.documentElement.getAttribute('IssueDateTime');
     //invoiceNumber
@@ -107,6 +141,7 @@ function handleDmsCalculateIICResponse(appArea, requestXml, parsedResponse, isSu
         iicSignature: iscSignature
     };
 }
+exports.handleDmsCalculateIICResponse = handleDmsCalculateIICResponse;
 function handleDmsCalculateWTNICResponse(appArea, requestXml, parsedResponse, isSuccessReponse) {
     var parsedRequest = new DOMParser().parseFromString(requestXml, 'text/xml');
     var iicInput = '';
@@ -155,26 +190,26 @@ function processResponseByRequestType(appArea, requestType, transformedRequestXm
     var parsedResponse = new DOMParser().parseFromString(response, 'text/xml');
     var transformedResponse = null;
     if (parsedResponse) {
-        switch (requestType) {
-            case 'RegisterTCRRequest':
+        switch (requestType.toUpperCase()) {
+            case 'RegisterTCRRequest'.toUpperCase():
                 transformedResponse = handleRegisterTCRResponse(appArea, transformedRequestXml, parsedResponse, isSuccessReponse);
                 break;
-            case 'RegisterCashDepositRequest':
+            case 'RegisterCashDepositRequest'.toUpperCase():
                 transformedResponse = handleRegisterCashDepositResponse(appArea, transformedRequestXml, parsedResponse, isSuccessReponse);
                 break;
-            case 'RegisterInvoiceRequest':
+            case 'RegisterInvoiceRequest'.toUpperCase():
                 transformedResponse = handleRegisterInvoiceResponse(appArea, transformedRequestXml, parsedResponse, isSuccessReponse);
                 break;
-            case 'RegisterWTNRequest':
+            case 'RegisterWTNRequest'.toUpperCase():
                 transformedResponse = handleRegisterWTNResponse(appArea, transformedRequestXml, parsedResponse, isSuccessReponse);
                 break;
-            case 'DmsCalculateIIC':
-                transformedResponse = handleDmsCalculateIICResponse(appArea, transformedRequestXml, parsedResponse, isSuccessReponse);
+            case 'DmsCalculateIIC'.toUpperCase():
+                transformedResponse = handleDmsCalculateIICResponse(appArea, transformedRequestXml);
                 break;
-            case 'DmsCalculateWTNIC':
+            case 'DmsCalculateWTNIC'.toUpperCase():
                 transformedResponse = handleDmsCalculateWTNICResponse(appArea, transformedRequestXml, parsedResponse, isSuccessReponse);
                 break;
-            case 'RegisterEInvoiceRequest':
+            case 'RegisterEInvoiceRequest'.toUpperCase():
                 transformedResponse = handleRegisterEInvoiceResponse(appArea, transformedRequestXml, parsedResponse, isSuccessReponse);
                 break;
             default: throw new Error('Unkown request type');

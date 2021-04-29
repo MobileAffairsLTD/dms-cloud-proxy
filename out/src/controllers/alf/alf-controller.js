@@ -67,7 +67,7 @@ var ALFController = /** @class */ (function (_super) {
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
-                        _b.trys.push([0, 7, , 8]);
+                        _b.trys.push([0, 10, , 11]);
                         appArea = req.params.appArea;
                         requestType = req.params.requestType;
                         if (!req.body) {
@@ -90,17 +90,24 @@ var ALFController = /** @class */ (function (_super) {
                         _a = alf_requestType_request_1.processByRequestType(appArea, requestType, xml), transformedRequest = _a.transformedRequest, skipUplinkRequest = _a.skipUplinkRequest;
                         successResponse = false;
                         response = void 0;
-                        if (!!skipUplinkRequest) return [3 /*break*/, 5];
+                        if (!!skipUplinkRequest) return [3 /*break*/, 8];
                         signedRequest = alf_requestSignature_1.computeSignedRequest(requestType, transformedRequest, appArea);
                         _b.label = 1;
                     case 1:
-                        _b.trys.push([1, 3, , 4]);
-                        return [4 /*yield*/, alf_request_1.executeRequest(signedRequest)];
+                        _b.trys.push([1, 6, , 7]);
+                        if (!(requestType.toUpperCase() == 'RegisterEinvoiceRequest'.toUpperCase())) return [3 /*break*/, 3];
+                        return [4 /*yield*/, alf_request_1.executeRequestEinvoice(signedRequest)];
                     case 2:
                         response = _b.sent();
+                        return [3 /*break*/, 5];
+                    case 3: return [4 /*yield*/, alf_request_1.executeRequest(signedRequest)];
+                    case 4:
+                        response = _b.sent();
+                        _b.label = 5;
+                    case 5:
                         successResponse = true;
-                        return [3 /*break*/, 4];
-                    case 3:
+                        return [3 /*break*/, 7];
+                    case 6:
                         requestError_1 = _b.sent();
                         parsedError = new DOMParser().parseFromString(requestError_1, 'text/xml');
                         if (parsedError) {
@@ -112,19 +119,22 @@ var ALFController = /** @class */ (function (_super) {
                             response = "<env:Envelop><env:Header/><env:Body><env:Fault><faultcode>dms:REQFAIL</faultcode><detail><code>89219</code></detail><faultstring>" + (requestError_1.message ? requestError_1.message : requestError_1) + "</faultstring><requestUUID>" + requestId + "</requestUUID></env:Fault></env:Body></env:Envelop>";
                         }
                         successResponse = false;
-                        return [3 /*break*/, 4];
-                    case 4: return [3 /*break*/, 6];
-                    case 5:
+                        return [3 /*break*/, 7];
+                    case 7: return [3 /*break*/, 9];
+                    case 8:
                         successResponse = true;
                         response = transformedRequest;
-                        _b.label = 6;
-                    case 6:
+                        _b.label = 9;
+                    case 9:
                         transformedResponse = alf_requestType_response_1.processResponseByRequestType(appArea, requestType, transformedRequest, response, successResponse);
                         transformedResponse.success = successResponse;
                         res.set('Content-Type', 'appplicaion/json').status(200).send(transformedResponse);
-                        return [3 /*break*/, 8];
-                    case 7:
+                        return [3 /*break*/, 11];
+                    case 10:
                         err_1 = _b.sent();
+                        console.error(err_1);
+                        console.log(err_1.stackTrace);
+                        console.log(err_1.stack);
                         parser = new DOMParser().parseFromString(err_1, 'text/xml');
                         if (parser) {
                             errorCode = parser.documentElement.getElementsByTagName('code');
@@ -154,8 +164,8 @@ var ALFController = /** @class */ (function (_super) {
                                 errorCode: 89219
                             });
                         }
-                        return [3 /*break*/, 8];
-                    case 8: return [2 /*return*/];
+                        return [3 /*break*/, 11];
+                    case 11: return [2 /*return*/];
                 }
             });
         }); };

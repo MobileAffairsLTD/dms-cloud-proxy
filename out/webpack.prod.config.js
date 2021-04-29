@@ -5,15 +5,10 @@ var CopyPlugin = require('copy-webpack-plugin');
 var nodeExternals = require('webpack-node-externals');
 module.exports = {
     target: 'node',
-    mode: 'development',
-    devtool: 'inline-source-map',
+    mode: 'production',
     entry: './src/app.ts',
     module: {
         rules: [
-            // {
-            // 	test: /\.css$/i,
-            // 	use: ['style-loader', 'css-loader'],
-            // },
             {
                 test: /\.tsx?$/,
                 use: [{
@@ -29,16 +24,6 @@ module.exports = {
                 use: 'babel-loader',
                 exclude: /node_modules/
             }
-            // {
-            // 	test: /\.(woff|woff2|eot|ttf|png|jpg|jpeg|svg)$/,
-            // 	use: [{
-            // 		loader: 'url-loader',
-            // 		options: {
-            // 			limit: 3192,
-            // 			name: 'images/[hash]-[name].[ext]'
-            // 		}
-            // 	}]
-            // }
         ]
     },
     resolve: {

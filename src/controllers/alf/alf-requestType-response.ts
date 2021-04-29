@@ -103,11 +103,51 @@ function handleRegisterWTNResponse(appArea: string, requestXml: string, parsedRe
 }
 
 
-function handleDmsCalculateIICResponse(appArea: string, requestXml: string, parsedResponse: Document, isSuccessReponse: boolean): Record<string, any> {
+export function handleDmsCalculateIICResponse(appArea: string, requestXml: string): Record<string, any> {
     const parsedRequest = new DOMParser().parseFromString(requestXml, 'text/xml');
+
+    let nuis = parsedRequest.documentElement.getAttribute('NUIS');
+    if(!nuis){
+        nuis = parsedRequest.documentElement.getAttribute('IssuerNuis');
+    }
+    if(!nuis){
+        nuis = parsedRequest.documentElement.getAttribute('IssuerNuis');
+    }
+
+    if(!nuis){
+        const seller = parsedRequest.documentElement.getElementsByTagName('Seller');
+        if(seller && seller.length>0){
+            nuis = seller[0].getAttribute('IDNum');
+        }
+    }
+    
+     if(!nuis){
+         throw new Error('IIC calculation erorr: One of Invoice.NUIS, Invoice.IssuerNuis, Seller.IDNum attribute are required');
+     }
+
+    if(!parsedRequest.documentElement.getAttribute('IssueDateTime')){
+        throw new Error('IIC calculation erorr: Invoice.IssueDateTime attribute is required');
+    }
+    if(!parsedRequest.documentElement.getAttribute('InvOrdNum')){
+        throw new Error('IIC calculation erorr: Invoice.InvOrdNum attribute is required');
+    }
+    if(!parsedRequest.documentElement.getAttribute('BusinUnitCode')){
+        throw new Error('IIC calculation erorr: Invoice.BusinUnitCode attribute is required');
+    }
+    if(!parsedRequest.documentElement.getAttribute('TCRCode')){
+        throw new Error('IIC calculation erorr: Invoice.TCRCode attribute is required');
+    }
+    if(!parsedRequest.documentElement.getAttribute('SoftCode')){
+        throw new Error('IIC calculation erorr: Invoice.SoftCode attribute is required');
+    }
+    if(!parsedRequest.documentElement.getAttribute('TotPrice')){
+        throw new Error('IIC calculation erorr: Invoice.TotPrice attribute is required');
+    }
+
+
     let iicInput = '';
     //issuerNuis
-    iicInput +=  parsedRequest.documentElement.getAttribute('NUIS');
+    iicInput +=  nuis;//'L01714012M';
     //dateTimeCreated
     iicInput += "|" + parsedRequest.documentElement.getAttribute('IssueDateTime');
     //invoiceNumber
@@ -191,7 +231,7 @@ export function processResponseByRequestType(appArea: string, requestType: strin
             case 'RegisterCashDepositRequest'.toUpperCase(): transformedResponse = handleRegisterCashDepositResponse(appArea, transformedRequestXml, parsedResponse, isSuccessReponse); break;
             case 'RegisterInvoiceRequest'.toUpperCase(): transformedResponse = handleRegisterInvoiceResponse(appArea, transformedRequestXml, parsedResponse, isSuccessReponse); break;
             case 'RegisterWTNRequest'.toUpperCase(): transformedResponse = handleRegisterWTNResponse(appArea, transformedRequestXml, parsedResponse, isSuccessReponse); break;
-            case 'DmsCalculateIIC'.toUpperCase(): transformedResponse = handleDmsCalculateIICResponse(appArea, transformedRequestXml, parsedResponse, isSuccessReponse); break;
+            case 'DmsCalculateIIC'.toUpperCase(): transformedResponse = handleDmsCalculateIICResponse(appArea, transformedRequestXml); break;
             case 'DmsCalculateWTNIC'.toUpperCase(): transformedResponse = handleDmsCalculateWTNICResponse(appArea, transformedRequestXml, parsedResponse, isSuccessReponse); break;
             case 'RegisterEInvoiceRequest'.toUpperCase(): transformedResponse = handleRegisterEInvoiceResponse(appArea, transformedRequestXml, parsedResponse, isSuccessReponse); break;            
             default: throw new Error('Unkown request type');

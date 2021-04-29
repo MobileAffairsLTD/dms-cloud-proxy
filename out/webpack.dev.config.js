@@ -6,7 +6,7 @@ var nodeExternals = require('webpack-node-externals');
 module.exports = {
     target: 'node',
     mode: 'development',
-    devtool: 'inline-source-map',
+    devtool: 'eval-cheap-source-map',
     entry: './src/app.ts',
     module: {
         rules: [
@@ -50,7 +50,7 @@ module.exports = {
         extensions: ['.tsx', '.ts', '.js']
     },
     output: {
-        pathinfo: false,
+        pathinfo: true,
         filename: 'app.js',
         path: path.resolve(__dirname, './out/')
     },
