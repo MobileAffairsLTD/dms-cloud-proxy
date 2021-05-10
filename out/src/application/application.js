@@ -65,7 +65,7 @@ var Application = /** @class */ (function () {
         router.post('/plugins/alf/request/:appArea/:requestType', [], route_1.route(auth_1.authApiKey(alfController.fiscalizationServiceSubmit)));
         this._express.use(function (req, res, next) {
             res.header("Access-Control-Allow-Origin", "*");
-            res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+            res.header("Access-Control-Allow-Headers", "*");
             next();
         });
         this._express.use('/api', router);

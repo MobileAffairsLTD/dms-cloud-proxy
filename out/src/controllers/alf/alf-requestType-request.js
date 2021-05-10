@@ -373,7 +373,14 @@ function handleRegisterEInvoiceRequest(appArea, parser) {
     // if (!Invoice || Invoice.length != 1) {
     //     throw new Error('Invalid RegisterEInvoiceRequest: Invoice element is missing');
     // }
-    var Invoice = parser.documentElement.childNodes[0];
+    var Header = parser.documentElement.getElementsByTagName('Header');
+    if (!Header || Header.length != 1) {
+        throw new Error('Invalid RegisterEInvoiceRequest: Header element is missing');
+    }
+    if (parser.documentElement.childNodes.length < 2) {
+        throw new Error('Invalid RegisterEInvoiceRequest: Header and Invoice elements are requird');
+    }
+    var Invoice = parser.documentElement.childNodes[1];
     Invoice.setAttribute('xmlns:sac', 'urn:oasis:names:specification:ubl:schema:xsd:SignatureAggregateComponents-2');
     Invoice.setAttribute('xmlns:sig', 'urn:oasis:names:specification:ubl:schema:xsd:CommonSignatureComponents-2');
     Invoice.setAttribute('xmlns:ext', 'urn:oasis:names:specification:ubl:schema:xsd:CommonExtensionComponents-2');
@@ -392,20 +399,20 @@ function handleRegisterEInvoiceRequest(appArea, parser) {
     //const cleanInvoiceXmlDom = new DOMParser().parseFromString(cleanInvoiceXml, 'text/xml');
     //cleanInvoiceXmlDom.documentElement.removeChild(cleanInvoiceXmlDom.documentElement.getElementsByTagName('cbc:UBLVersionID')[0]);
     var cleanInvoiceXmlDom = new DOMParser().parseFromString(Invoice.toLocaleString(), 'text/xml');
-    //actual signature generation , e.g. do not change invoice xml after that point
-    var cleanInvoiceXml = cleanInvoiceXmlDom.documentElement.toLocaleString();
-    var pureSignature = alf_requestSignature_1.computeEinvoiceSignature('Invoice', cleanInvoiceXml, appArea);
     var UBLExtensions = appendEmptyXmlElement(cleanInvoiceXmlDom.documentElement, 'ext:UBLExtensions', cleanInvoiceXmlDom.documentElement.getElementsByTagName('CustomizationID')[0]);
     var UBLExtension = appendEmptyXmlElement(UBLExtensions, 'ext:UBLExtension');
     var ExtensionContent = appendEmptyXmlElement(UBLExtension, 'ext:ExtensionContent');
     var UBLDocumentSignatures = appendEmptyXmlElement(ExtensionContent, 'sig:UBLDocumentSignatures');
     var SignatureInformation = appendEmptyXmlElement(UBLDocumentSignatures, 'sac:SignatureInformation');
+    //actual signature generation , e.g. do not change invoice xml after that point
+    var cleanInvoiceXml = cleanInvoiceXmlDom.documentElement.toLocaleString();
+    var pureSignature = alf_requestSignature_1.computeEinvoiceSignature('Invoice', cleanInvoiceXml, appArea);
     var signatureElement = new DOMParser().parseFromString(pureSignature, 'text/xml');
-    SignatureInformation.appendChild(signatureElement);
+    SignatureInformation.appendChild(signatureElement.documentElement);
     var finalEInvoiceXml = cleanInvoiceXmlDom.documentElement.toString();
     var buff = Buffer.from(finalEInvoiceXml);
     var invoiceAsBase64 = buff.toString('base64');
-    var request = "<RegisterEinvoiceRequest xmlns=\"https://Einvoice.tatime.gov.al/EinvoiceService/schema\"\n    xmlns:ns2=\"http://www.w3.org/2000/09/xmldsig#\" Id=\"Request\" Version=\"1\"> <Header SendDateTime=\"2021-05-07T17:05:36+02:00\" UUID=\"af847648-5091-4a8c-a78a-9d98206a319c\"/><EinvoiceEnvelope><UblInvoice>" + invoiceAsBase64 + "</UblInvoice></EinvoiceEnvelope></RegisterEinvoiceRequest>";
+    var request = "<RegisterEinvoiceRequest xmlns=\"https://Einvoice.tatime.gov.al/EinvoiceService/schema\"\n    xmlns:ns2=\"http://www.w3.org/2000/09/xmldsig#\" Id=\"Request\" Version=\"1\">" + Header[0].toString() + "<EinvoiceEnvelope><UblInvoice>" + invoiceAsBase64 + "</UblInvoice></EinvoiceEnvelope></RegisterEinvoiceRequest>";
     //const ublInv = parser.documentElement.getElementsByTagName('UblInvoice');
     //if (!ublInv || ublInv.length != 1) {
     //    throw new Error('Element UblInvoice is missing in the request!');
@@ -426,6 +433,7 @@ function processByRequestType(appArea, requestType, xml) {
             case 'RegisterEInvoiceRequest'.toUpperCase(): return { transformedRequest: handleRegisterEInvoiceRequest(appArea, parser), skipUplinkRequest: false };
             case 'GetTaxpayersRequest'.toUpperCase(): return { transformedRequest: xml, skipUplinkRequest: false };
             case 'GetEInvoicesRequest'.toUpperCase(): return { transformedRequest: xml, skipUplinkRequest: false };
+            case 'EinvoiceChangeStatusRequest'.toUpperCase(): return { transformedRequest: xml, skipUplinkRequest: false };
             default: throw new Error('Unkown request type');
         }
     }

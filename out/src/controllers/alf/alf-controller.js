@@ -63,7 +63,7 @@ var ALFController = /** @class */ (function (_super) {
     function ALFController(configuraiton) {
         var _this = _super.call(this, configuraiton) || this;
         _this.fiscalizationServiceSubmit = function (req, res) { return __awaiter(_this, void 0, void 0, function () {
-            var appArea, requestType, xml, contentType, _a, transformedRequest, skipUplinkRequest, successResponse, response, signedRequest, requestError_1, parsedError, parsedRequest, requestId, transformedResponse, err_1, parser, errorCode, faultstring, faultcode, requestUUID, iic, wtnic;
+            var appArea, requestType, xml, isProduction, contentType, _a, transformedRequest, skipUplinkRequest, successResponse, response, signedRequest, requestError_1, parsedError, parsedRequest, requestId, transformedResponse, err_1, parser, errorCode, faultstring, faultcode, requestUUID, iic, wtnic;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
@@ -74,6 +74,7 @@ var ALFController = /** @class */ (function (_super) {
                             throw new Error('Payload is required!');
                         }
                         xml = req.body.request;
+                        isProduction = req.body.mode === 'production';
                         contentType = req.headers['content-type'];
                         if (contentType != 'application/json') {
                             throw new Error('Content-Type header must be application/json');
@@ -84,7 +85,7 @@ var ALFController = /** @class */ (function (_super) {
                         if (!xml) {
                             throw new Error('Request field is required!');
                         }
-                        if (xml.indexOf(requestType) != 1) {
+                        if (xml.toUpperCase().indexOf(requestType.toUpperCase()) != 1) {
                             throw new Error('RequestType does not correspond to the request payload');
                         }
                         _a = alf_requestType_request_1.processByRequestType(appArea, requestType, xml), transformedRequest = _a.transformedRequest, skipUplinkRequest = _a.skipUplinkRequest;
@@ -97,12 +98,13 @@ var ALFController = /** @class */ (function (_super) {
                         _b.trys.push([1, 6, , 7]);
                         if (!(requestType.toUpperCase() == 'RegisterEinvoiceRequest'.toUpperCase() ||
                             requestType.toUpperCase() == 'GetTaxpayersRequest'.toUpperCase() ||
-                            requestType.toUpperCase() == 'GetEInvoicesRequest'.toUpperCase())) return [3 /*break*/, 3];
-                        return [4 /*yield*/, alf_request_1.executeRequestEinvoice(signedRequest)];
+                            requestType.toUpperCase() == 'GetEInvoicesRequest'.toUpperCase() ||
+                            requestType.toUpperCase() == 'EinvoiceChangeStatusRequest'.toUpperCase())) return [3 /*break*/, 3];
+                        return [4 /*yield*/, alf_request_1.executeRequestEinvoice(signedRequest, isProduction)];
                     case 2:
                         response = _b.sent();
                         return [3 /*break*/, 5];
-                    case 3: return [4 /*yield*/, alf_request_1.executeRequest(signedRequest)];
+                    case 3: return [4 /*yield*/, alf_request_1.executeRequest(signedRequest, isProduction)];
                     case 4:
                         response = _b.sent();
                         _b.label = 5;

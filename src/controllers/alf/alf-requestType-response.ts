@@ -65,6 +65,7 @@ function handleRegisterInvoiceResponse(appArea: string, requestXml: string, pars
 
 
     return {
+        
         fic: FIC && FIC.length > 0 ? FIC[0].textContent : '',
         iic: parsedRequest.documentElement.getElementsByTagName('Invoice')[0].getAttribute('IIC'),
         iicSignature: parsedRequest.documentElement.getElementsByTagName('Invoice')[0].getAttribute('IICSignature'),
@@ -184,10 +185,36 @@ function handleDmsCalculateWTNICResponse(appArea: string, requestXml: string, pa
     const { iscHash, iscSignature } = calculateISC(getPrivateCertificate(appArea), iicInput);
        return {       
         wtnic: iscHash,
-        wtnicSignature: iscSignature
+        wtnicSignature: iscSignature,
     }
 }
 
+
+
+function handleGetTaxPayersResponse(appArea: string, requestXml: string, parsedResponse: Document, isSuccessReponse: boolean): Record<string, any> {
+    const parsedRequest = new DOMParser().parseFromString(requestXml, 'text/xml');
+
+    const Taxpayer = parsedResponse.documentElement.getElementsByTagName('ns2:Taxpayer');
+    const Header = parsedResponse.documentElement.getElementsByTagName('Header');
+    const taxPayers = [];
+    for(let i=-0;i<Taxpayer.length;i++){
+        const node = Taxpayer[i];
+        taxPayers.push({
+            name: node.getAttribute('Name'),
+            tin: node.getAttribute('Tin'),
+            town: node.getAttribute('Town'),
+            country: node.getAttribute('Country'),
+            address: node.getAttribute('Address')
+        }) 
+    }
+
+    return {
+        //fic: FIC && FIC.length > 0 ? FIC[0].textContent : '',
+        //iic: parsedRequest.documentElement.getElementsByTagName('Invoice')[0].getAttribute('IIC'),
+        taxPayers: taxPayers,
+        requestUUID: Header && Header.length > 0 ? Header[0].getAttribute('RequestUUID') : '',
+    }
+}
 
 function handleRegisterEInvoiceResponse(appArea: string, requestXml: string, parsedResponse: Document, isSuccessReponse: boolean): Record<string, any> {
     const parsedRequest = new DOMParser().parseFromString(requestXml, 'text/xml');
@@ -222,6 +249,28 @@ function handleRegisterEInvoiceResponse(appArea: string, requestXml: string, par
     }
 }
 
+function handleGetEInvoicesResponse(appArea: string, requestXml: string, parsedResponse: Document, isSuccessReponse: boolean): Record<string, any> {
+    const parsedRequest = new DOMParser().parseFromString(requestXml, 'text/xml');
+
+    
+    const Header = parsedResponse.documentElement.getElementsByTagName('Header');
+   
+    return {
+        requestUUID: Header && Header.length > 0 ? Header[0].getAttribute('RequestUUID') : '',
+    }
+}
+
+function handleEinvoiceChangeStatusResponse(appArea: string, requestXml: string, parsedResponse: Document, isSuccessReponse: boolean): Record<string, any> {
+    const parsedRequest = new DOMParser().parseFromString(requestXml, 'text/xml');
+
+    
+    const Header = parsedResponse.documentElement.getElementsByTagName('Header');
+   
+    return {
+        requestUUID: Header && Header.length > 0 ? Header[0].getAttribute('RequestUUID') : '',
+    }
+}
+
 export function processResponseByRequestType(appArea: string, requestType: string, transformedRequestXml: string, response: string, isSuccessReponse: boolean): any {
     const parsedResponse = new DOMParser().parseFromString(response, 'text/xml');
     let transformedResponse = null;
@@ -235,8 +284,9 @@ export function processResponseByRequestType(appArea: string, requestType: strin
             case 'DmsCalculateIIC'.toUpperCase(): transformedResponse = handleDmsCalculateIICResponse(appArea, transformedRequestXml); break;
             case 'DmsCalculateWTNIC'.toUpperCase(): transformedResponse = handleDmsCalculateWTNICResponse(appArea, transformedRequestXml, parsedResponse, isSuccessReponse); break;
             case 'RegisterEInvoiceRequest'.toUpperCase(): transformedResponse = handleRegisterEInvoiceResponse(appArea, transformedRequestXml, parsedResponse, isSuccessReponse); break;            
-            case 'GetTaxpayersRequest'.toUpperCase(): transformedResponse = {};break;
-            case 'GetEInvoicesRequest'.toUpperCase(): transformedResponse = {};break;
+            case 'GetTaxpayersRequest'.toUpperCase(): transformedResponse = handleGetTaxPayersResponse(appArea, transformedRequestXml, parsedResponse, isSuccessReponse); break;            
+            case 'GetEInvoicesRequest'.toUpperCase(): transformedResponse = handleGetEInvoicesResponse(appArea, transformedRequestXml, parsedResponse, isSuccessReponse); break;            
+            case 'EinvoiceChangeStatusRequest'.toUpperCase():transformedResponse = handleEinvoiceChangeStatusResponse(appArea, transformedRequestXml, parsedResponse, isSuccessReponse); break;                  
             default: throw new Error('Unkown request type');
         }
 

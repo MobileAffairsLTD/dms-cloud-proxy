@@ -2,7 +2,7 @@
 exports.__esModule = true;
 exports.executeRequestEinvoice = exports.executeRequest = void 0;
 var https = require('follow-redirects').https;
-function executeRequest(signedXml) {
+function executeRequest(signedXml, isProduction) {
     return new Promise(function (resolve, reject) {
         var callback = function (response) {
             var str = '';
@@ -25,7 +25,7 @@ function executeRequest(signedXml) {
         var req = https.request({
             rejectUnauthorized: false,
             method: 'POST',
-            hostname: 'efiskalizimi-test.tatime.gov.al',
+            hostname: isProduction ? 'efiskalizimi.tatime.gov.al' : 'efiskalizimi-test.tatime.gov.al',
             port: 443,
             path: '/FiscalizationService-v3',
             headers: {
@@ -42,7 +42,7 @@ function executeRequest(signedXml) {
     });
 }
 exports.executeRequest = executeRequest;
-function executeRequestEinvoice(signedXml) {
+function executeRequestEinvoice(signedXml, isProduction) {
     return new Promise(function (resolve, reject) {
         var callback = function (response) {
             var str = '';
@@ -65,7 +65,7 @@ function executeRequestEinvoice(signedXml) {
         var req = https.request({
             rejectUnauthorized: false,
             method: 'POST',
-            hostname: 'einvoice-test.tatime.gov.al',
+            hostname: isProduction ? 'einvoice.tatime.gov.al' : 'einvoice-test.tatime.gov.al',
             port: 443,
             path: '/EinvoiceService-v1',
             headers: {

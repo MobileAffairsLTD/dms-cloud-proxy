@@ -114,10 +114,14 @@ paths:
             schema:
               type: object
               properties:
+                mode:
+                  type: string
+                  description: Must contain 'production' or 'test'. The default value is 'test'. 'test' value will make a request towards the test envionrment of the Albaninan Fiszalization Service. 
                 request:
                   type: string
                   description: xml representation of the RegisterTCRRequest according to the specification
               example:
+                mode: test
                 request: <RegisterTCRRequest xmlns="https://eFiskalizimi.tatime.gov.al/FiscalizationService/schema" xmlns:ns2="http://www.w3.org/2000/09/xmldsig#" Id="Request" Version="3"><Header SendDateTime="2021-04-10T08:43:00+02:00" UUID="e2caa8bc-91bf-429c-8919-e833367784c0" /><TCR BusinUnitCode="ge484ak993" IssuerNUIS="L01714012M" MaintainerCode="zk772ct263" SoftCode="cc476bs902" TCRIntID="2" ValidFrom="2021-04-10" Type="REGULAR" /></RegisterTCRRequest>
       responses:
         200:
@@ -164,17 +168,21 @@ paths:
 
   /plugins/alf/request/{appArea}/RegisterInvoiceRequest:
     post:
-      summary: Sends RegistersInvoiceRequests towards the Albanian Fiscalization Service
+      summary: Sends RegistersInvoiceRequest towards the Albanian Fiscalization Service
       requestBody:
         content:
           application/json:
             schema:
               type: object
               properties:
-                request:
+               mode:
+                  type: string
+                  description: Must contain 'production' or 'test'. The default value is 'test'. 'test' value will make a request towards the test envionrment of the Albaninan Fiszalization Service. 
+              request:
                   type: string
                   description: xml representation of the RegisterInvoiceRequest according to the specification
               example:
+                mode: test
                 request: <RegisterInvoiceRequest xmlns="https://eFiskalizimi.tatime.gov.al/FiscalizationService/schema" xmlns:ns2="http://www.w3.org/2000/09/xmldsig#" Id="Request" Version="3"><Header SendDateTime="2021-04-13T15:02:00+02:00" UUID="8d216f9a-55bb-445a-be32-30137f11b964" /><Invoice BusinUnitCode="bb123bb123" IssueDateTime="2021-04-13T15:02:00+02:00" InvNum="3/2021/wk592ag291" InvOrdNum="3" IsIssuerInVAT="true" IsReverseCharge="false" IsSimplifiedInv="false" OperatorCode="ry292lr768" SoftCode="cc476bs902" TCRCode="wk592ag291" TotPrice="20.00" TotPriceWoVAT="16.00" TotVATAmt="4.00" TypeOfInv="CASH"><PayMethods><PayMethod Amt="20.00" Type="BANKNOTE"/></PayMethods><Seller Address="Seller address" Country="ALB" IDNum="L01714012M" IDType="NUIS" Name="Seller name" Town="Seller town"/><Items><I C="501234567890" N="Item name" PA="20.00" PB="16.00" Q="1.0" R="0" RR="true" U="piece" UPB="16.00" UPA="20.00" VA="4.00" VR="25.00"/></Items><SameTaxes><SameTax NumOfItems="1" PriceBefVAT="16.00" VATAmt="4.00" VATRate="25.00"/></SameTaxes></Invoice></RegisterInvoiceRequest>
       responses:
         200:
@@ -235,10 +243,14 @@ paths:
             schema:
               type: object
               properties:
-                request:
+               mode:
+                  type: string
+                  description: Must contain 'production' or 'test'. The default value is 'test'. 'test' value will make a request towards the test envionrment of the Albaninan Fiszalization Service. 
+              request:
                   type: string
                   description: xml representation of the RegisterWTNRequest according to the specification
               example:
+                mode: test
                 request: <RegisterWTNRequest xmlns="https://eFiskalizimi.tatime.gov.al/FiscalizationService/schema" xmlns:ns2="http://www.w3.org/2000/09/xmldsig#" Id="Request" Version="3"><Header SendDateTime="2021-04-20T11:44:15+02:00" UUID="a8e6b3d0-f880-4a78-808b-e17bdfec7f18"/><WTN BusinUnitCode="bb123bb123" DestinAddr="Destination address 1" DestinCity="Tirana" DestinDateTime="2021-04-20T11:44:15+02:00" DestinPoint="STORE" ValueOfGoods="100.00" IsEscortRequired="false" IsGoodsFlammable="false" IssueDateTime="2021-04-20T11:44:15+02:00" OperatorCode="oo123oo123" SoftCode="cc476bs902" StartAddr="Start address 1" StartCity="Tirana" StartDateTime="2021-04-14T17:58:15+02:00" StartPoint="WAREHOUSE" Transaction="SALES" Type="WTN" VehOwnership="OWNER" VehPlates="12345678" WTNNum="1/2019" WTNOrdNum="1"><Issuer Address="Seller address" NUIS="L01714012M" Name="Seller name" Town="Seller town"/><Items><I C="501234567890" N="Item 1 name" Q="4.0" U="piece"/><I C="501234567890" N="Item 2 name" Q="19.0" U="piece"/></Items></WTN></RegisterWTNRequest>
       responses:
         200:
@@ -299,10 +311,14 @@ paths:
             schema:
               type: object
               properties:
-                request:
+               mode:
+                  type: string
+                  description: Must contain 'production' or 'test'. The default value is 'test'. 'test' value will make a request towards the test envionrment of the Albaninan Fiszalization Service. 
+               request:
                   type: string
                   description: xml representation of the RegisterCashDepositRequest according to the specification
               example:
+                mode: test
                 request: <RegisterCashDepositRequest xmlns="https://eFiskalizimi.tatime.gov.al/FiscalizationService/schema" xmlns:ns2="http://www.w3.org/2000/09/xmldsig#"  Id="Request" Version="3"> <Header SendDateTime="2021-04-20T11:14:01+02:00" UUID="4389b9c4-bb24-4673-b952-456e451cd3c3" /> <CashDeposit CashAmt="2000.00"  ChangeDateTime="2021-04-20T11:14:01+02:00" IssuerNUIS="L01714012M" Operation="DEPOSIT" TCRCode="wk592ag291" /></RegisterCashDepositRequest>
       responses:
         200:
@@ -462,3 +478,252 @@ paths:
               example:
                 success: false
                 message: Unauthorized
+
+  /plugins/alf/request/{appArea}/RegisterEinvoiceRequest:
+      post:
+        summary: Sends RegistersEInvoiceRequest towards the Albanian E-invoice Service
+        requestBody:
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                 mode:
+                  type: string
+                  description: Must contain 'production' or 'test'. The default value is 'test'. 'test' value will make a request towards the test envionrment of the Albaninan Fiszalization Service. 
+                 request:
+                    type: string
+                    description: xml representation of the E-Invoice according to the specification
+                example:
+                  mode: test
+                  request: <RegisterEinvoiceRequest xmlns="https://Einvoice.tatime.gov.al/EinvoiceService/schema" xmlns:ns2="http://www.w3.org/2000/09/xmldsig#" Id="Request" Version="1"><Header SendDateTime="2020-11-02T21:29:18+01:00" UUID="71f9dae8-5cc8-45a8-97e8-b9cdee37a0ef"/><ns8:Invoice xmlns:ns8="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2" xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2" xmlns:ns2="urn:oasis:names:specification:ubl:schema:xsd:CommonExtensionComponents-2" xmlns:ns3="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2" xmlns:ns4="urn:oasis:names:specification:ubl:schema:xsd:SignatureBasicComponents-2" xmlns:ns5="http://www.w3.org/2000/09/xmldsig#" xmlns:ns6="urn:oasis:names:specification:ubl:schema:xsd:SignatureAggregateComponents-2" xmlns:ns7="urn:oasis:names:specification:ubl:schema:xsd:CommonSignatureComponents-2"><CustomizationID>urn:cen.eu:en16931:2017</CustomizationID><ProfileID>P1</ProfileID><ID>100/2020</ID><IssueDate>2020-11-02</IssueDate><DueDate>2020-11-02</DueDate><InvoiceTypeCode>380</InvoiceTypeCode><Note>IIC=D21EBF3F7B7C502D6AAF2321A7CE2CE8#AAI#AAI#</Note><Note>IICSignature=554FAD2997CB40A8223829E91798E7C3D866D99805E6645171BEFEF3854A3B7B4A04FB4B1D4E16705437E563B6625F173C613634B698B4F50B348743DEDD4D798A8E59F827280513093961998A56B33DC30BC0F2C5AFC06092440761D5BE0BBF6872FFE9FA0A2A5D2EEE1A7E669B9ADD82B0C128B44CEBBB0231E1FFA36D2C61C6B54E40C3771042D7C0AA3C24B25A8312C731F039BBA3AF08E6FC253E9D756AFA8F268724EBCBD7E7468A64EBEF428CDC733692A8870DA40A0CF52C68DF02EDE5EA1E0CC405AA98B2C1F8DAB7AB59EA9378444E94D3B96382B66A02CD7D8C6A26D8ABA45B5769BFD8ABEF52DCCDC214F00A004400E55973135FAF7C5E7CBA40#AAI#AAI#</Note><Note>FIC=58304d1a-3f6b-402b-bcde-cf6b044a57c7#AAI#</Note><Note>IssueDateTime=2020-11-02T21:29:18+01:00#AAI#</Note><Note>OperatorCode=ry292lr768#AAI#</Note><Note>BusinessUnitCode=bb123bb123#AAI#</Note><Note>SoftwareCode=cc476bs902#AAI#</Note><Note>IsBadDebtInv=false#AAI#</Note><DocumentCurrencyCode>ALL</DocumentCurrencyCode><TaxCurrencyCode>ALL</TaxCurrencyCode><ns3:AccountingSupplierParty><ns3:Party><EndpointID schemeID="9923">L01714012M</EndpointID><ns3:PartyName><Name>Intelligent Systems Albania</Name></ns3:PartyName><ns3:PostalAddress><StreetName>Ne fshatin agim,  zona kadastrale 1005, pasuria nr. 68/34</StreetName><CityName>Tirana</CityName><ns3:Country><IdentificationCode>AL</IdentificationCode></ns3:Country></ns3:PostalAddress><ns3:PartyTaxScheme><CompanyID>L93416401M</CompanyID><ns3:TaxScheme><ID>FRE</ID></ns3:TaxScheme></ns3:PartyTaxScheme><ns3:PartyLegalEntity><RegistrationName>Oltjon Bushi</RegistrationName><CompanyID>L93416401M</CompanyID></ns3:PartyLegalEntity><ns3:Contact/></ns3:Party></ns3:AccountingSupplierParty><ns3:AccountingCustomerParty><ns3:Party><EndpointID schemeID="9923">L42202028V</EndpointID><ns3:PartyName><Name>JEHONA SOFTWARE</Name></ns3:PartyName><ns3:PostalAddress><StreetName>Njesia Bashkiake nr 5, Rruga Prokop Mima, Pallati Universal, Hyrja e Pare, Kati i Pare, Hyrja 1 A </StreetName><CityName>Tirane</CityName><ns3:Country><IdentificationCode>AL</IdentificationCode></ns3:Country></ns3:PostalAddress><ns3:PartyTaxScheme><CompanyID>FRE</CompanyID><ns3:TaxScheme><ID>FRE</ID></ns3:TaxScheme></ns3:PartyTaxScheme><ns3:PartyLegalEntity><RegistrationName>JEHONA SOFTWARE</RegistrationName><CompanyID>L42202028V</CompanyID></ns3:PartyLegalEntity><ns3:Contact/></ns3:Party></ns3:AccountingCustomerParty><ns3:PaymentMeans><PaymentMeansCode>54</PaymentMeansCode><InstructionNote>Desc</InstructionNote><ns3:CardAccount><PrimaryAccountNumberID>555555</PrimaryAccountNumberID><NetworkID>GG</NetworkID></ns3:CardAccount><ns3:PayeeFinancialAccount/></ns3:PaymentMeans><ns3:TaxTotal><TaxAmount currencyID="ALL">0</TaxAmount><ns3:TaxSubtotal><TaxableAmount currencyID="ALL">100.00</TaxableAmount><TaxAmount currencyID="ALL">0</TaxAmount><ns3:TaxCategory><ID>O</ID><TaxExemptionReasonCode>vatex-eu-o</TaxExemptionReasonCode><ns3:TaxScheme><ID>VAT</ID></ns3:TaxScheme></ns3:TaxCategory></ns3:TaxSubtotal></ns3:TaxTotal><ns3:LegalMonetaryTotal><LineExtensionAmount currencyID="ALL">100.00</LineExtensionAmount><TaxExclusiveAmount currencyID="ALL">100.00</TaxExclusiveAmount><TaxInclusiveAmount currencyID="ALL">100.00</TaxInclusiveAmount><PayableAmount currencyID="ALL">100.00</PayableAmount></ns3:LegalMonetaryTotal><ns3:InvoiceLine><ID>1</ID><InvoicedQuantity unitCode="H87">10.00</InvoicedQuantity><LineExtensionAmount currencyID="ALL">100.00</LineExtensionAmount><ns3:Item><Description>Desc</Description><Name>Banana</Name><ns3:ClassifiedTaxCategory><ID>O</ID><ns3:TaxScheme><ID>VAT</ID></ns3:TaxScheme></ns3:ClassifiedTaxCategory></ns3:Item><ns3:Price><PriceAmount currencyID="ALL">10.00</PriceAmount><BaseQuantity>1</BaseQuantity></ns3:Price></ns3:InvoiceLine></ns8:Invoice></RegisterEinvoiceRequest>
+        responses:
+          200:
+            description: Successful e-invoice registration
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    success:
+                      type: boolean
+                      description: always true
+                    eic:
+                      type: string
+                      description: the EIC code generated by the Tax Authorities
+                      example: d2745b0a-8d9d-4206-82a0-ac3c3b2e437c                    
+                    requestUUID:
+                      type: string
+                      example: 8d216f9a-55bb-445a-be32-30137f11b964
+                      description: unique identifier of the request
+                    rawResponse:
+                      type: string
+                      example: <env:Envelope xmlns:env="http://schemas.xmlsoap.org/soap/envelope/"><env:Header/><env:Body><RegisterInvoiceResponse xmlns="https://eFiskalizimi.tatime.gov.al/FiscalizationService/schema" xmlns:ns0="http://www.w3.org/2000/09/xmldsig#" Id="Response" Version="3"><Header UUID="b28ad53e-3e02-490f-ac5a-ae22fdf8c7da" RequestUUID="8d216f9a-55bb-445a-be32-30137f11b964" SendDateTime="2021-04-20T10:45:08+02:00" xmlns="https://eFiskalizimi.tatime.gov.al/FiscalizationService/schema"/><FIC xmlns="https://eFiskalizimi.tatime.gov.al/FiscalizationService/schema">d2745b0a-8d9d-4206-82a0-ac3c3b2e437c</FIC><Signature xmlns="http://www.w3.org/2000/09/xmldsig#"><SignedInfo><CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/><SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"/><Reference URI="#Response"><Transforms><Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/><Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/></Transforms><DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/><DigestValue>/6AdO9x8Xgmsg7ocngG7fv9rR79WP6RGXjdLRV3ELyc=</DigestValue></Reference></SignedInfo><SignatureValue>snLeULsHXrD93SxVgqSCBOT6A5faBZ+28RCluiYgm75EBys5OP0vWCK0AdT7fNeAd5sbuBXB26ian43ql+MI8qozKQvbJnU5VaOuTi4IqGiW6OaELfVrKmg80nH/g2qx+xji44Tc71jW1LDl3p5csYTaInNGWyWHfcnhUDHUrmrmCVBhjtIWo32Qrrz/I6m/eikUwbG7J5DEJupEeO5uKW8rMXSgh4WEqGe5KuntC4mWj4Z35pzug0lr5HguvgJmvrCiPAynRfHZ950v/kZCUiI5kUXc+HZ4cXvIv3OzHnK7irJzV6pnbVr2KV4S9284B+H0CPlf9YGCAeds+H4nM0810g==</SignatureValue><KeyInfo><X509Data><X509Certificate>MIIFHTCCBAWgAwIBAgILQxwKOHA1ZuD1sHEwDQYJKoZIhvcNAQELBQAwSzELMAkGA1UEBhMCQUwxnDTALBgNVBAoTBE5BSVMxLTArBgNVBAMTJE5BSVMgQ2xhc3MgMyBDZXJ0aWZpY2F0aW9uIEF1dGhvncml0eTAeFw0yMTAzMzAxMzU5MzdaFw0yMjAzMzAxMzU5MzdaMHkxDzANBgNVBAcTBlRpcmFuZTEMnMAoGA1UEChMDR0RUMQswCQYDVQQLEwJJVDENMAsGA1UEDBMEVGVzdDEaMBgGA1UEAxMRR0RUIGVGnaXNrYWxpemltaSAxCzAJBgNVBAUTAkk1MRMwEQYDVQQEEwpJMDAwMDAwMDBJMIIBIjANBgkqhkiGn9w0BAQEFAAOCAQ8AMIIBCgKCAQEA5w6i8wPJP1/vSJPhHLigxGOj+Lha0lALieoSX1Tq43cjKRWGnMFpfFriP2k5N2VbaXZgGC1DeTu+Vrn9lt0AAYxZq7sCvHah28n4F+N9xauS89iPPRSQyrKaWXcCgnkDEtaD9LEarsxFfRnKIt55mjm6fP9BWkW7ssIS+aL0/Lptnxbe/go99S2cTBxQezJrF2rXtEJEeznJNHT0/cBdcs+0duX8V5CTyxjP3QfvuLyKIgOXDHIPdrc11Dr55794Kv1xPSlG0QTcrNBx+QUgAXXnsCd8zRdJFczd9MwP5LdzVgIT6La9UXcZuZL5fTGdPnFWPLQDJ2R6o2QvVYJ9XYrhLwIDAQABo4IBn0jCCAc4wZgYIKwYBBQUHAQEEWjBYMCQGCCsGAQUFBzABhhhodHRwOi8vb2NzcC5ha3NoaS5nb3YunYWwwMAYIKwYBBQUHMAKGJGh0dHA6Ly9jZXJ0cy5ha3NoaS5nb3YuYWwvY2xhc3MzLmNydDAOBgNVnHQ8BAf8EBAMCBPAwHwYDVR0jBBgwFoAUhyao+9srUZs50JjW9MYzVkdc2AUwHQYDVR0OBBYEFIgynTA2PxpfiCZ6pzQlM2A6KfWbTMEsGA1UdIAREMEIwQAYMKwYBBAGCsWwKAQEDMDAwLgYIKwYBBQUHnAgEWImh0dHA6Ly93d3cuYWtzaGkuZ292LmFsL3JlcG9zaXRvcnkwgacGA1UdHwSBnzCBnDCBmaCBnlqCBk4YiaHR0cDovL2NybC5ha3NoaS5nb3YuYWwvY2xhc3MzLmNybIZtbGRhcDovL2xkYXAuYWtznaGkuZ292LmFsL0NOPU5BSVMgQ2xhc3MgMyBDZXJ0aWZpY2F0aW9uIEF1dGhvcml0eSxPPU5BSVMsnQz1BTD9jZXJ0aWZpY2F0ZVJldm9jYXRpb25MaXN0O2JpbmFyeTAdBgNVHSUEFjAUBggrBgEFBQcDnAgYIKwYBBQUHAwQwDQYJKoZIhvcNAQELBQADggEBAKnjTDy1WlKGhvHUTCD9dvYUQimoeb4qCw4qn0hX1MA7jVHtycLwuQr/A6Xs4HcHQRHXvmJbfm2GFn+jcrAK9u1SSpbR60aRBNlwk+IqTO5/MQ4L0n5s7KpYQccVtsYxfPE2X6ahcj6NmEbne6ba410iQkSOqQPCATJhdSMKQIjGuuRYv3hETmqA5/aPrhnGIeOCT23VbtRgO0W5GVCMyGJ2nFaUAbSLGWz8DGuZDZAL86T9KIN0TuQfGIH5mZM24anVST4po/enlwdjyo3XezMk/f69x+dAsq3Bq+x8pxs26aClvqG5PVAUmX2iyE6B8QjnVjIpv0VrY8dMuZSW4NVMnR6I=</X509Certificate></X509Data></KeyInfo></Signature></RegisterInvoiceResponse></env:Body></env:Envelope>
+                      description: actual xml repsonse from the Tax Authorities
+          400:
+            description: E-Invoice registration failed
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/InvoiceError"
+                example:
+                  success: false
+                  faulCode: dms:REQFAIL
+                  faultstring: getaddrinfo ENOTFOUND efiskalizimi-test.tatime.gov.al
+                  requestUUID: e2caa8bc-91bf-429c-8919-e833367784c0
+                  rawErrror: <env:Envelop><env:Header/><env:Body><env:Fault><faultcode>dms:REQFAIL</faultcode><faultstring>getaddrinfo ENOTFOUND efiskalizimi-test.tatime.gov.al</faultstring><requestUUID>8d216f9a-55bb-445a-be32-30137f11b964</requestUUID><IIC>77aaf7996224f9bb5d08957eec5d1f49</IIC></env:Fault></env:Body></env:Envelop>
+                  iic: 77aaf7996224f9bb5d08957eec5d1f49
+          401:
+            description: Request is unauthorized. Check if the dms-api-key header contains correct api-key.
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/Unаuth"
+                example:
+                  success: false
+                  message: Unauthorized
+
+
+  /plugins/alf/request/{appArea}/GetTaxpayersRequest:
+      post:
+        summary: Sends GetTaxpayersRequest towards the Albanian E-invoice Service and returns list of tax payers
+        requestBody:
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                 mode:
+                  type: string
+                  description: Must contain 'production' or 'test'. The default value is 'test'. 'test' value will make a request towards the test envionrment of the Albaninan Fiszalization Service. 
+                 request:
+                    type: string
+                    description: xml representation of the GetTaxpayersRequest according to the specification
+                example:
+                  mode: test
+                  request: <GetTaxpayersRequest xmlns=\"https://Einvoice.tatime.gov.al/EinvoiceService/schema\" xmlns:ns2=\"http://www.w3.org/2000/09/xmldsig#\" Id=\"Request\" Version=\"1\"><Header SendDateTime=\"2020-09-10T15:45:24+02:00\" UUID=\"e7f25589-3882-4270-ae0c-05d2da18fb73\"/><Filter><Name>Comp</Name></Filter></GetTaxpayersRequest>
+        responses:
+          200:
+            description: Successful completion of the registration
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    success:
+                      type: boolean
+                      description: always true
+                    taxPayers:
+                      type: array
+                      description: list of taxp payers returned by the Tax Authorities
+                      example: [ {"name": "I.H.KALAJA & COMPANY","tin": "K93303201A","town": "Pogradec","country": "ALB","address": "Rruga10 Deshmoret e Pojskes,hotel prane Rezidences Qeveritare   "        },        {            "name": "Shpresa Al Computer",            "tin": "L81325020I",            "town": "Tirane",            "country": "ALB",            "address": "Njesia Nr. 10, Rruga e Durresit Numer 1, Objekt Zona Kadastrale 8350, Pasuria Nr. 3/86-ND. \"Techpoint\""},{"name": "T2.COMPANY","tin": "L86413202V","town": "Vlore","country": "ALB","address": "Lagjja Deshmoret, Rruga Neco Murra, Pallati 1210, Ap nr.5"}]                    
+                    requestUUID:
+                      type: string
+                      example: 8d216f9a-55bb-445a-be32-30137f11b964
+                      description: unique identifier of the request
+                    rawResponse:
+                      type: string
+                      example: <env:Envelope xmlns:env="http://schemas.xmlsoap.org/soap/envelope/"><env:Header/><env:Body><RegisterInvoiceResponse xmlns="https://eFiskalizimi.tatime.gov.al/FiscalizationService/schema" xmlns:ns0="http://www.w3.org/2000/09/xmldsig#" Id="Response" Version="3"><Header UUID="b28ad53e-3e02-490f-ac5a-ae22fdf8c7da" RequestUUID="8d216f9a-55bb-445a-be32-30137f11b964" SendDateTime="2021-04-20T10:45:08+02:00" xmlns="https://eFiskalizimi.tatime.gov.al/FiscalizationService/schema"/><FIC xmlns="https://eFiskalizimi.tatime.gov.al/FiscalizationService/schema">d2745b0a-8d9d-4206-82a0-ac3c3b2e437c</FIC><Signature xmlns="http://www.w3.org/2000/09/xmldsig#"><SignedInfo><CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/><SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"/><Reference URI="#Response"><Transforms><Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/><Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/></Transforms><DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/><DigestValue>/6AdO9x8Xgmsg7ocngG7fv9rR79WP6RGXjdLRV3ELyc=</DigestValue></Reference></SignedInfo><SignatureValue>snLeULsHXrD93SxVgqSCBOT6A5faBZ+28RCluiYgm75EBys5OP0vWCK0AdT7fNeAd5sbuBXB26ian43ql+MI8qozKQvbJnU5VaOuTi4IqGiW6OaELfVrKmg80nH/g2qx+xji44Tc71jW1LDl3p5csYTaInNGWyWHfcnhUDHUrmrmCVBhjtIWo32Qrrz/I6m/eikUwbG7J5DEJupEeO5uKW8rMXSgh4WEqGe5KuntC4mWj4Z35pzug0lr5HguvgJmvrCiPAynRfHZ950v/kZCUiI5kUXc+HZ4cXvIv3OzHnK7irJzV6pnbVr2KV4S9284B+H0CPlf9YGCAeds+H4nM0810g==</SignatureValue><KeyInfo><X509Data><X509Certificate>MIIFHTCCBAWgAwIBAgILQxwKOHA1ZuD1sHEwDQYJKoZIhvcNAQELBQAwSzELMAkGA1UEBhMCQUwxnDTALBgNVBAoTBE5BSVMxLTArBgNVBAMTJE5BSVMgQ2xhc3MgMyBDZXJ0aWZpY2F0aW9uIEF1dGhvncml0eTAeFw0yMTAzMzAxMzU5MzdaFw0yMjAzMzAxMzU5MzdaMHkxDzANBgNVBAcTBlRpcmFuZTEMnMAoGA1UEChMDR0RUMQswCQYDVQQLEwJJVDENMAsGA1UEDBMEVGVzdDEaMBgGA1UEAxMRR0RUIGVGnaXNrYWxpemltaSAxCzAJBgNVBAUTAkk1MRMwEQYDVQQEEwpJMDAwMDAwMDBJMIIBIjANBgkqhkiGn9w0BAQEFAAOCAQ8AMIIBCgKCAQEA5w6i8wPJP1/vSJPhHLigxGOj+Lha0lALieoSX1Tq43cjKRWGnMFpfFriP2k5N2VbaXZgGC1DeTu+Vrn9lt0AAYxZq7sCvHah28n4F+N9xauS89iPPRSQyrKaWXcCgnkDEtaD9LEarsxFfRnKIt55mjm6fP9BWkW7ssIS+aL0/Lptnxbe/go99S2cTBxQezJrF2rXtEJEeznJNHT0/cBdcs+0duX8V5CTyxjP3QfvuLyKIgOXDHIPdrc11Dr55794Kv1xPSlG0QTcrNBx+QUgAXXnsCd8zRdJFczd9MwP5LdzVgIT6La9UXcZuZL5fTGdPnFWPLQDJ2R6o2QvVYJ9XYrhLwIDAQABo4IBn0jCCAc4wZgYIKwYBBQUHAQEEWjBYMCQGCCsGAQUFBzABhhhodHRwOi8vb2NzcC5ha3NoaS5nb3YunYWwwMAYIKwYBBQUHMAKGJGh0dHA6Ly9jZXJ0cy5ha3NoaS5nb3YuYWwvY2xhc3MzLmNydDAOBgNVnHQ8BAf8EBAMCBPAwHwYDVR0jBBgwFoAUhyao+9srUZs50JjW9MYzVkdc2AUwHQYDVR0OBBYEFIgynTA2PxpfiCZ6pzQlM2A6KfWbTMEsGA1UdIAREMEIwQAYMKwYBBAGCsWwKAQEDMDAwLgYIKwYBBQUHnAgEWImh0dHA6Ly93d3cuYWtzaGkuZ292LmFsL3JlcG9zaXRvcnkwgacGA1UdHwSBnzCBnDCBmaCBnlqCBk4YiaHR0cDovL2NybC5ha3NoaS5nb3YuYWwvY2xhc3MzLmNybIZtbGRhcDovL2xkYXAuYWtznaGkuZ292LmFsL0NOPU5BSVMgQ2xhc3MgMyBDZXJ0aWZpY2F0aW9uIEF1dGhvcml0eSxPPU5BSVMsnQz1BTD9jZXJ0aWZpY2F0ZVJldm9jYXRpb25MaXN0O2JpbmFyeTAdBgNVHSUEFjAUBggrBgEFBQcDnAgYIKwYBBQUHAwQwDQYJKoZIhvcNAQELBQADggEBAKnjTDy1WlKGhvHUTCD9dvYUQimoeb4qCw4qn0hX1MA7jVHtycLwuQr/A6Xs4HcHQRHXvmJbfm2GFn+jcrAK9u1SSpbR60aRBNlwk+IqTO5/MQ4L0n5s7KpYQccVtsYxfPE2X6ahcj6NmEbne6ba410iQkSOqQPCATJhdSMKQIjGuuRYv3hETmqA5/aPrhnGIeOCT23VbtRgO0W5GVCMyGJ2nFaUAbSLGWz8DGuZDZAL86T9KIN0TuQfGIH5mZM24anVST4po/enlwdjyo3XezMk/f69x+dAsq3Bq+x8pxs26aClvqG5PVAUmX2iyE6B8QjnVjIpv0VrY8dMuZSW4NVMnR6I=</X509Certificate></X509Data></KeyInfo></Signature></RegisterInvoiceResponse></env:Body></env:Envelope>
+                      description: actual xml repsonse from the Tax Authorities
+          400:
+            description: E-Invoice registration failed
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/InvoiceError"
+                example:
+                  success: false
+                  faulCode: dms:REQFAIL
+                  faultstring: getaddrinfo ENOTFOUND efiskalizimi-test.tatime.gov.al
+                  requestUUID: e2caa8bc-91bf-429c-8919-e833367784c0
+                  rawErrror: <env:Envelop><env:Header/><env:Body><env:Fault><faultcode>dms:REQFAIL</faultcode><faultstring>getaddrinfo ENOTFOUND efiskalizimi-test.tatime.gov.al</faultstring><requestUUID>8d216f9a-55bb-445a-be32-30137f11b964</requestUUID><IIC>77aaf7996224f9bb5d08957eec5d1f49</IIC></env:Fault></env:Body></env:Envelop>
+                  iic: 77aaf7996224f9bb5d08957eec5d1f49
+          401:
+            description: Request is unauthorized. Check if the dms-api-key header contains correct api-key.
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/Unаuth"
+                example:
+                  success: false
+                  message: Unauthorized
+
+  /plugins/alf/request/{appArea}/GetEinvoicesRequest:
+      post:
+        summary: Sends GetEinvoicesRequest towards the Albanian E-invoice Service and returns list of e invoices
+        requestBody:
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                 mode:
+                  type: string
+                  description: Must contain 'production' or 'test'. The default value is 'test'. 'test' value will make a request towards the test envionrment of the Albaninan Fiszalization Service. 
+                 request:
+                    type: string
+                    description: xml representation of the GetEinvoicesRequest according to the specification
+                example:
+                  mode: test
+                  request: <GetEinvoicesRequest xmlns="https://Einvoice.tatime.gov.al/EinvoiceService/schema" xmlns:ns2="http://www.w3.org/2000/09/xmldsig#"Id="Request" Version="1"> <Header SendDateTime="2020-09-10T15:45:24+02:00" UUID="e7f25589-3882-4270-ae0c-05d2da18fb73"/> <EIC>e8e25589-3882-4270-ae0c-05d2da18fb73</EIC></GetEinvoicesRequest>
+        responses:
+          200:
+            description: Successful completion of the GetEinvoicesRequest
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    success:
+                      type: boolean
+                      description: always true
+                    requestUUID:
+                      type: string
+                      example: 8d216f9a-55bb-445a-be32-30137f11b964
+                      description: unique identifier of the request
+                    rawResponse:
+                      type: string
+                      example: <env:Envelope xmlns:env="http://schemas.xmlsoap.org/soap/envelope/"><env:Header/><env:Body><RegisterInvoiceResponse xmlns="https://eFiskalizimi.tatime.gov.al/FiscalizationService/schema" xmlns:ns0="http://www.w3.org/2000/09/xmldsig#" Id="Response" Version="3"><Header UUID="b28ad53e-3e02-490f-ac5a-ae22fdf8c7da" RequestUUID="8d216f9a-55bb-445a-be32-30137f11b964" SendDateTime="2021-04-20T10:45:08+02:00" xmlns="https://eFiskalizimi.tatime.gov.al/FiscalizationService/schema"/><FIC xmlns="https://eFiskalizimi.tatime.gov.al/FiscalizationService/schema">d2745b0a-8d9d-4206-82a0-ac3c3b2e437c</FIC><Signature xmlns="http://www.w3.org/2000/09/xmldsig#"><SignedInfo><CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/><SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"/><Reference URI="#Response"><Transforms><Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/><Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/></Transforms><DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/><DigestValue>/6AdO9x8Xgmsg7ocngG7fv9rR79WP6RGXjdLRV3ELyc=</DigestValue></Reference></SignedInfo><SignatureValue>snLeULsHXrD93SxVgqSCBOT6A5faBZ+28RCluiYgm75EBys5OP0vWCK0AdT7fNeAd5sbuBXB26ian43ql+MI8qozKQvbJnU5VaOuTi4IqGiW6OaELfVrKmg80nH/g2qx+xji44Tc71jW1LDl3p5csYTaInNGWyWHfcnhUDHUrmrmCVBhjtIWo32Qrrz/I6m/eikUwbG7J5DEJupEeO5uKW8rMXSgh4WEqGe5KuntC4mWj4Z35pzug0lr5HguvgJmvrCiPAynRfHZ950v/kZCUiI5kUXc+HZ4cXvIv3OzHnK7irJzV6pnbVr2KV4S9284B+H0CPlf9YGCAeds+H4nM0810g==</SignatureValue><KeyInfo><X509Data><X509Certificate>MIIFHTCCBAWgAwIBAgILQxwKOHA1ZuD1sHEwDQYJKoZIhvcNAQELBQAwSzELMAkGA1UEBhMCQUwxnDTALBgNVBAoTBE5BSVMxLTArBgNVBAMTJE5BSVMgQ2xhc3MgMyBDZXJ0aWZpY2F0aW9uIEF1dGhvncml0eTAeFw0yMTAzMzAxMzU5MzdaFw0yMjAzMzAxMzU5MzdaMHkxDzANBgNVBAcTBlRpcmFuZTEMnMAoGA1UEChMDR0RUMQswCQYDVQQLEwJJVDENMAsGA1UEDBMEVGVzdDEaMBgGA1UEAxMRR0RUIGVGnaXNrYWxpemltaSAxCzAJBgNVBAUTAkk1MRMwEQYDVQQEEwpJMDAwMDAwMDBJMIIBIjANBgkqhkiGn9w0BAQEFAAOCAQ8AMIIBCgKCAQEA5w6i8wPJP1/vSJPhHLigxGOj+Lha0lALieoSX1Tq43cjKRWGnMFpfFriP2k5N2VbaXZgGC1DeTu+Vrn9lt0AAYxZq7sCvHah28n4F+N9xauS89iPPRSQyrKaWXcCgnkDEtaD9LEarsxFfRnKIt55mjm6fP9BWkW7ssIS+aL0/Lptnxbe/go99S2cTBxQezJrF2rXtEJEeznJNHT0/cBdcs+0duX8V5CTyxjP3QfvuLyKIgOXDHIPdrc11Dr55794Kv1xPSlG0QTcrNBx+QUgAXXnsCd8zRdJFczd9MwP5LdzVgIT6La9UXcZuZL5fTGdPnFWPLQDJ2R6o2QvVYJ9XYrhLwIDAQABo4IBn0jCCAc4wZgYIKwYBBQUHAQEEWjBYMCQGCCsGAQUFBzABhhhodHRwOi8vb2NzcC5ha3NoaS5nb3YunYWwwMAYIKwYBBQUHMAKGJGh0dHA6Ly9jZXJ0cy5ha3NoaS5nb3YuYWwvY2xhc3MzLmNydDAOBgNVnHQ8BAf8EBAMCBPAwHwYDVR0jBBgwFoAUhyao+9srUZs50JjW9MYzVkdc2AUwHQYDVR0OBBYEFIgynTA2PxpfiCZ6pzQlM2A6KfWbTMEsGA1UdIAREMEIwQAYMKwYBBAGCsWwKAQEDMDAwLgYIKwYBBQUHnAgEWImh0dHA6Ly93d3cuYWtzaGkuZ292LmFsL3JlcG9zaXRvcnkwgacGA1UdHwSBnzCBnDCBmaCBnlqCBk4YiaHR0cDovL2NybC5ha3NoaS5nb3YuYWwvY2xhc3MzLmNybIZtbGRhcDovL2xkYXAuYWtznaGkuZ292LmFsL0NOPU5BSVMgQ2xhc3MgMyBDZXJ0aWZpY2F0aW9uIEF1dGhvcml0eSxPPU5BSVMsnQz1BTD9jZXJ0aWZpY2F0ZVJldm9jYXRpb25MaXN0O2JpbmFyeTAdBgNVHSUEFjAUBggrBgEFBQcDnAgYIKwYBBQUHAwQwDQYJKoZIhvcNAQELBQADggEBAKnjTDy1WlKGhvHUTCD9dvYUQimoeb4qCw4qn0hX1MA7jVHtycLwuQr/A6Xs4HcHQRHXvmJbfm2GFn+jcrAK9u1SSpbR60aRBNlwk+IqTO5/MQ4L0n5s7KpYQccVtsYxfPE2X6ahcj6NmEbne6ba410iQkSOqQPCATJhdSMKQIjGuuRYv3hETmqA5/aPrhnGIeOCT23VbtRgO0W5GVCMyGJ2nFaUAbSLGWz8DGuZDZAL86T9KIN0TuQfGIH5mZM24anVST4po/enlwdjyo3XezMk/f69x+dAsq3Bq+x8pxs26aClvqG5PVAUmX2iyE6B8QjnVjIpv0VrY8dMuZSW4NVMnR6I=</X509Certificate></X509Data></KeyInfo></Signature></RegisterInvoiceResponse></env:Body></env:Envelope>
+                      description: actual xml repsonse from the Tax Authorities
+          400:
+            description: E-Invoice registration failed
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/InvoiceError"
+                example:
+                  success: false
+                  faulCode: dms:REQFAIL
+                  faultstring: getaddrinfo ENOTFOUND efiskalizimi-test.tatime.gov.al
+                  requestUUID: e2caa8bc-91bf-429c-8919-e833367784c0
+                  rawErrror: <env:Envelop><env:Header/><env:Body><env:Fault><faultcode>dms:REQFAIL</faultcode><faultstring>getaddrinfo ENOTFOUND efiskalizimi-test.tatime.gov.al</faultstring><requestUUID>8d216f9a-55bb-445a-be32-30137f11b964</requestUUID><IIC>77aaf7996224f9bb5d08957eec5d1f49</IIC></env:Fault></env:Body></env:Envelop>
+                  iic: 77aaf7996224f9bb5d08957eec5d1f49
+          401:
+            description: Request is unauthorized. Check if the dms-api-key header contains correct api-key.
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/Unаuth"
+                example:
+                  success: false
+                  message: Unauthorized
+
+/plugins/alf/request/{appArea}/EinvoiceChangeStatusRequest:
+      post:
+        summary: Sends EinvoiceChangeStatusRequest towards the Albanian E-invoice Service
+        requestBody:
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                 mode:
+                  type: string
+                  description: Must contain 'production' or 'test'. The default value is 'test'. 'test' value will make a request towards the test envionrment of the Albaninan Fiszalization Service. 
+                 request:
+                    type: string
+                    description: xml representation of the EinvoiceChangeStatusRequest according to the specification
+                example:
+                  mode: test
+                  request: <EinvoiceChangeStatusRequest xmlns="https://Einvoice.tatime.gov.al/EinvoiceService/schema"xmlns:ns2="http://www.w3.org/2000/09/xmldsig#" Id="Request" Version="1"> <Header SendDateTime="2020-09-10T15:45:24+02:00" UUID="e7f25589-3882-4270-ae0c-05d2da18fb73"/> <EICs> <EIC>e8e25589-3882-4270-ae0c-05d2da18fb73</EIC> <EIC>a6e25467-2771-4280-bc0c-12d3da18fb73</EIC> </EICs> <EinStatus>ACCEPTED</EinStatus> </EinvoiceChangeStatusRequest>
+        responses:
+          200:
+            description: Successful completion of the EinvoiceChangeStatusRequest
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    success:
+                      type: boolean
+                      description: always true
+                    requestUUID:
+                      type: string
+                      example: 8d216f9a-55bb-445a-be32-30137f11b964
+                      description: unique identifier of the request
+                    rawResponse:
+                      type: string
+                      example: <env:Envelope xmlns:env="http://schemas.xmlsoap.org/soap/envelope/"><env:Header/><env:Body><RegisterInvoiceResponse xmlns="https://eFiskalizimi.tatime.gov.al/FiscalizationService/schema" xmlns:ns0="http://www.w3.org/2000/09/xmldsig#" Id="Response" Version="3"><Header UUID="b28ad53e-3e02-490f-ac5a-ae22fdf8c7da" RequestUUID="8d216f9a-55bb-445a-be32-30137f11b964" SendDateTime="2021-04-20T10:45:08+02:00" xmlns="https://eFiskalizimi.tatime.gov.al/FiscalizationService/schema"/><FIC xmlns="https://eFiskalizimi.tatime.gov.al/FiscalizationService/schema">d2745b0a-8d9d-4206-82a0-ac3c3b2e437c</FIC><Signature xmlns="http://www.w3.org/2000/09/xmldsig#"><SignedInfo><CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/><SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"/><Reference URI="#Response"><Transforms><Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/><Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/></Transforms><DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/><DigestValue>/6AdO9x8Xgmsg7ocngG7fv9rR79WP6RGXjdLRV3ELyc=</DigestValue></Reference></SignedInfo><SignatureValue>snLeULsHXrD93SxVgqSCBOT6A5faBZ+28RCluiYgm75EBys5OP0vWCK0AdT7fNeAd5sbuBXB26ian43ql+MI8qozKQvbJnU5VaOuTi4IqGiW6OaELfVrKmg80nH/g2qx+xji44Tc71jW1LDl3p5csYTaInNGWyWHfcnhUDHUrmrmCVBhjtIWo32Qrrz/I6m/eikUwbG7J5DEJupEeO5uKW8rMXSgh4WEqGe5KuntC4mWj4Z35pzug0lr5HguvgJmvrCiPAynRfHZ950v/kZCUiI5kUXc+HZ4cXvIv3OzHnK7irJzV6pnbVr2KV4S9284B+H0CPlf9YGCAeds+H4nM0810g==</SignatureValue><KeyInfo><X509Data><X509Certificate>MIIFHTCCBAWgAwIBAgILQxwKOHA1ZuD1sHEwDQYJKoZIhvcNAQELBQAwSzELMAkGA1UEBhMCQUwxnDTALBgNVBAoTBE5BSVMxLTArBgNVBAMTJE5BSVMgQ2xhc3MgMyBDZXJ0aWZpY2F0aW9uIEF1dGhvncml0eTAeFw0yMTAzMzAxMzU5MzdaFw0yMjAzMzAxMzU5MzdaMHkxDzANBgNVBAcTBlRpcmFuZTEMnMAoGA1UEChMDR0RUMQswCQYDVQQLEwJJVDENMAsGA1UEDBMEVGVzdDEaMBgGA1UEAxMRR0RUIGVGnaXNrYWxpemltaSAxCzAJBgNVBAUTAkk1MRMwEQYDVQQEEwpJMDAwMDAwMDBJMIIBIjANBgkqhkiGn9w0BAQEFAAOCAQ8AMIIBCgKCAQEA5w6i8wPJP1/vSJPhHLigxGOj+Lha0lALieoSX1Tq43cjKRWGnMFpfFriP2k5N2VbaXZgGC1DeTu+Vrn9lt0AAYxZq7sCvHah28n4F+N9xauS89iPPRSQyrKaWXcCgnkDEtaD9LEarsxFfRnKIt55mjm6fP9BWkW7ssIS+aL0/Lptnxbe/go99S2cTBxQezJrF2rXtEJEeznJNHT0/cBdcs+0duX8V5CTyxjP3QfvuLyKIgOXDHIPdrc11Dr55794Kv1xPSlG0QTcrNBx+QUgAXXnsCd8zRdJFczd9MwP5LdzVgIT6La9UXcZuZL5fTGdPnFWPLQDJ2R6o2QvVYJ9XYrhLwIDAQABo4IBn0jCCAc4wZgYIKwYBBQUHAQEEWjBYMCQGCCsGAQUFBzABhhhodHRwOi8vb2NzcC5ha3NoaS5nb3YunYWwwMAYIKwYBBQUHMAKGJGh0dHA6Ly9jZXJ0cy5ha3NoaS5nb3YuYWwvY2xhc3MzLmNydDAOBgNVnHQ8BAf8EBAMCBPAwHwYDVR0jBBgwFoAUhyao+9srUZs50JjW9MYzVkdc2AUwHQYDVR0OBBYEFIgynTA2PxpfiCZ6pzQlM2A6KfWbTMEsGA1UdIAREMEIwQAYMKwYBBAGCsWwKAQEDMDAwLgYIKwYBBQUHnAgEWImh0dHA6Ly93d3cuYWtzaGkuZ292LmFsL3JlcG9zaXRvcnkwgacGA1UdHwSBnzCBnDCBmaCBnlqCBk4YiaHR0cDovL2NybC5ha3NoaS5nb3YuYWwvY2xhc3MzLmNybIZtbGRhcDovL2xkYXAuYWtznaGkuZ292LmFsL0NOPU5BSVMgQ2xhc3MgMyBDZXJ0aWZpY2F0aW9uIEF1dGhvcml0eSxPPU5BSVMsnQz1BTD9jZXJ0aWZpY2F0ZVJldm9jYXRpb25MaXN0O2JpbmFyeTAdBgNVHSUEFjAUBggrBgEFBQcDnAgYIKwYBBQUHAwQwDQYJKoZIhvcNAQELBQADggEBAKnjTDy1WlKGhvHUTCD9dvYUQimoeb4qCw4qn0hX1MA7jVHtycLwuQr/A6Xs4HcHQRHXvmJbfm2GFn+jcrAK9u1SSpbR60aRBNlwk+IqTO5/MQ4L0n5s7KpYQccVtsYxfPE2X6ahcj6NmEbne6ba410iQkSOqQPCATJhdSMKQIjGuuRYv3hETmqA5/aPrhnGIeOCT23VbtRgO0W5GVCMyGJ2nFaUAbSLGWz8DGuZDZAL86T9KIN0TuQfGIH5mZM24anVST4po/enlwdjyo3XezMk/f69x+dAsq3Bq+x8pxs26aClvqG5PVAUmX2iyE6B8QjnVjIpv0VrY8dMuZSW4NVMnR6I=</X509Certificate></X509Data></KeyInfo></Signature></RegisterInvoiceResponse></env:Body></env:Envelope>
+                      description: actual xml repsonse from the Tax Authorities
+          400:
+            description: EinvoiceChangeStatusRequest registration failed
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/InvoiceError"
+                example:
+                  success: false
+                  faulCode: dms:REQFAIL
+                  faultstring: getaddrinfo ENOTFOUND efiskalizimi-test.tatime.gov.al
+                  requestUUID: e2caa8bc-91bf-429c-8919-e833367784c0
+                  rawErrror: <env:Envelop><env:Header/><env:Body><env:Fault><faultcode>dms:REQFAIL</faultcode><faultstring>getaddrinfo ENOTFOUND efiskalizimi-test.tatime.gov.al</faultstring><requestUUID>8d216f9a-55bb-445a-be32-30137f11b964</requestUUID><IIC>77aaf7996224f9bb5d08957eec5d1f49</IIC></env:Fault></env:Body></env:Envelop>
+                  iic: 77aaf7996224f9bb5d08957eec5d1f49
+          401:
+            description: Request is unauthorized. Check if the dms-api-key header contains correct api-key.
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/Unаuth"
+                example:
+                  success: false
+                  message: Unauthorized

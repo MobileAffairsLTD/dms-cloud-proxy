@@ -16,15 +16,14 @@ export class ALFController extends ApiControlerBase {
 
 
     fiscalizationServiceSubmit = async (req, res): Promise<any> => {
-
         try {
-
             const appArea = req.params.appArea;
             const requestType = req.params.requestType;
             if (!req.body) {
                 throw new Error('Payload is required!');
             }
             const xml = req.body.request;
+            const isProduction = req.body.mode === 'production';
             const contentType = req.headers['content-type'];
             if (contentType != 'application/json') {
                 throw new Error('Content-Type header must be application/json');
@@ -38,10 +37,12 @@ export class ALFController extends ApiControlerBase {
                 throw new Error('Request field is required!');
             }
 
-            if (xml.indexOf(requestType) != 1) {
+            if (xml.toUpperCase().indexOf(requestType.toUpperCase()) != 1) {
                 throw new Error('RequestType does not correspond to the request payload');
 
             }
+
+            
             const { transformedRequest, skipUplinkRequest } = processByRequestType(appArea, requestType, xml);
             let successResponse = false;
             let response;
@@ -50,13 +51,13 @@ export class ALFController extends ApiControlerBase {
                 try {
                     if(requestType.toUpperCase()=='RegisterEinvoiceRequest'.toUpperCase() ||
                     requestType.toUpperCase()=='GetTaxpayersRequest'.toUpperCase() ||
-                    requestType.toUpperCase()=='GetEInvoicesRequest'.toUpperCase()
-                    
+                    requestType.toUpperCase()=='GetEInvoicesRequest'.toUpperCase() ||
+                    requestType.toUpperCase()=='EinvoiceChangeStatusRequest'.toUpperCase()                                
                     ){
-                        response = await executeRequestEinvoice(signedRequest);
+                        response = await executeRequestEinvoice(signedRequest,isProduction);
                     }
                     else {
-                        response = await executeRequest(signedRequest);
+                        response = await executeRequest(signedRequest, isProduction);
                     }
                     successResponse = true;
                 }

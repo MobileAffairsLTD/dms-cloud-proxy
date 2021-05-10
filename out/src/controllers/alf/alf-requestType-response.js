@@ -162,6 +162,28 @@ function handleDmsCalculateWTNICResponse(appArea, requestXml, parsedResponse, is
         wtnicSignature: iscSignature
     };
 }
+function handleGetTaxPayersResponse(appArea, requestXml, parsedResponse, isSuccessReponse) {
+    var parsedRequest = new DOMParser().parseFromString(requestXml, 'text/xml');
+    var Taxpayer = parsedResponse.documentElement.getElementsByTagName('ns2:Taxpayer');
+    var Header = parsedResponse.documentElement.getElementsByTagName('Header');
+    var taxPayers = [];
+    for (var i = -0; i < Taxpayer.length; i++) {
+        var node = Taxpayer[i];
+        taxPayers.push({
+            name: node.getAttribute('Name'),
+            tin: node.getAttribute('Tin'),
+            town: node.getAttribute('Town'),
+            country: node.getAttribute('Country'),
+            address: node.getAttribute('Address')
+        });
+    }
+    return {
+        //fic: FIC && FIC.length > 0 ? FIC[0].textContent : '',
+        //iic: parsedRequest.documentElement.getElementsByTagName('Invoice')[0].getAttribute('IIC'),
+        taxPayers: taxPayers,
+        requestUUID: Header && Header.length > 0 ? Header[0].getAttribute('RequestUUID') : ''
+    };
+}
 function handleRegisterEInvoiceResponse(appArea, requestXml, parsedResponse, isSuccessReponse) {
     var parsedRequest = new DOMParser().parseFromString(requestXml, 'text/xml');
     var RegisterEInvoiceResponse = parsedResponse.documentElement.getElementsByTagName('RegisterInvoiceResponse');
@@ -184,6 +206,20 @@ function handleRegisterEInvoiceResponse(appArea, requestXml, parsedResponse, isS
     return {
         //fic: FIC && FIC.length > 0 ? FIC[0].textContent : '',
         //iic: parsedRequest.documentElement.getElementsByTagName('Invoice')[0].getAttribute('IIC'),
+        requestUUID: Header && Header.length > 0 ? Header[0].getAttribute('RequestUUID') : ''
+    };
+}
+function handleGetEInvoicesResponse(appArea, requestXml, parsedResponse, isSuccessReponse) {
+    var parsedRequest = new DOMParser().parseFromString(requestXml, 'text/xml');
+    var Header = parsedResponse.documentElement.getElementsByTagName('Header');
+    return {
+        requestUUID: Header && Header.length > 0 ? Header[0].getAttribute('RequestUUID') : ''
+    };
+}
+function handleEinvoiceChangeStatusResponse(appArea, requestXml, parsedResponse, isSuccessReponse) {
+    var parsedRequest = new DOMParser().parseFromString(requestXml, 'text/xml');
+    var Header = parsedResponse.documentElement.getElementsByTagName('Header');
+    return {
         requestUUID: Header && Header.length > 0 ? Header[0].getAttribute('RequestUUID') : ''
     };
 }
@@ -214,10 +250,13 @@ function processResponseByRequestType(appArea, requestType, transformedRequestXm
                 transformedResponse = handleRegisterEInvoiceResponse(appArea, transformedRequestXml, parsedResponse, isSuccessReponse);
                 break;
             case 'GetTaxpayersRequest'.toUpperCase():
-                transformedResponse = {};
+                transformedResponse = handleGetTaxPayersResponse(appArea, transformedRequestXml, parsedResponse, isSuccessReponse);
                 break;
             case 'GetEInvoicesRequest'.toUpperCase():
-                transformedResponse = {};
+                transformedResponse = handleGetEInvoicesResponse(appArea, transformedRequestXml, parsedResponse, isSuccessReponse);
+                break;
+            case 'EinvoiceChangeStatusRequest'.toUpperCase():
+                transformedResponse = handleEinvoiceChangeStatusResponse(appArea, transformedRequestXml, parsedResponse, isSuccessReponse);
                 break;
             default: throw new Error('Unkown request type');
         }

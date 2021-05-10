@@ -159,7 +159,7 @@ function handleRegisterEInvoiceRequest(appArea: string, parser: Document): strin
     // if (!Buyer || Buyer.length != 1) {
     //     throw new Error('Invalid RegisterEInvoiceRequest: Buyer element is missing');
     // }
-    
+
     // let FinalIic;
     // let finalIicSignature;
     // let fic = Invoice[0].getAttribute('FIC');
@@ -327,14 +327,14 @@ function handleRegisterEInvoiceRequest(appArea: string, parser: Document): strin
     // });
     // //totals
     // ubl.setLegalMonetaryTotal(monetaryTotal);
-    
+
     // //invoice lines
     // const Lines = parser.documentElement.getElementsByTagName('I');
     // if (!Lines || Lines.length != 1) {
     //     throw new Error('Invalid RegisterEInvoiceRequest: At one I element must be presented');
     // }
 
-    
+
     // for(let i=0;i<Lines.length;i++){
     //     const lineElement = Lines[0];
     //     const item = new Item({
@@ -349,12 +349,12 @@ function handleRegisterEInvoiceRequest(appArea: string, parser: Document): strin
     //         hazardousRiskIndicator: undefined,
     //         keywords: undefined,
     //     });
-    
-    
+
+
     //     const price = new Price(undefined);
     //     price.setPriceAmount(new UdtAmount(lineElement.getAttribute('PA'), { currencyID: defaultCurrency }));
     //     price.setBaseQuantity('1');
-       
+
     //     ubl.addInvoiceLine({
     //         id: i.toString(),
     //         uuid: undefined,
@@ -382,7 +382,7 @@ function handleRegisterEInvoiceRequest(appArea: string, parser: Document): strin
     //         deliveryTerms: undefined
     //     })
     // }
-   
+
 
 
 
@@ -416,20 +416,29 @@ function handleRegisterEInvoiceRequest(appArea: string, parser: Document): strin
     //     //buyerContact: undefined
     // })
 
-    const invoiceTagName = "Invoice"; 
+    const invoiceTagName = "Invoice";
 
     // const Invoice = parser.documentElement.getElementsByTagName(invoiceTagName);
     // if (!Invoice || Invoice.length != 1) {
     //     throw new Error('Invalid RegisterEInvoiceRequest: Invoice element is missing');
     // }
 
-    const Invoice = parser.documentElement.childNodes[0];
-    
-    Invoice.setAttribute('xmlns:sac','urn:oasis:names:specification:ubl:schema:xsd:SignatureAggregateComponents-2');
-    Invoice.setAttribute('xmlns:sig','urn:oasis:names:specification:ubl:schema:xsd:CommonSignatureComponents-2');
-    Invoice.setAttribute('xmlns:ext','urn:oasis:names:specification:ubl:schema:xsd:CommonExtensionComponents-2');
-    Invoice.setAttribute('xmlns:ds','http://www.w3.org/2000/09/xmldsig#');
- 
+    const Header = parser.documentElement.getElementsByTagName('Header');
+    if (!Header || Header.length != 1) {
+        throw new Error('Invalid RegisterEInvoiceRequest: Header element is missing');
+    }
+
+
+    if(parser.documentElement.childNodes.length<2){
+        throw new Error('Invalid RegisterEInvoiceRequest: Header and Invoice elements are requird');
+    }
+
+    const Invoice = parser.documentElement.childNodes[1];
+    Invoice.setAttribute('xmlns:sac', 'urn:oasis:names:specification:ubl:schema:xsd:SignatureAggregateComponents-2');
+    Invoice.setAttribute('xmlns:sig', 'urn:oasis:names:specification:ubl:schema:xsd:CommonSignatureComponents-2');
+    Invoice.setAttribute('xmlns:ext', 'urn:oasis:names:specification:ubl:schema:xsd:CommonExtensionComponents-2');
+    Invoice.setAttribute('xmlns:ds', 'http://www.w3.org/2000/09/xmldsig#');
+
     // { key: 'xmlns:cac', value: 'urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2' },
     //         { key: 'xmlns:cbc', value: 'urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2' },
     //         { key: 'xmlns:ds', value: 'http://www.w3.org/2000/09/xmldsig#' },
@@ -445,30 +454,29 @@ function handleRegisterEInvoiceRequest(appArea: string, parser: Document): strin
     //const cleanInvoiceXmlDom = new DOMParser().parseFromString(cleanInvoiceXml, 'text/xml');
     //cleanInvoiceXmlDom.documentElement.removeChild(cleanInvoiceXmlDom.documentElement.getElementsByTagName('cbc:UBLVersionID')[0]);
     const cleanInvoiceXmlDom = new DOMParser().parseFromString(Invoice.toLocaleString(), 'text/xml');
-    
-        
-   
-    
-    const UBLExtensions =appendEmptyXmlElement(cleanInvoiceXmlDom.documentElement,'ext:UBLExtensions',cleanInvoiceXmlDom.documentElement.getElementsByTagName('CustomizationID')[0]);    
-    const UBLExtension = appendEmptyXmlElement(UBLExtensions,'ext:UBLExtension');
-    const ExtensionContent = appendEmptyXmlElement(UBLExtension,'ext:ExtensionContent');
-    const UBLDocumentSignatures = appendEmptyXmlElement(ExtensionContent,'sig:UBLDocumentSignatures');
-    const SignatureInformation = appendEmptyXmlElement(UBLDocumentSignatures,'sac:SignatureInformation');
-    
 
-     //actual signature generation , e.g. do not change invoice xml after that point
-     let cleanInvoiceXml = cleanInvoiceXmlDom.documentElement.toLocaleString();
-     const pureSignature = computeEinvoiceSignature('Invoice',cleanInvoiceXml, appArea);
-  
-    const signatureElement = new DOMParser().parseFromString(pureSignature, 'text/xml');  
-    SignatureInformation.appendChild(signatureElement);
 
-   
+
+
+    const UBLExtensions = appendEmptyXmlElement(cleanInvoiceXmlDom.documentElement, 'ext:UBLExtensions', cleanInvoiceXmlDom.documentElement.getElementsByTagName('CustomizationID')[0]);
+    const UBLExtension = appendEmptyXmlElement(UBLExtensions, 'ext:UBLExtension');
+    const ExtensionContent = appendEmptyXmlElement(UBLExtension, 'ext:ExtensionContent');
+    const UBLDocumentSignatures = appendEmptyXmlElement(ExtensionContent, 'sig:UBLDocumentSignatures');
+    const SignatureInformation = appendEmptyXmlElement(UBLDocumentSignatures, 'sac:SignatureInformation');
+
+
+    //actual signature generation , e.g. do not change invoice xml after that point
+    let cleanInvoiceXml = cleanInvoiceXmlDom.documentElement.toLocaleString();
+    const pureSignature = computeEinvoiceSignature('Invoice', cleanInvoiceXml, appArea);
+
+    const signatureElement = new DOMParser().parseFromString(pureSignature, 'text/xml');
+    SignatureInformation.appendChild(signatureElement.documentElement);
+
     let finalEInvoiceXml = cleanInvoiceXmlDom.documentElement.toString();
     const buff = Buffer.from(finalEInvoiceXml);
-    const invoiceAsBase64  = buff.toString('base64');
+    const invoiceAsBase64 = buff.toString('base64');
     const request = `<RegisterEinvoiceRequest xmlns="https://Einvoice.tatime.gov.al/EinvoiceService/schema"
-    xmlns:ns2="http://www.w3.org/2000/09/xmldsig#" Id="Request" Version="1"> <Header SendDateTime="2021-05-07T17:05:36+02:00" UUID="af847648-5091-4a8c-a78a-9d98206a319c"/><EinvoiceEnvelope><UblInvoice>${invoiceAsBase64}</UblInvoice></EinvoiceEnvelope></RegisterEinvoiceRequest>`;
+    xmlns:ns2="http://www.w3.org/2000/09/xmldsig#" Id="Request" Version="1">${Header[0].toString()}<EinvoiceEnvelope><UblInvoice>${invoiceAsBase64}</UblInvoice></EinvoiceEnvelope></RegisterEinvoiceRequest>`;
     //const ublInv = parser.documentElement.getElementsByTagName('UblInvoice');
     //if (!ublInv || ublInv.length != 1) {
     //    throw new Error('Element UblInvoice is missing in the request!');
@@ -491,6 +499,7 @@ export function processByRequestType(appArea: string, requestType: string, xml: 
             case 'RegisterEInvoiceRequest'.toUpperCase(): return { transformedRequest: handleRegisterEInvoiceRequest(appArea, parser), skipUplinkRequest: false };
             case 'GetTaxpayersRequest'.toUpperCase(): return { transformedRequest: xml, skipUplinkRequest: false };
             case 'GetEInvoicesRequest'.toUpperCase(): return { transformedRequest: xml, skipUplinkRequest: false };
+            case 'EinvoiceChangeStatusRequest'.toUpperCase(): return { transformedRequest: xml, skipUplinkRequest: false };
             default: throw new Error('Unkown request type');
         }
     }
@@ -504,12 +513,12 @@ export function processByRequestType(appArea: string, requestType: string, xml: 
 function appendEmptyXmlElement(cleanInvoiceXmlDom: any, elementName: string, beforeElement?: string): any {
     const newElement = cleanInvoiceXmlDom.ownerDocument.createElement(elementName);
 
-    if(beforeElement){
+    if (beforeElement) {
         cleanInvoiceXmlDom.insertBefore(newElement, beforeElement);
     }
     else {
         cleanInvoiceXmlDom.appendChild(newElement);
-    }   
+    }
     return newElement;
 
 }
