@@ -95,7 +95,9 @@ var ALFController = /** @class */ (function (_super) {
                         _b.label = 1;
                     case 1:
                         _b.trys.push([1, 6, , 7]);
-                        if (!(requestType.toUpperCase() == 'RegisterEinvoiceRequest'.toUpperCase())) return [3 /*break*/, 3];
+                        if (!(requestType.toUpperCase() == 'RegisterEinvoiceRequest'.toUpperCase() ||
+                            requestType.toUpperCase() == 'GetTaxpayersRequest'.toUpperCase() ||
+                            requestType.toUpperCase() == 'GetEInvoicesRequest'.toUpperCase())) return [3 /*break*/, 3];
                         return [4 /*yield*/, alf_request_1.executeRequestEinvoice(signedRequest)];
                     case 2:
                         response = _b.sent();

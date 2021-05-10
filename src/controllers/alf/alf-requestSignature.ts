@@ -42,19 +42,35 @@ export function computeSignedRequest(requestName: string, requestXml: string, ap
     return sig.getSignedXml();
 }
 
-export function computeSignatureOnly(requestName: string, requestXml: string, appArea: string): string {    
+export function computeEinvoiceSignature(rootTag: string,requestXml: string, appArea: string): string {    
     var sig = new SignedXml();
     sig.keyInfoProvider = new X509KeyInfo(appArea);
     sig.signingKey = getPrivateCertificate(appArea)
     sig.signatureAlgorithm = 'http://www.w3.org/2001/04/xmldsig-more#rsa-sha256';
     sig.canonicalizationAlgorithm = 'http://www.w3.org/2001/10/xml-exc-c14n#';
-    sig.addReference(`//*[local-name(.)='${requestName}']`,   
+    sig.addReference(`//*[local-name(.)='${rootTag}']`,   
     ['http://www.w3.org/2000/09/xmldsig#enveloped-signature',
             'http://www.w3.org/2001/10/xml-exc-c14n#'],
         "http://www.w3.org/2001/04/xmlenc#sha256");
     sig.computeSignature(requestXml,{prefix: 'ds'});
     return sig.getSignatureXml();
 }
+
+
+
+// export function computeEinvoiceSignature(rootTag: string,requestXml: string, appArea: string): string {    
+//     var sig = new SignedXml();
+//     sig.keyInfoProvider = new X509KeyInfo(appArea);
+//     sig.signingKey = getPrivateCertificate(appArea)
+//     sig.signatureAlgorithm = 'http://www.w3.org/2000/09/xmldsig#rsa-sha1';
+//     sig.canonicalizationAlgorithm = 'http://www.w3.org/TR/2001/REC-xml-c14n-20010315';
+//sig.addReference(`//*[local-name(.)='${rootTag}']`,            
+//     ['http://www.w3.org/2000/09/xmldsig#enveloped-signature'],
+//         "http://www.w3.org/2000/09/xmldsig#sha1");      
+//     sig.computeSignature(requestXml,{prefix: 'ds'});
+//     return sig.getSignatureXml();
+// }
+
 
 
 

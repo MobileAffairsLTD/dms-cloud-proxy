@@ -73,7 +73,6 @@ module.exports = {
 		// 		{ from: path.resolve(__dirname, 'config.json'), to: 'config.json' },
 		// 		{ from: path.resolve(__dirname, './src/swagger.yaml'), to: 'swagger.yaml' },
 		// 		{ from: path.resolve(__dirname, './src/.ebextentions/node.yml'), to: 'node.yml' },
-
 		// 	  ]
 		// 	}
 		// )

@@ -56,6 +56,7 @@ function handleRegisterInvoiceResponse(appArea, requestXml, parsedResponse, isSu
     return {
         fic: FIC && FIC.length > 0 ? FIC[0].textContent : '',
         iic: parsedRequest.documentElement.getElementsByTagName('Invoice')[0].getAttribute('IIC'),
+        iicSignature: parsedRequest.documentElement.getElementsByTagName('Invoice')[0].getAttribute('IICSignature'),
         requestUUID: Header && Header.length > 0 ? Header[0].getAttribute('RequestUUID') : ''
     };
 }
@@ -211,6 +212,12 @@ function processResponseByRequestType(appArea, requestType, transformedRequestXm
                 break;
             case 'RegisterEInvoiceRequest'.toUpperCase():
                 transformedResponse = handleRegisterEInvoiceResponse(appArea, transformedRequestXml, parsedResponse, isSuccessReponse);
+                break;
+            case 'GetTaxpayersRequest'.toUpperCase():
+                transformedResponse = {};
+                break;
+            case 'GetEInvoicesRequest'.toUpperCase():
+                transformedResponse = {};
                 break;
             default: throw new Error('Unkown request type');
         }
