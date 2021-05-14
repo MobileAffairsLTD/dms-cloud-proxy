@@ -111,7 +111,7 @@ export class Application {
 
     run() {
         
-        this._express.listen(this.configuration.port);
+        this._express.listen(this.configuration.port);      
         console.log('*** DMS is listening on port ',this.configuration.port)
         //EventLog.logInfoStr(`Dynamics Mobile Cloud Proxy (c) 2009-2021 www.dynamicsmobile.com, on port ${this.configuration.port}`);
 

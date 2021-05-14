@@ -2,7 +2,7 @@ import { getPrivateCertificate } from "./alf-certificate-storage";
 import { calculateISC, computeEinvoiceSignature, computeSignedRequest } from "./alf-requestSignature";
 import { Invoice as ublInvoice } from 'ubl-builder';
 import { AccountingContact, AccountingCustomerParty, AccountingSupplierParty, Item, LegalMonetaryTotal, Party, PartyName, PaymentMeans, PhysicalLocation, Price, TaxCategory, TaxScheme, TaxSubtotal, TaxTotal } from "ubl-builder/lib/ubl21/CommonAggregateComponents";
-import { UdtAmount } from "ubl-builder/lib/ubl21/types/UnqualifiedDataTypes";
+import { UdtAmount, UdtIdentifier } from "ubl-builder/lib/ubl21/types/UnqualifiedDataTypes";
 import { UBLExtensions, UBLExtensionType } from "ubl-builder/lib/ubl21/extensionComponents";
 import { SignatureExtensions } from 'ubl-builder/lib/ubl21/extensionComponents/customExtensionContents/SignatureExtensions'
 import AnyExtensionContent from "ubl-builder/lib/ubl21/extensionComponents/AnyExtensionContent";
@@ -96,9 +96,9 @@ function handleRegisterDmsCalculateIICRequest(appArea: string, parser: Document)
     if (!parsedRequest.documentElement.getAttribute('BusinUnitCode')) {
         errors.push('Attribute BusinUnitCode is required');
     }
-    if (!parsedRequest.documentElement.getAttribute('TCRCode')) {
-        errors.push('Attribute TCRCode is required');
-    }
+    // if (!parsedRequest.documentElement.getAttribute('TCRCode')) {
+    //     errors.push('Attribute TCRCode is required');
+    // }
     if (!parsedRequest.documentElement.getAttribute('SoftCode')) {
         errors.push('Attribute SoftCode is required');
     }
@@ -137,292 +137,287 @@ function handleRegisterDmsCalculateWTNICRequest(appArea: string, parser: Documen
 }
 
 
-function handleRegisterEInvoiceRequest(appArea: string, parser: Document): string {
+
+async function handleRegisterEInvoiceRequest(appArea: string, parser: Document): Promise<string> {
     const terminatingString = '#AAI#';
     const defaultCurrency = 'ALL';
-    // const Invoice = parser.documentElement.getElementsByTagName('Invoice');
-    // if (!Invoice || Invoice.length != 1) {
-    //     throw new Error('Invalid RegisterEInvoiceRequest: Invoice element is missing');
-    // }
+    const Invoice = parser.documentElement.getElementsByTagName('Invoice');
+    if (!Invoice || Invoice.length != 1) {
+        throw new Error('Invalid RegisterEInvoiceRequest: Invoice element is missing');
+    }
 
-    // const SameTax = parser.documentElement.getElementsByTagName('SameTax');
-    // if (!SameTax || SameTax.length != 1) {
-    //     throw new Error('Invalid RegisterEInvoiceRequest: SameTax element is missing');
-    // }
+    const SameTax = parser.documentElement.getElementsByTagName('SameTax');
+    if (!SameTax || SameTax.length != 1) {
+        throw new Error('Invalid RegisterEInvoiceRequest: SameTax element is missing');
+    }
 
-    // const Seller = parser.documentElement.getElementsByTagName('Seller');
-    // if (!Seller || Seller.length != 1) {
-    //     throw new Error('Invalid RegisterEInvoiceRequest: Seller element is missing');
-    // }
+    const Seller = parser.documentElement.getElementsByTagName('Seller');
+    if (!Seller || Seller.length != 1) {
+        throw new Error('Invalid RegisterEInvoiceRequest: Seller element is missing');
+    }
 
-    // const Buyer = parser.documentElement.getElementsByTagName('Buyer');
-    // if (!Buyer || Buyer.length != 1) {
-    //     throw new Error('Invalid RegisterEInvoiceRequest: Buyer element is missing');
-    // }
+    const Buyer = parser.documentElement.getElementsByTagName('Buyer');
+    if (!Buyer || Buyer.length != 1) {
+        throw new Error('Invalid RegisterEInvoiceRequest: Buyer element is missing');
+    }
 
-    // let FinalIic;
-    // let finalIicSignature;
-    // let fic = Invoice[0].getAttribute('FIC');
-    // if(!fic){
-    //     throw new Error('Invalid RegisterEInvoiceRequest: Invoice.FIC attribute is missing');
-    // }
-    // if(Invoice[0].getAttribute('IIC') && Invoice[0].getAttribute('IICSignature')){
-    //     FinalIic = Invoice[0].getAttribute('IIC');
-    //     finalIicSignature = Invoice[0].getAttribute('IICSignature');
-    // }
-    // else {
-    //     const {iic, iicSignature } = handleDmsCalculateIICResponse(appArea, Invoice.toString() );
-    //     FinalIic = iic;
-    //     finalIicSignature = iicSignature;
-    // }
-    // const ubl = new ublInvoice(Invoice[0].getAttribute('InvNum'), {
-    //     software: {
-    //         id: Invoice[0].getAttribute('InvNum'),
-    //         pin: undefined,
-    //         providerNit: undefined,
-    //     },
-    //     issuer: {
-    //         endDate: undefined,
-    //         prefix: undefined,
-    //         resolutionNumber: undefined,
-    //         startDate: undefined,
-    //         endRange: undefined,
-    //         startRange: undefined,
-    //         technicalKey: undefined
-    //     },
-    //     timestamp: (new Date().getTime()),
-    //     enviroment: undefined
+    let FinalIic;
+    let finalIicSignature;
+    let fic = Invoice[0].getAttribute('FIC');
+    if(!fic){
+        throw new Error('Invalid RegisterEInvoiceRequest: Invoice.FIC attribute is missing');
+    }
+    if(Invoice[0].getAttribute('IIC') && Invoice[0].getAttribute('IICSignature')){
+        FinalIic = Invoice[0].getAttribute('IIC');
+        finalIicSignature = Invoice[0].getAttribute('IICSignature');
+    }
+    else {
+        const {iic, iicSignature } = handleDmsCalculateIICResponse(appArea, Invoice.toString() );
+        FinalIic = iic;
+        finalIicSignature = iicSignature;
+    }
+    const ubl = new ublInvoice(Invoice[0].getAttribute('InvNum'), {
+        software: {
+            id: Invoice[0].getAttribute('InvNum'),
+            pin: undefined,
+            providerNit: undefined,
+        },
+        issuer: {
+            endDate: undefined,
+            prefix: undefined,
+            resolutionNumber: undefined,
+            startDate: undefined,
+            endRange: undefined,
+            startRange: undefined,
+            technicalKey: undefined
+        },
+        timestamp: (new Date().getTime()),
+        enviroment: undefined
+    });
+
+    ubl.setDefaultProperties();
+
+    // ubl.addProperty('xmlns:ns8','urn:oasis:names:specification:ubl:schema:xsd:Invoice-2');
+    // ubl.addProperty('xmlns','urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2');
+    // ubl.addProperty('xmlns:ns2','urn:oasis:names:specification:ubl:schema:xsd:CommonExtensionComponents-2');
+    // ubl.addProperty('xmlns:ns3','urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2');
+
+    // ubl.addProperty('xmlns:ns4','urn:oasis:names:specification:ubl:schema:xsd:SignatureBasicComponents-2');
+    // ubl.addProperty('xmlns:ns5','http://www.w3.org/2000/09/xmldsig#');
+    ubl.addProperty('xmlns:sac','urn:oasis:names:specification:ubl:schema:xsd:SignatureAggregateComponents-2');
+    ubl.addProperty('xmlns:sig','urn:oasis:names:specification:ubl:schema:xsd:CommonSignatureComponents-2');
+
+    const issueDateTime = Invoice[0].getAttribute('IssueDateTime');
+    ubl.setIssueTime(issueDateTime.split('T')[1]);
+    ubl.setCustomizationID('urn:cen.eu:en16931:2017#compliant#urn:akshi.al:2019:1.0');
+    ubl.setDueDate(issueDateTime.split('T')[0]);
+    ubl.setProfileID('P1');
+    ubl.setInvoiceTypeCode('380');
+    ubl.setDocumentCurrencyCode(defaultCurrency);
+    ubl.setTaxCurrencyCode(defaultCurrency);
+    ubl.setDocumentCurrencyCode(defaultCurrency);
+    ubl.addNote(`IIC=${FinalIic}${terminatingString}`);
+    ubl.addNote(`IICSignature=${finalIicSignature}${terminatingString}`);
+    ubl.addNote(`FIC=${fic}${terminatingString}`);
+    ubl.addNote(`IssueDateTime=${issueDateTime}${terminatingString}`);
+    ubl.addNote(`OperatorCode=${Invoice[0].getAttribute('OperatorCode')}${terminatingString}`);
+    ubl.addNote(`BusinessUnitCode=${Invoice[0].getAttribute('BusinUnitCode')}${terminatingString}`);
+    ubl.addNote(`SoftwareCode=${Invoice[0].getAttribute('SoftCode')}${terminatingString}`);
+    ubl.addNote(`IsBadDebtInv=${'false'}${terminatingString}`);
+
+
+    const party = new Party({
+        EndpointID: new UdtIdentifier(Seller[0].getAttribute('IDNum'), {schemeID:'9923'}),
+        contact: undefined,
+        industryClassificationCode: undefined,
+        language: undefined,
+        logoReferenceID: undefined,
+        markAttentionIndicator: undefined,
+        markCareIndicator: undefined,
+        partyIdentifications: undefined,
+        partyLegalEntities: undefined,
+        partyNames: [new PartyName({ name: Seller[0].getAttribute('Name') })],
+        partyTaxSchemes: undefined,
+        websiteURI: undefined,
+    });
+    // const locationTypeCode = new PhysicalLocation({
+    //     address: Seller[0].getAttribute('Address'),
+    //     conditions: undefined,
+    //     countrySubentity: Seller[0].getAttribute('Country'),
+    //     countrySubentityCode: Seller[0].getAttribute('Country'),
+    //     description: Seller[0].getAttribute('Town'),
+    //     id: "4",
+    //     informationURI: "3",
+    //     locationTypeCode: "2",
+    //     name: "1",
+    //     validityPeriod: undefined,
     // });
 
-    // ubl.setDefaultProperties();
+    // locationTypeCode.classRefName="address";
+    // party.setPhysicalLocation(locationTypeCode)
 
-    // // ubl.addProperty('xmlns:ns8','urn:oasis:names:specification:ubl:schema:xsd:Invoice-2');
-    // // ubl.addProperty('xmlns','urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2');
-    // // ubl.addProperty('xmlns:ns2','urn:oasis:names:specification:ubl:schema:xsd:CommonExtensionComponents-2');
-    // // ubl.addProperty('xmlns:ns3','urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2');
+    ubl.setAccountingSupplierParty(new AccountingSupplierParty({
+        additionalAccountIDs: undefined,
+        customerAssignedAccountID: undefined,
+        dataSendingCapability: undefined,
+        party: party
+    }))
+    // ubl.setAccountingCustomerParty()
 
-    // // ubl.addProperty('xmlns:ns4','urn:oasis:names:specification:ubl:schema:xsd:SignatureBasicComponents-2');
-    // // ubl.addProperty('xmlns:ns5','http://www.w3.org/2000/09/xmldsig#');
-    // ubl.addProperty('xmlns:sac','urn:oasis:names:specification:ubl:schema:xsd:SignatureAggregateComponents-2');
-    // ubl.addProperty('xmlns:sig','urn:oasis:names:specification:ubl:schema:xsd:CommonSignatureComponents-2');
+    const paymentMeans = new PaymentMeans({
+        id: undefined,
+        paymentMeansCode: '54',
+        paymentDueDate: undefined,
+        paymentChannelCode: undefined,
+        instructionID: undefined,
+        instructionNotes: undefined,
+        paymentID: undefined,
+    });
+    ubl.addPaymentMeans(paymentMeans)
 
-    // const issueDateTime = Invoice[0].getAttribute('IssueDateTime');
-    // ubl.setIssueTime(issueDateTime.split('T')[1]);
-    // ubl.setCustomizationID('urn:cen.eu:en16931:2017#compliant#urn:akshi.al:2019:1.0');
-    // ubl.setDueDate(issueDateTime.split('T')[0]);
-    // ubl.setProfileID('P1');
-    // ubl.setInvoiceTypeCode('380');
-    // ubl.setDocumentCurrencyCode(defaultCurrency);
-    // ubl.setTaxCurrencyCode(defaultCurrency);
-    // ubl.setDocumentCurrencyCode(defaultCurrency);
-    // ubl.addNote(`IIC=${FinalIic}${terminatingString}`);
-    // ubl.addNote(`IICSignature=${finalIicSignature}${terminatingString}`);
-    // ubl.addNote(`FIC=${fic}${terminatingString}`);
-    // ubl.addNote(`IssueDateTime=${issueDateTime}${terminatingString}`);
-    // ubl.addNote(`OperatorCode=${Invoice[0].getAttribute('OperatorCode')}${terminatingString}`);
-    // ubl.addNote(`BusinessUnitCode=${Invoice[0].getAttribute('BusinUnitCode')}${terminatingString}`);
-    // ubl.addNote(`SoftwareCode=${Invoice[0].getAttribute('SoftCode')}${terminatingString}`);
-    // ubl.addNote(`IsBadDebtInv=${'false'}${terminatingString}`);
+    //taxes
+    const tax = new TaxTotal({
+        roundingAmount: undefined,
+        taxAmount: new UdtAmount(Invoice[0].getAttribute('TotVATAmt'), { currencyID: defaultCurrency }),
+        taxEvidenceIndicator: undefined,
+        taxSubtotals: [
+            new TaxSubtotal({
+                taxAmount: new UdtAmount(Invoice[0].getAttribute('TotVATAmt'), { currencyID: defaultCurrency }),
+                taxableAmount: new UdtAmount(Invoice[0].getAttribute('TotPriceWoVAT'), { currencyID: defaultCurrency }),
+                baseUnitMeasure: undefined,
+                calculationSequenceNumeric: undefined,
+                perUnitAmount: undefined,
+                percent: SameTax[0].getAttribute('VATRate'),
+                taxCategory: new TaxCategory(
+                    {
+                        id: 'O',
+                        taxExemptionReasonCode: 'vatex-eu-o',
+                        taxScheme: new TaxScheme({
+                            id: 'VAT',
+                            currencyCode: undefined,
+                            jurisdictionRegionAddress: undefined,
+                            name: undefined,
+                            taxTypeCode: undefined
+                        }),
+                        baseUnitMeasure: undefined,
+                        name: undefined,
+                        perUnitAmount: undefined,
+                        percent: undefined,
+                        taxExemptionReason: undefined,
+                        tierRange: undefined,
+                        tierRatePercent: undefined
+                    }
+                ),
+                tierRange: undefined,
+                tierRatePercent: undefined,
+                transactionCurrencyTaxAmount: undefined,
+            })
+        ]
+    });
+    ubl.addTaxTotal(tax);
+    const monetaryTotal = new LegalMonetaryTotal({
+        allowanceTotalAmount: undefined,
+        chargeTotalAmount: undefined,
+        payableAlternativeAmount: undefined,
+        payableRoundingAmount: undefined,
+        prepaidAmount: undefined,
+        payableAmount: new UdtAmount(Invoice[0].getAttribute('TotPrice'), { currencyID: defaultCurrency }),
+        lineExtensionAmount: new UdtAmount(Invoice[0].getAttribute('TotPrice'), { currencyID: defaultCurrency }),
+        taxExclusiveAmount: new UdtAmount(Invoice[0].getAttribute('TotPriceWoVAT'), { currencyID: defaultCurrency }),
+        taxInclusiveAmount: new UdtAmount(Invoice[0].getAttribute('TotPrice'), { currencyID: defaultCurrency }),
+    });
+    //totals
+    ubl.setLegalMonetaryTotal(monetaryTotal);
 
-
-    // const party = new Party({
-    //     EndpointID: Seller[0].getAttribute('IDNum'),
-    //     contact: undefined,
-    //     industryClassificationCode: undefined,
-    //     language: undefined,
-    //     logoReferenceID: undefined,
-    //     markAttentionIndicator: undefined,
-    //     markCareIndicator: undefined,
-    //     partyIdentifications: undefined,
-    //     partyLegalEntities: undefined,
-    //     partyNames: [new PartyName({ name: Seller[0].getAttribute('Name') })],
-    //     partyTaxSchemes: undefined,
-    //     websiteURI: undefined,
-    // });
-    // // const locationTypeCode = new PhysicalLocation({
-    // //     address: Seller[0].getAttribute('Address'),
-    // //     conditions: undefined,
-    // //     countrySubentity: Seller[0].getAttribute('Country'),
-    // //     countrySubentityCode: Seller[0].getAttribute('Country'),
-    // //     description: Seller[0].getAttribute('Town'),
-    // //     id: "4",
-    // //     informationURI: "3",
-    // //     locationTypeCode: "2",
-    // //     name: "1",
-    // //     validityPeriod: undefined,
-    // // });
-
-    // // locationTypeCode.classRefName="address";
-    // // party.setPhysicalLocation(locationTypeCode)
-
-    // ubl.setAccountingSupplierParty(new AccountingSupplierParty({
-    //     additionalAccountIDs: undefined,
-    //     customerAssignedAccountID: undefined,
-    //     dataSendingCapability: undefined,
-    //     party: party
-    // }))
-    // // ubl.setAccountingCustomerParty()
-
-    // const paymentMeans = new PaymentMeans({
-    //     id: undefined,
-    //     paymentMeansCode: '54',
-    //     paymentDueDate: undefined,
-    //     paymentChannelCode: undefined,
-    //     instructionID: undefined,
-    //     instructionNotes: undefined,
-    //     paymentID: undefined,
-    // });
-    // ubl.addPaymentMeans(paymentMeans)
-
-    // //taxes
-    // const tax = new TaxTotal({
-    //     roundingAmount: undefined,
-    //     taxAmount: new UdtAmount(Invoice[0].getAttribute('TotVATAmt'), { currencyID: defaultCurrency }),
-    //     taxEvidenceIndicator: undefined,
-    //     taxSubtotals: [
-    //         new TaxSubtotal({
-    //             taxAmount: new UdtAmount(Invoice[0].getAttribute('TotVATAmt'), { currencyID: defaultCurrency }),
-    //             taxableAmount: new UdtAmount(Invoice[0].getAttribute('TotPriceWoVAT'), { currencyID: defaultCurrency }),
-    //             baseUnitMeasure: undefined,
-    //             calculationSequenceNumeric: undefined,
-    //             perUnitAmount: undefined,
-    //             percent: SameTax[0].getAttribute('VATRate'),
-    //             taxCategory: new TaxCategory(
-    //                 {
-    //                     id: 'O',
-    //                     taxExemptionReasonCode: 'vatex-eu-o',
-    //                     taxScheme: new TaxScheme({
-    //                         id: 'VAT',
-    //                         currencyCode: undefined,
-    //                         jurisdictionRegionAddress: undefined,
-    //                         name: undefined,
-    //                         taxTypeCode: undefined
-    //                     }),
-    //                     baseUnitMeasure: undefined,
-    //                     name: undefined,
-    //                     perUnitAmount: undefined,
-    //                     percent: undefined,
-    //                     taxExemptionReason: undefined,
-    //                     tierRange: undefined,
-    //                     tierRatePercent: undefined
-    //                 }
-    //             ),
-    //             tierRange: undefined,
-    //             tierRatePercent: undefined,
-    //             transactionCurrencyTaxAmount: undefined,
-    //         })
-    //     ]
-    // });
-    // ubl.addTaxTotal(tax);
-    // const monetaryTotal = new LegalMonetaryTotal({
-    //     allowanceTotalAmount: undefined,
-    //     chargeTotalAmount: undefined,
-    //     payableAlternativeAmount: undefined,
-    //     payableRoundingAmount: undefined,
-    //     prepaidAmount: undefined,
-    //     payableAmount: new UdtAmount(Invoice[0].getAttribute('TotPrice'), { currencyID: defaultCurrency }),
-    //     lineExtensionAmount: new UdtAmount(Invoice[0].getAttribute('TotPrice'), { currencyID: defaultCurrency }),
-    //     taxExclusiveAmount: new UdtAmount(Invoice[0].getAttribute('TotPriceWoVAT'), { currencyID: defaultCurrency }),
-    //     taxInclusiveAmount: new UdtAmount(Invoice[0].getAttribute('TotPrice'), { currencyID: defaultCurrency }),
-    // });
-    // //totals
-    // ubl.setLegalMonetaryTotal(monetaryTotal);
-
-    // //invoice lines
-    // const Lines = parser.documentElement.getElementsByTagName('I');
-    // if (!Lines || Lines.length != 1) {
-    //     throw new Error('Invalid RegisterEInvoiceRequest: At one I element must be presented');
-    // }
+    //invoice lines
+    const Lines = parser.documentElement.getElementsByTagName('I');
+    if (!Lines || Lines.length != 1) {
+        throw new Error('Invalid RegisterEInvoiceRequest: At one I element must be presented');
+    }
 
 
-    // for(let i=0;i<Lines.length;i++){
-    //     const lineElement = Lines[0];
-    //     const item = new Item({
-    //         name: lineElement.getAttribute('N'),
-    //         catalogueIndicator: undefined,
-    //         brandName: undefined,
-    //         modelName: undefined,
-    //         packQuantity: undefined,
-    //         packSizeNumeric: undefined,
-    //         descriptions: undefined,
-    //         additionalInformations: undefined,
-    //         hazardousRiskIndicator: undefined,
-    //         keywords: undefined,
-    //     });
+    for(let i=0;i<Lines.length;i++){
+        const lineElement = Lines[0];
+        const item = new Item({
+            name: lineElement.getAttribute('N'),
+            catalogueIndicator: undefined,
+            brandName: undefined,
+            modelName: undefined,
+            packQuantity: undefined,
+            packSizeNumeric: undefined,
+            descriptions: undefined,
+            additionalInformations: undefined,
+            hazardousRiskIndicator: undefined,
+            keywords: undefined,
+        });
 
 
-    //     const price = new Price(undefined);
-    //     price.setPriceAmount(new UdtAmount(lineElement.getAttribute('PA'), { currencyID: defaultCurrency }));
-    //     price.setBaseQuantity('1');
+        const price = new Price(undefined);
+        price.setPriceAmount(new UdtAmount(lineElement.getAttribute('PA'), { currencyID: defaultCurrency }));
+        price.setBaseQuantity('1');
 
-    //     ubl.addInvoiceLine({
-    //         id: i.toString(),
-    //         uuid: undefined,
-    //         notes: undefined,
-    //         invoicedQuantity: lineElement.getAttribute('Q'),
-    //         lineExtensionAmount: new UdtAmount(lineElement.getAttribute('PA'), { currencyID: defaultCurrency }),
-    //         taxPointDate: undefined,
-    //         accountingCostCode: undefined,
-    //         accountingCost: undefined,
-    //         paymentPurposeCode: undefined,
-    //         freeOfChargeIndicator: 'false',
-    //         invoicePeriods: undefined,
-    //         orderLineReferences: undefined,
-    //         despatchLineReference: undefined,
-    //         receiptLineReference: undefined,
-    //         billingReference: undefined,
-    //         documentReference: undefined,
-    //         originatorParty: undefined,
-    //         delivery: undefined,
-    //         paymentTerms: undefined,
-    //         taxTotals: undefined,
-    //         withholdingTaxTotal: undefined,
-    //         item: item,
-    //         price: price,
-    //         deliveryTerms: undefined
-    //     })
-    // }
+        ubl.addInvoiceLine({
+            id: i.toString(),
+            uuid: undefined,
+            notes: undefined,
+            invoicedQuantity: lineElement.getAttribute('Q'),
+            lineExtensionAmount: new UdtAmount(lineElement.getAttribute('PA'), { currencyID: defaultCurrency }),
+            taxPointDate: undefined,
+            accountingCostCode: undefined,
+            accountingCost: undefined,
+            paymentPurposeCode: undefined,
+            freeOfChargeIndicator: 'false',
+            invoicePeriods: undefined,
+            orderLineReferences: undefined,
+            despatchLineReference: undefined,
+            receiptLineReference: undefined,
+            billingReference: undefined,
+            documentReference: undefined,
+            originatorParty: undefined,
+            delivery: undefined,
+            paymentTerms: undefined,
+            taxTotals: undefined,
+            withholdingTaxTotal: undefined,
+            item: item,
+            price: price,
+            deliveryTerms: undefined
+        })
+    }
 
 
 
 
-    // ubl.setAccountingCustomerParty({
-    //     customerAssignedAccountID: Buyer[0].getAttribute('IDNum'),
-    //     additionalAccountIDs: undefined,
-    //     dataSendingCapability: undefined,
-    //     party: new Party(
-    //         {
-    //             markCareIndicator: 'false',
-    //             markAttentionIndicator: 'false',
-    //             websiteURI: undefined,
-    //             logoReferenceID: undefined,
-    //             EndpointID: Buyer[0].getAttribute('IDNum'),
-    //             industryClassificationCode: undefined,
-    //             partyIdentifications: undefined,
-    //             partyNames: [new PartyName({ name: Buyer[0].getAttribute('Name') })],
-    //             language: undefined,
-    //             partyTaxSchemes: undefined,
-    //             partyLegalEntities: undefined,
-    //             contact: undefined
-    //         })
-    //     // accountingContact: new AccountingContact({
-    //     //     id: undefined,
-    //     //     name: undefined,
-    //     //     telephone: undefined,
-    //     //     telefax: undefined,
-    //     //     electronicMail: undefined,
-    //     //     note: undefined,
-    //     // })
-    //     //buyerContact: undefined
-    // })
+    ubl.setAccountingCustomerParty({
+        customerAssignedAccountID: Buyer[0].getAttribute('IDNum'),
+        additionalAccountIDs: undefined,
+        dataSendingCapability: undefined,
+        party: new Party(
+            {
+                markCareIndicator: 'false',
+                markAttentionIndicator: 'false',
+                websiteURI: undefined,
+                logoReferenceID: undefined,
+                EndpointID: Buyer[0].getAttribute('IDNum'),
+                industryClassificationCode: undefined,
+                partyIdentifications: undefined,
+                partyNames: [new PartyName({ name: Buyer[0].getAttribute('Name') })],
+                language: undefined,
+                partyTaxSchemes: undefined,
+                partyLegalEntities: undefined,
+                contact: undefined
+            })
+        // accountingContact: new AccountingContact({
+        //     id: undefined,
+        //     name: undefined,
+        //     telephone: undefined,
+        //     telefax: undefined,
+        //     electronicMail: undefined,
+        //     note: undefined,
+        // })
+        //buyerContact: undefined
+    })
 
-    const invoiceTagName = "Invoice";
-
-    // const Invoice = parser.documentElement.getElementsByTagName(invoiceTagName);
-    // if (!Invoice || Invoice.length != 1) {
-    //     throw new Error('Invalid RegisterEInvoiceRequest: Invoice element is missing');
-    // }
-
+   
     const Header = parser.documentElement.getElementsByTagName('Header');
     if (!Header || Header.length != 1) {
         throw new Error('Invalid RegisterEInvoiceRequest: Header element is missing');
@@ -433,11 +428,12 @@ function handleRegisterEInvoiceRequest(appArea: string, parser: Document): strin
         throw new Error('Invalid RegisterEInvoiceRequest: Header and Invoice elements are requird');
     }
 
-    const Invoice = parser.documentElement.childNodes[1];
-    Invoice.setAttribute('xmlns:sac', 'urn:oasis:names:specification:ubl:schema:xsd:SignatureAggregateComponents-2');
-    Invoice.setAttribute('xmlns:sig', 'urn:oasis:names:specification:ubl:schema:xsd:CommonSignatureComponents-2');
-    Invoice.setAttribute('xmlns:ext', 'urn:oasis:names:specification:ubl:schema:xsd:CommonExtensionComponents-2');
-    Invoice.setAttribute('xmlns:ds', 'http://www.w3.org/2000/09/xmldsig#');
+    //const Invoice = parser.documentElement.childNodes[1];
+    // Invoice.setAttribute('xmlns:sac', 'urn:oasis:names:specification:ubl:schema:xsd:SignatureAggregateComponents-2');
+    // Invoice.setAttribute('xmlns:sig', 'urn:oasis:names:specification:ubl:schema:xsd:CommonSignatureComponents-2');
+    // Invoice.setAttribute('xmlns:ext', 'urn:oasis:names:specification:ubl:schema:xsd:CommonExtensionComponents-2');
+    //Invoice.setAttribute('xmlns:ds', 'http://www.w3.org/2000/09/xmldsig#');
+   
 
     // { key: 'xmlns:cac', value: 'urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2' },
     //         { key: 'xmlns:cbc', value: 'urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2' },
@@ -450,42 +446,120 @@ function handleRegisterEInvoiceRequest(appArea: string, parser: Document): strin
     //         { key: 'xmlns:xsi', value: 'http://www.w3.org/2001/XMLSchema-instance' },
 
     //let cleanInvoiceXml = Invoice[0].toLocaleString(); //ubl.getXml();
-    //cleanInvoiceXml = cleanInvoiceXml.replace('<?xml version="1.0" encoding="UTF-8" standalone="no"?>','');
-    //const cleanInvoiceXmlDom = new DOMParser().parseFromString(cleanInvoiceXml, 'text/xml');
-    //cleanInvoiceXmlDom.documentElement.removeChild(cleanInvoiceXmlDom.documentElement.getElementsByTagName('cbc:UBLVersionID')[0]);
-    const cleanInvoiceXmlDom = new DOMParser().parseFromString(Invoice.toLocaleString(), 'text/xml');
-
-
-
-
-    const UBLExtensions = appendEmptyXmlElement(cleanInvoiceXmlDom.documentElement, 'ext:UBLExtensions', cleanInvoiceXmlDom.documentElement.getElementsByTagName('CustomizationID')[0]);
+    
+    let cleanInvoiceXml =ubl.getXml();
+    cleanInvoiceXml = cleanInvoiceXml.replace('<?xml version="1.0" encoding="UTF-8" standalone="no"?>','');
+    const dom = new DOMParser().parseFromString(cleanInvoiceXml, 'text/xml');
+    dom.documentElement.removeChild(parser.documentElement.getElementsByTagName('cbc:UBLVersionID')[0]);
+      
+    const UBLExtensions = appendEmptyXmlElement(parser.documentElement, 'ext:UBLExtensions', parser.documentElement.getElementsByTagName('cbc:CustomizationID')[0]);
     const UBLExtension = appendEmptyXmlElement(UBLExtensions, 'ext:UBLExtension');
     const ExtensionContent = appendEmptyXmlElement(UBLExtension, 'ext:ExtensionContent');
     const UBLDocumentSignatures = appendEmptyXmlElement(ExtensionContent, 'sig:UBLDocumentSignatures');
     const SignatureInformation = appendEmptyXmlElement(UBLDocumentSignatures, 'sac:SignatureInformation');
 
 
+    
     //actual signature generation , e.g. do not change invoice xml after that point
-    let cleanInvoiceXml = cleanInvoiceXmlDom.documentElement.toLocaleString();
-    const pureSignature = computeEinvoiceSignature('Invoice', cleanInvoiceXml, appArea);
+    //let cleanInvoiceXml = dom.documentElement.toLocaleString();
+    let pureSignature = computeEinvoiceSignature('Invoice', dom.documentElement.toString(), appArea);
+    //pureSignature = pureSignature.replace(/<Signature /gi,'<ns8:Signature ');
+    //pureSignature = pureSignature.replace(/<\/Signature>/gi,'</ns8:Signature>');
+    //pureSignature = pureSignature.replace(/xmlns:ns8=""/gi,'');
+    //pureSignature = pureSignature.replace(/URI="#_0"/gi,'URI="1"');
+    
 
     const signatureElement = new DOMParser().parseFromString(pureSignature, 'text/xml');
     SignatureInformation.appendChild(signatureElement.documentElement);
 
-    let finalEInvoiceXml = cleanInvoiceXmlDom.documentElement.toString();
+
+    let finalEInvoiceXml = dom.documentElement.toString();
+    // finalEInvoiceXml = finalEInvoiceXml.replace('URI="#_0"','URI=""');
+    // finalEInvoiceXml = finalEInvoiceXml.replace(/ds:/gi,'ns5:');
+    //finalEInvoiceXml = finalEInvoiceXml.replace(/xmlns:ds="http:\/\/www.w3.org\/2000\/09\/xmldsig#"/gi,'');
+    // finalEInvoiceXml = finalEInvoiceXml.rechrlace('xmlns:ext="urn:oasis:names:specification:ubl:schema:xsd:CommonExtensionComponents-2','');
+
+     //finalEInvoiceXml = finalEInvoiceXml.replace(/ds:/gi,'');
+     
+
+
     const buff = Buffer.from(finalEInvoiceXml);
     const invoiceAsBase64 = buff.toString('base64');
-    const request = `<RegisterEinvoiceRequest xmlns="https://Einvoice.tatime.gov.al/EinvoiceService/schema"
-    xmlns:ns2="http://www.w3.org/2000/09/xmldsig#" Id="Request" Version="1">${Header[0].toString()}<EinvoiceEnvelope><UblInvoice>${invoiceAsBase64}</UblInvoice></EinvoiceEnvelope></RegisterEinvoiceRequest>`;
-    //const ublInv = parser.documentElement.getElementsByTagName('UblInvoice');
-    //if (!ublInv || ublInv.length != 1) {
-    //    throw new Error('Element UblInvoice is missing in the request!');
-    //}
-    //ublInv[0].textContent = buff.toString('base64');
-    return request
+    const request = `<RegisterEinvoiceRequest xmlns="https://Einvoice.tatime.gov.al/EinvoiceService/schema" xmlns:ns2="http://www.w3.org/2000/09/xmldsig#" Id="Request" Version="1">${Header[0].toString()}<EinvoiceEnvelope><UblInvoice>${invoiceAsBase64}</UblInvoice></EinvoiceEnvelope></RegisterEinvoiceRequest>`;
+
+    return request  
 }
 
-export function processByRequestType(appArea: string, requestType: string, xml: string): { transformedRequest: string; skipUplinkRequest: boolean } {
+
+async function handleRegisterRawEInvoiceRequest(appArea: string, parser: Document): Promise<string> {
+    const terminatingString = '#AAI#';
+    const defaultCurrency = 'ALL';
+    const Invoice = parser.documentElement.getElementsByTagName('ns8:Invoice');
+    if (!Invoice || Invoice.length != 1) {
+        throw new Error('Invalid RegisterEInvoiceRequest: Invoice element is missing');
+    }
+
+    const invoiceDom = new DOMParser().parseFromString(Invoice.toString(), 'text/xml');
+     
+    const Header = parser.documentElement.getElementsByTagName('Header');
+    if (!Header || Header.length != 1) {
+        throw new Error('Invalid RegisterEInvoiceRequest: Header element is missing');
+    }
+
+
+    if(parser.documentElement.childNodes.length<2){
+        throw new Error('Invalid RegisterEInvoiceRequest: Header and Invoice elements are requird');
+    }
+
+     
+   
+    let custId =  invoiceDom.documentElement.getElementsByTagName('CustomizationID');
+    if(custId.length>0){
+        custId = custId[0]
+    }
+    else 
+        custId = undefined;
+    
+
+    const UBLExtensions = appendEmptyXmlElement( invoiceDom.documentElement, 'ns2:UBLExtensions', custId);
+    const UBLExtension = appendEmptyXmlElement(UBLExtensions, 'ns2:UBLExtension');
+    const ExtensionContent = appendEmptyXmlElement(UBLExtension, 'ns2:ExtensionContent');
+    const UBLDocumentSignatures = appendEmptyXmlElement(ExtensionContent, 'ns7:UBLDocumentSignatures');
+    const SignatureInformation = appendEmptyXmlElement(UBLDocumentSignatures, 'ns6:SignatureInformation');
+
+
+
+    //actual signature generation , e.g. do not change invoice xml after that point
+    //let cleanInvoiceXml = dom.documentElement.toLocaleString();
+    let pureSignature = computeEinvoiceSignature('Invoice', invoiceDom.toString(), appArea);
+    //pureSignature = pureSignature.replace(/<Signature /gi,'<ns8:Signature ');
+    //pureSignature = pureSignature.replace(/<\/Signature>/gi,'</ns8:Signature>');
+    //pureSignature = pureSignature.replace(/xmlns:ns8=""/gi,'');
+    //pureSignature = pureSignature.replace(/URI="#_0"/gi,'URI="1"');
+    
+
+    const signatureElement = new DOMParser().parseFromString(pureSignature, 'text/xml');
+    SignatureInformation.appendChild(signatureElement.documentElement);
+
+
+    let finalEInvoiceXml = invoiceDom.documentElement.toString();
+    // finalEInvoiceXml = finalEInvoiceXml.replace('URI="#_0"','URI=""');
+    // finalEInvoiceXml = finalEInvoiceXml.replace(/ds:/gi,'ns5:');
+    //finalEInvoiceXml = finalEInvoiceXml.replace(/xmlns:ds="http:\/\/www.w3.org\/2000\/09\/xmldsig#"/gi,'');
+    // finalEInvoiceXml = finalEInvoiceXml.rechrlace('xmlns:ext="urn:oasis:names:specification:ubl:schema:xsd:CommonExtensionComponents-2','');
+
+     //finalEInvoiceXml = finalEInvoiceXml.replace(/ds:/gi,'');
+     
+
+
+    const buff = Buffer.from(finalEInvoiceXml);
+    const invoiceAsBase64 = buff.toString('base64');
+    const request = `<RegisterEinvoiceRequest xmlns="https://Einvoice.tatime.gov.al/EinvoiceService/schema" xmlns:ns2="http://www.w3.org/2000/09/xmldsig#" Id="Request" Version="1">${Header[0].toString()}<EinvoiceEnvelope><UblInvoice>${invoiceAsBase64}</UblInvoice></EinvoiceEnvelope></RegisterEinvoiceRequest>`;
+
+    return request  
+}
+
+export async function processByRequestType(appArea: string, requestType: string, xml: string): Promise<{ transformedRequest: string; skipUplinkRequest: boolean }> {
     const parser = new DOMParser().parseFromString(xml, 'text/xml');
     if (parser) {
 
@@ -496,7 +570,7 @@ export function processByRequestType(appArea: string, requestType: string, xml: 
             case 'RegisterWTNRequest'.toUpperCase(): return { transformedRequest: handleRegisterWTNRequest(appArea, parser), skipUplinkRequest: false };
             case 'DmsCalculateIIC'.toUpperCase(): return { transformedRequest: handleRegisterDmsCalculateIICRequest(appArea, parser), skipUplinkRequest: true };
             case 'DmsCalculateWTNIC'.toUpperCase(): return { transformedRequest: handleRegisterDmsCalculateWTNICRequest(appArea, parser), skipUplinkRequest: true };
-            case 'RegisterEInvoiceRequest'.toUpperCase(): return { transformedRequest: handleRegisterEInvoiceRequest(appArea, parser), skipUplinkRequest: false };
+            case 'RegisterEInvoiceRequest'.toUpperCase(): return { transformedRequest: await handleRegisterRawEInvoiceRequest(appArea, parser), skipUplinkRequest: false };
             case 'GetTaxpayersRequest'.toUpperCase(): return { transformedRequest: xml, skipUplinkRequest: false };
             case 'GetEInvoicesRequest'.toUpperCase(): return { transformedRequest: xml, skipUplinkRequest: false };
             case 'EinvoiceChangeStatusRequest'.toUpperCase(): return { transformedRequest: xml, skipUplinkRequest: false };

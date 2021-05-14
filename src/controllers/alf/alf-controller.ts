@@ -43,11 +43,12 @@ export class ALFController extends ApiControlerBase {
             }
 
             
-            const { transformedRequest, skipUplinkRequest } = processByRequestType(appArea, requestType, xml);
+            const { transformedRequest, skipUplinkRequest } = await processByRequestType(appArea, requestType, xml);
             let successResponse = false;
             let response;
             if (!skipUplinkRequest) {
-                const signedRequest = computeSignedRequest(requestType, transformedRequest, appArea);                              
+                let signedRequest = computeSignedRequest(requestType, transformedRequest, appArea);     
+                signedRequest = signedRequest.replace('URI="#_0"','URI="#Request"');                         
                 try {
                     if(requestType.toUpperCase()=='RegisterEinvoiceRequest'.toUpperCase() ||
                     requestType.toUpperCase()=='GetTaxpayersRequest'.toUpperCase() ||

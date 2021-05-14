@@ -16,7 +16,7 @@
     "dependencies": {
         "@babel/core": "^7.13.15",
         "@elastic/elasticsearch": "^7.12.0",
-        "@peculiar/webcrypto": "^1.1.6",
+        "@peculiar/webcrypto": "^1.1.7",
         "@types/node": "^14.14.41",
         "babel-loader": "^8.2.2",
         "bestzip": "^2.2.0",
@@ -45,8 +45,8 @@
         "webpack": "^4.46.0",
         "webpack-cli": "^4.6.0",
         "webpack-node-externals": "^2.5.2",
-        "xadesjs": "^2.1.1",
         "xml-crypto": "^2.1.1",
+        "xmldsigjs": "^2.1.4",
         "yamljs": "^0.3.0"
     }
 }

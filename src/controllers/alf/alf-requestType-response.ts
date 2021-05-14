@@ -136,9 +136,10 @@ export function handleDmsCalculateIICResponse(appArea: string, requestXml: strin
     if(!parsedRequest.documentElement.getAttribute('BusinUnitCode')){
         throw new Error('IIC calculation erorr: Invoice.BusinUnitCode attribute is required');
     }
-    if(!parsedRequest.documentElement.getAttribute('TCRCode')){
-        throw new Error('IIC calculation erorr: Invoice.TCRCode attribute is required');
-    }
+    //TCRCode can be 0 for 
+    // if(!parsedRequest.documentElement.getAttribute('TCRCode')){
+    //     throw new Error('IIC calculation erorr: Invoice.TCRCode attribute is required');
+    // }
     if(!parsedRequest.documentElement.getAttribute('SoftCode')){
         throw new Error('IIC calculation erorr: Invoice.SoftCode attribute is required');
     }
@@ -218,33 +219,18 @@ function handleGetTaxPayersResponse(appArea: string, requestXml: string, parsedR
 
 function handleRegisterEInvoiceResponse(appArea: string, requestXml: string, parsedResponse: Document, isSuccessReponse: boolean): Record<string, any> {
     const parsedRequest = new DOMParser().parseFromString(requestXml, 'text/xml');
-
+    let fault = undefined;
+    let code = undefined;
     const RegisterEInvoiceResponse = parsedResponse.documentElement.getElementsByTagName('RegisterInvoiceResponse');
     if (!isSuccessReponse) {
-        // const iic = parsedResponse.createElement('IIC')
-        // iic.innerText = parsedRequest.documentElement.getElementsByTagName('Invoice')[0].getAttribute('IIC');
-        // iic.textContent = parsedRequest.documentElement.getElementsByTagName('Invoice')[0].getAttribute('IIC');
-        // const c = parsedResponse.documentElement.toString();
-        // parsedResponse.documentElement.getElementsByTagName('env:Fault')[0].appendChild(iic)
-        // throw parsedResponse.documentElement.toString();
+        throw parsedResponse.documentElement.toString();
     }
     else
         if (!RegisterEInvoiceResponse || RegisterEInvoiceResponse.length != 1) {
             throw new Error('Invalid response for RegisterEInvoiceResponse');
         }
     const Header = parsedResponse.documentElement.getElementsByTagName('Header');
-    //const FIC = parsedResponse.documentElement.getElementsByTagName('FIC');
-
-    // if (!FIC || FIC.length == 0) {
-    //     throw 'FIC was not returned'
-    // }
-
-
-
-
     return {
-        //fic: FIC && FIC.length > 0 ? FIC[0].textContent : '',
-        //iic: parsedRequest.documentElement.getElementsByTagName('Invoice')[0].getAttribute('IIC'),
         requestUUID: Header && Header.length > 0 ? Header[0].getAttribute('RequestUUID') : '',
     }
 }
