@@ -220,8 +220,8 @@ function handleGetTaxPayersResponse(appArea: string, requestXml: string, parsedR
 function handleRegisterEInvoiceResponse(appArea: string, requestXml: string, parsedResponse: Document, isSuccessReponse: boolean): Record<string, any> {
     const parsedRequest = new DOMParser().parseFromString(requestXml, 'text/xml');
     let fault = undefined;
-    let code = undefined;
-    const RegisterEInvoiceResponse = parsedResponse.documentElement.getElementsByTagName('RegisterEinvoiceResponse');
+    let code = undefined;                                                                 
+    const RegisterEInvoiceResponse = parsedResponse.documentElement.getElementsByTagName('ns2:RegisterEinvoiceResponse');
     if (!isSuccessReponse) {
         throw parsedResponse.documentElement.toString();
     }
@@ -229,9 +229,10 @@ function handleRegisterEInvoiceResponse(appArea: string, requestXml: string, par
         if (!RegisterEInvoiceResponse || RegisterEInvoiceResponse.length != 1) {
             throw new Error('Invalid response for RegisterEinvoiceResponse');
         }
-    const Header = parsedResponse.documentElement.getElementsByTagName('Header');
+    const Header = parsedResponse.documentElement.getElementsByTagName('ns2:Header');
+    const eic = parsedResponse.documentElement.getElementsByTagName('ns2:EIC');
     return {
-        eic: Header && Header.length > 0 ? Header[0].getAttribute('eic') : '',
+        eic: eic && eic.length > 0 ? eic[0].textContent: '',
         requestUUID: Header && Header.length > 0 ? Header[0].getAttribute('RequestUUID') : '',
     }
 }
