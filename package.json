@@ -1,7 +1,7 @@
 {
     "name": "dms",
     "sideEffects": false,
-    "version": "0.0.5",
+    "version": "0.0.6",
     "private": true,
     "module": "true",
     "engines": {
@@ -11,7 +11,8 @@
         "zip": "cd ./out/ && bestzip ../deploy.zip *",
         "start": "node app",
         "build": "npx webpack --config webpack.dev.config",
-        "release": "npx webpack --config webpack.dev.config && npm run zip"
+        "release": "npx webpack --config webpack.dev.config && npm run zip",
+        "deploy":"eb deploy"
     },
     "dependencies": {
         "@babel/core": "^7.13.15",

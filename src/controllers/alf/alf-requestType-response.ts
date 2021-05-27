@@ -221,16 +221,17 @@ function handleRegisterEInvoiceResponse(appArea: string, requestXml: string, par
     const parsedRequest = new DOMParser().parseFromString(requestXml, 'text/xml');
     let fault = undefined;
     let code = undefined;
-    const RegisterEInvoiceResponse = parsedResponse.documentElement.getElementsByTagName('RegisterInvoiceResponse');
+    const RegisterEInvoiceResponse = parsedResponse.documentElement.getElementsByTagName('RegisterEinvoiceResponse');
     if (!isSuccessReponse) {
         throw parsedResponse.documentElement.toString();
     }
     else
         if (!RegisterEInvoiceResponse || RegisterEInvoiceResponse.length != 1) {
-            throw new Error('Invalid response for RegisterEInvoiceResponse');
+            throw new Error('Invalid response for RegisterEinvoiceResponse');
         }
     const Header = parsedResponse.documentElement.getElementsByTagName('Header');
     return {
+        eic: Header && Header.length > 0 ? Header[0].getAttribute('eic') : '',
         requestUUID: Header && Header.length > 0 ? Header[0].getAttribute('RequestUUID') : '',
     }
 }
