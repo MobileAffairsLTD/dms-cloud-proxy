@@ -67,6 +67,7 @@ export function executeRequestEinvoice(signedXml: string, isProduction: boolean)
                 rejectUnauthorized: false,
                 method: 'POST', 
                 hostname: isProduction?'einvoice.tatime.gov.al':'einvoice-test.tatime.gov.al',
+                // hostname: 'einvoice-test.tatime.gov.al',               
                 port: 443,
                 path: '/EinvoiceService-v1',
                 headers: {
