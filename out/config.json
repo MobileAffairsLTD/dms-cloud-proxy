@@ -19,6 +19,7 @@
             }
         },
         "DEMO01": {
+            "apiKey": "12222",
             "settings": {   
                 "backend": {
                     "type": "bc1",

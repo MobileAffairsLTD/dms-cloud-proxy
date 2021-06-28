@@ -1,0 +1,493 @@
+{
+	"info": {
+		"_postman_id": "f07bb296-7e04-44c9-8bc9-893679f6763f",
+		"name": "Albanian Fiscalization",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "CalculateIIC - valid",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "dms-api-key",
+						"value": "123",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"request\":\"<DmsCalculateIIC IssuerNuis=\\\"12344\\\" BusinUnitCode=\\\"bb123bb123\\\" IssueDateTime=\\\"2021-04-13T15:02:00+02:00\\\" InvOrdNum=\\\"3\\\" SoftCode=\\\"cc476bs902\\\" TCRCode=\\\"wk592ag291\\\" TotPrice=\\\"20.00\\\"/>\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://dynamicsmobile-agent-east1.us-east-1.elasticbeanstalk.com/api/plugins/alf/request/DEMO01/DmsCalculateIIC",
+					"protocol": "http",
+					"host": [
+						"dynamicsmobile-agent-east1",
+						"us-east-1",
+						"elasticbeanstalk",
+						"com"
+					],
+					"path": [
+						"api",
+						"plugins",
+						"alf",
+						"request",
+						"DEMO01",
+						"DmsCalculateIIC"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "RegisterTCRrequest - valid",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "dms-api-key",
+						"value": "123",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"request\":\"<RegisterTCRRequest xmlns=\\\"https://eFiskalizimi.tatime.gov.al/FiscalizationService/schema\\\" xmlns:ns2=\\\"http://www.w3.org/2000/09/xmldsig#\\\" Id=\\\"Request\\\" Version=\\\"3\\\"><Header SendDateTime=\\\"2021-04-10T08:43:00+02:00\\\" UUID=\\\"e2caa8bc-91bf-429c-8919-e833367784c0\\\" /><TCR BusinUnitCode=\\\"ge484ak993\\\" IssuerNUIS=\\\"L01714012M\\\" MaintainerCode=\\\"zk772ct263\\\" SoftCode=\\\"cc476bs902\\\" TCRIntID=\\\"2\\\" ValidFrom=\\\"2021-04-10\\\" Type=\\\"REGULAR\\\" /></RegisterTCRRequest>\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://dynamicsmobile-agent-east1.us-east-1.elasticbeanstalk.com/api/plugins/alf/request/DEMO01/RegisterTCRRequest",
+					"protocol": "http",
+					"host": [
+						"dynamicsmobile-agent-east1",
+						"us-east-1",
+						"elasticbeanstalk",
+						"com"
+					],
+					"path": [
+						"api",
+						"plugins",
+						"alf",
+						"request",
+						"DEMO01",
+						"RegisterTCRRequest"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "CashDepositRequest - valid",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "dms-api-key",
+						"value": "123",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"request\":\"<RegisterCashDepositRequest xmlns=\\\"https://eFiskalizimi.tatime.gov.al/FiscalizationService/schema\\\" xmlns:ns2=\\\"http://www.w3.org/2000/09/xmldsig#\\\"  Id=\\\"Request\\\" Version=\\\"3\\\"> <Header SendDateTime=\\\"2021-04-20T11:14:01+02:00\\\" UUID=\\\"4389b9c4-bb24-4673-b952-456e451cd3c3\\\" /> <CashDeposit CashAmt=\\\"2000.00\\\"  ChangeDateTime=\\\"2021-04-20T11:14:01+02:00\\\" IssuerNUIS=\\\"L01714012M\\\" Operation=\\\"DEPOSIT\\\" TCRCode=\\\"wk592ag291\\\" /></RegisterCashDepositRequest>\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://dynamicsmobile-agent-east1.us-east-1.elasticbeanstalk.com/api/plugins/alf/request/DEMO01/RegisterCashDepositRequest",
+					"protocol": "http",
+					"host": [
+						"dynamicsmobile-agent-east1",
+						"us-east-1",
+						"elasticbeanstalk",
+						"com"
+					],
+					"path": [
+						"api",
+						"plugins",
+						"alf",
+						"request",
+						"DEMO01",
+						"RegisterCashDepositRequest"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "RegisterInvoiceRequest- valid",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "dms-api-key",
+						"value": "123",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"request\":\"<RegisterInvoiceRequest xmlns=\\\"https://eFiskalizimi.tatime.gov.al/FiscalizationService/schema\\\" xmlns:ns2=\\\"http://www.w3.org/2000/09/xmldsig#\\\" Id=\\\"Request\\\" Version=\\\"3\\\"><Header SendDateTime=\\\"2021-06-17T09:24:24+02:00\\\" UUID=\\\"8d216f9a-55bb-445a-be32-30137f11b964\\\" /><Invoice IsEinvoice=\\\"true\\\" BusinUnitCode=\\\"bb123bb123\\\" IssueDateTime=\\\"2021-06-17T09:24:24+02:00\\\" InvNum=\\\"6020/2021\\\" InvOrdNum=\\\"6020\\\" IsIssuerInVAT=\\\"true\\\" IsReverseCharge=\\\"false\\\" IsSimplifiedInv=\\\"false\\\" OperatorCode=\\\"ry292lr768\\\" SoftCode=\\\"cc476bs902\\\" TCRCode=\\\"wk592ag291\\\" TotPrice=\\\"40.00\\\" TotPriceWoVAT=\\\"32.00\\\" TotVATAmt=\\\"8.00\\\" TypeOfInv=\\\"NONCASH\\\"><PayMethods><PayMethod Amt=\\\"40.00\\\" Type=\\\"ACCOUNT\\\"/></PayMethods><Seller Address=\\\"Seller address\\\" Country=\\\"ALB\\\" Name=\\\"Intelligent Systems Albania\\\" IDNum=\\\"L01714012M\\\" IDType=\\\"NUIS\\\"  Town=\\\"Tirana\\\"/><Buyer IDType=\\\"NUIS\\\" IDNum=\\\"K41914024V\\\" Name=\\\"BT SOLUTIONS\\\" /><Items><I C=\\\"501234567890\\\" N=\\\"Item name\\\" PA=\\\"40.00\\\" PB=\\\"32.00\\\" Q=\\\"2.0\\\" R=\\\"0\\\" RR=\\\"true\\\" U=\\\"piece\\\" UPB=\\\"32.00\\\" UPA=\\\"40.00\\\" VA=\\\"8.00\\\" VR=\\\"25.00\\\"/></Items><SameTaxes><SameTax NumOfItems=\\\"2\\\" PriceBefVAT=\\\"32.00\\\" VATAmt=\\\"8.00\\\" VATRate=\\\"25.00\\\"/></SameTaxes></Invoice></RegisterInvoiceRequest>\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://dynamicsmobile-agent-east1.us-east-1.elasticbeanstalk.com/api/plugins/alf/request/DEMO01/RegisterInvoiceRequest",
+					"protocol": "http",
+					"host": [
+						"dynamicsmobile-agent-east1",
+						"us-east-1",
+						"elasticbeanstalk",
+						"com"
+					],
+					"path": [
+						"api",
+						"plugins",
+						"alf",
+						"request",
+						"DEMO01",
+						"RegisterInvoiceRequest"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "RegisterEInvoiceRequest2 - valid",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "dms-api-key",
+						"value": "123",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"request\":\"<RegisterEinvoiceRequest xmlns=\\\"https://Einvoice.tatime.gov.al/EinvoiceService/schema\\\" xmlns:ns2=\\\"http://www.w3.org/2000/09/xmldsig#\\\" Id=\\\"Request\\\" Version=\\\"1\\\"><Header SendDateTime=\\\"2020-11-02T21:29:18+01:00\\\" UUID=\\\"71f9dae8-5cc8-45a8-97e8-b9cdee37a0ef\\\"/><ns8:Invoice xmlns:ns8=\\\"urn:oasis:names:specification:ubl:schema:xsd:Invoice-2\\\" xmlns=\\\"urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2\\\" xmlns:ns2=\\\"urn:oasis:names:specification:ubl:schema:xsd:CommonExtensionComponents-2\\\" xmlns:ns3=\\\"urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2\\\" xmlns:ns4=\\\"urn:oasis:names:specification:ubl:schema:xsd:SignatureBasicComponents-2\\\" xmlns:ns5=\\\"http://www.w3.org/2000/09/xmldsig#\\\" xmlns:ns6=\\\"urn:oasis:names:specification:ubl:schema:xsd:SignatureAggregateComponents-2\\\" xmlns:ns7=\\\"urn:oasis:names:specification:ubl:schema:xsd:CommonSignatureComponents-2\\\"><CustomizationID>urn:cen.eu:en16931:2017#compliant#urn:akshi.al:2019:1.0</CustomizationID><ProfileID>P1</ProfileID><ID>100/2020</ID><IssueDate>2020-11-02</IssueDate><DueDate>2020-11-02</DueDate><InvoiceTypeCode>380</InvoiceTypeCode><Note>IIC=D21EBF3F7B7C502D6AAF2321A7CE2CE8#AAI#</Note><Note>IICSignature=554FAD2997CB40A8223829E91798E7C3D866D99805E6645171BEFEF3854A3B7B4A04FB4B1D4E16705437E563B6625F173C613634B698B4F50B348743DEDD4D798A8E59F827280513093961998A56B33DC30BC0F2C5AFC06092440761D5BE0BBF6872FFE9FA0A2A5D2EEE1A7E669B9ADD82B0C128B44CEBBB0231E1FFA36D2C61C6B54E40C3771042D7C0AA3C24B25A8312C731F039BBA3AF08E6FC253E9D756AFA8F268724EBCBD7E7468A64EBEF428CDC733692A8870DA40A0CF52C68DF02EDE5EA1E0CC405AA98B2C1F8DAB7AB59EA9378444E94D3B96382B66A02CD7D8C6A26D8ABA45B5769BFD8ABEF52DCCDC214F00A004400E55973135FAF7C5E7CBA40#AAI#</Note><Note>FIC=58304d1a-3f6b-402b-bcde-cf6b044a57c7#AAI#</Note><Note>IssueDateTime=2020-11-02T21:29:18+01:00#AAI#</Note><Note>OperatorCode=ry292lr768#AAI#</Note><Note>BusinessUnitCode=bb123bb123#AAI#</Note><Note>SoftwareCode=cc476bs902#AAI#</Note><Note>IsBadDebtInv=false#AAI#</Note><DocumentCurrencyCode>ALL</DocumentCurrencyCode><TaxCurrencyCode>ALL</TaxCurrencyCode><ns3:AccountingSupplierParty><ns3:Party><EndpointID schemeID=\\\"9923\\\">L01714012M</EndpointID><ns3:PartyName><Name>Intelligent Systems Albania</Name></ns3:PartyName><ns3:PostalAddress><StreetName>Ne fshatin agim,  zona kadastrale 1005, pasuria nr. 68/34</StreetName><CityName>Tirana</CityName><ns3:Country><IdentificationCode>AL</IdentificationCode></ns3:Country></ns3:PostalAddress><ns3:PartyTaxScheme><CompanyID>L93416401M</CompanyID><ns3:TaxScheme><ID>FRE</ID></ns3:TaxScheme></ns3:PartyTaxScheme><ns3:PartyLegalEntity><RegistrationName>Oltjon Bushi</RegistrationName><CompanyID>L93416401M</CompanyID></ns3:PartyLegalEntity><ns3:Contact/></ns3:Party></ns3:AccountingSupplierParty><ns3:AccountingCustomerParty><ns3:Party><EndpointID schemeID=\\\"9923\\\">L42202028V</EndpointID><ns3:PartyName><Name>JEHONA SOFTWARE</Name></ns3:PartyName><ns3:PostalAddress><StreetName>Njesia Bashkiake nr 5, Rruga Prokop Mima, Pallati Universal, Hyrja e Pare, Kati i Pare, Hyrja 1 A </StreetName><CityName>Tirane</CityName><ns3:Country><IdentificationCode>AL</IdentificationCode></ns3:Country></ns3:PostalAddress><ns3:PartyTaxScheme><CompanyID>FRE</CompanyID><ns3:TaxScheme><ID>FRE</ID></ns3:TaxScheme></ns3:PartyTaxScheme><ns3:PartyLegalEntity><RegistrationName>JEHONA SOFTWARE</RegistrationName><CompanyID>L42202028V</CompanyID></ns3:PartyLegalEntity><ns3:Contact/></ns3:Party></ns3:AccountingCustomerParty><ns3:PaymentMeans><PaymentMeansCode>54</PaymentMeansCode><InstructionNote>Desc</InstructionNote><ns3:CardAccount><PrimaryAccountNumberID>555555</PrimaryAccountNumberID><NetworkID>GG</NetworkID></ns3:CardAccount><ns3:PayeeFinancialAccount/></ns3:PaymentMeans><ns3:TaxTotal><TaxAmount currencyID=\\\"ALL\\\">0</TaxAmount><ns3:TaxSubtotal><TaxableAmount currencyID=\\\"ALL\\\">100.00</TaxableAmount><TaxAmount currencyID=\\\"ALL\\\">0</TaxAmount><ns3:TaxCategory><ID>O</ID><TaxExemptionReasonCode>vatex-eu-o</TaxExemptionReasonCode><ns3:TaxScheme><ID>VAT</ID></ns3:TaxScheme></ns3:TaxCategory></ns3:TaxSubtotal></ns3:TaxTotal><ns3:LegalMonetaryTotal><LineExtensionAmount currencyID=\\\"ALL\\\">100.00</LineExtensionAmount><TaxExclusiveAmount currencyID=\\\"ALL\\\">100.00</TaxExclusiveAmount><TaxInclusiveAmount currencyID=\\\"ALL\\\">100.00</TaxInclusiveAmount><PayableAmount currencyID=\\\"ALL\\\">100.00</PayableAmount></ns3:LegalMonetaryTotal><ns3:InvoiceLine><ID>1</ID><InvoicedQuantity unitCode=\\\"H87\\\">10.00</InvoicedQuantity><LineExtensionAmount currencyID=\\\"ALL\\\">100.00</LineExtensionAmount><ns3:Item><Description>Desc</Description><Name>Banana</Name><ns3:ClassifiedTaxCategory><ID>O</ID><ns3:TaxScheme><ID>VAT</ID></ns3:TaxScheme></ns3:ClassifiedTaxCategory></ns3:Item><ns3:Price><PriceAmount currencyID=\\\"ALL\\\">10.00</PriceAmount><BaseQuantity>1</BaseQuantity></ns3:Price></ns3:InvoiceLine></ns8:Invoice></RegisterEinvoiceRequest>\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/plugins/alf/request/DEMO01/RegisterEinvoiceRequest",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"plugins",
+						"alf",
+						"request",
+						"DEMO01",
+						"RegisterEinvoiceRequest"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "RegisterEInvoiceRequest2 - valid Copy",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "dms-api-key",
+						"value": "123",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"request\":\"<RegisterEinvoiceRequest xmlns=\\\"https://Einvoice.tatime.gov.al/EinvoiceService/schema\\\" xmlns:ns2=\\\"http://www.w3.org/2000/09/xmldsig#\\\" Id=\\\"Request\\\" Version=\\\"1\\\"><Header SendDateTime=\\\"2020-11-02T21:29:18+01:00\\\" UUID=\\\"71f9dae8-5cc8-45a8-97e8-b9cdee37a0ef\\\"/><ns8:Invoice xmlns:ns8=\\\"urn:oasis:names:specification:ubl:schema:xsd:Invoice-2\\\" xmlns=\\\"urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2\\\" xmlns:ns2=\\\"urn:oasis:names:specification:ubl:schema:xsd:CommonExtensionComponents-2\\\" xmlns:ns3=\\\"urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2\\\" xmlns:ns4=\\\"urn:oasis:names:specification:ubl:schema:xsd:SignatureBasicComponents-2\\\" xmlns:ns5=\\\"http://www.w3.org/2000/09/xmldsig#\\\" xmlns:ns6=\\\"urn:oasis:names:specification:ubl:schema:xsd:SignatureAggregateComponents-2\\\" xmlns:ns7=\\\"urn:oasis:names:specification:ubl:schema:xsd:CommonSignatureComponents-2\\\"><CustomizationID>urn:cen.eu:en16931:2017#compliant#urn:akshi.al:2019:1.0</CustomizationID><ProfileID>P1</ProfileID><ID>100/2020</ID><IssueDate>2020-11-02</IssueDate><DueDate>2020-11-02</DueDate><InvoiceTypeCode>380</InvoiceTypeCode><Note>IIC=D21EBF3F7B7C502D6AAF2321A7CE2CE8#AAI#</Note><Note>IICSignature=554FAD2997CB40A8223829E91798E7C3D866D99805E6645171BEFEF3854A3B7B4A04FB4B1D4E16705437E563B6625F173C613634B698B4F50B348743DEDD4D798A8E59F827280513093961998A56B33DC30BC0F2C5AFC06092440761D5BE0BBF6872FFE9FA0A2A5D2EEE1A7E669B9ADD82B0C128B44CEBBB0231E1FFA36D2C61C6B54E40C3771042D7C0AA3C24B25A8312C731F039BBA3AF08E6FC253E9D756AFA8F268724EBCBD7E7468A64EBEF428CDC733692A8870DA40A0CF52C68DF02EDE5EA1E0CC405AA98B2C1F8DAB7AB59EA9378444E94D3B96382B66A02CD7D8C6A26D8ABA45B5769BFD8ABEF52DCCDC214F00A004400E55973135FAF7C5E7CBA40#AAI#</Note><Note>FIC=58304d1a-3f6b-402b-bcde-cf6b044a57c7#AAI#</Note><Note>IssueDateTime=2020-11-02T21:29:18+01:00#AAI#</Note><Note>OperatorCode=ry292lr768#AAI#</Note><Note>BusinessUnitCode=bb123bb123#AAI#</Note><Note>SoftwareCode=cc476bs902#AAI#</Note><Note>IsBadDebtInv=false#AAI#</Note><DocumentCurrencyCode>ALL</DocumentCurrencyCode><TaxCurrencyCode>ALL</TaxCurrencyCode><ns3:AccountingSupplierParty><ns3:Party><EndpointID schemeID=\\\"9923\\\">L01714012M</EndpointID><ns3:PartyName><Name>Intelligent Systems Albania</Name></ns3:PartyName><ns3:PostalAddress><StreetName>Ne fshatin agim,  zona kadastrale 1005, pasuria nr. 68/34</StreetName><CityName>Tirana</CityName><ns3:Country><IdentificationCode>AL</IdentificationCode></ns3:Country></ns3:PostalAddress><ns3:PartyTaxScheme><CompanyID>L93416401M</CompanyID><ns3:TaxScheme><ID>FRE</ID></ns3:TaxScheme></ns3:PartyTaxScheme><ns3:PartyLegalEntity><RegistrationName>Oltjon Bushi</RegistrationName><CompanyID>L93416401M</CompanyID></ns3:PartyLegalEntity><ns3:Contact/></ns3:Party></ns3:AccountingSupplierParty><ns3:AccountingCustomerParty><ns3:Party><EndpointID schemeID=\\\"9923\\\">L42202028V</EndpointID><ns3:PartyName><Name>JEHONA SOFTWARE</Name></ns3:PartyName><ns3:PostalAddress><StreetName>Njesia Bashkiake nr 5, Rruga Prokop Mima, Pallati Universal, Hyrja e Pare, Kati i Pare, Hyrja 1 A </StreetName><CityName>Tirane</CityName><ns3:Country><IdentificationCode>AL</IdentificationCode></ns3:Country></ns3:PostalAddress><ns3:PartyTaxScheme><CompanyID>FRE</CompanyID><ns3:TaxScheme><ID>FRE</ID></ns3:TaxScheme></ns3:PartyTaxScheme><ns3:PartyLegalEntity><RegistrationName>JEHONA SOFTWARE</RegistrationName><CompanyID>L42202028V</CompanyID></ns3:PartyLegalEntity><ns3:Contact/></ns3:Party></ns3:AccountingCustomerParty><ns3:PaymentMeans><PaymentMeansCode>54</PaymentMeansCode><InstructionNote>Desc</InstructionNote><ns3:CardAccount><PrimaryAccountNumberID>555555</PrimaryAccountNumberID><NetworkID>GG</NetworkID></ns3:CardAccount><ns3:PayeeFinancialAccount/></ns3:PaymentMeans><ns3:TaxTotal><TaxAmount currencyID=\\\"ALL\\\">0</TaxAmount><ns3:TaxSubtotal><TaxableAmount currencyID=\\\"ALL\\\">100.00</TaxableAmount><TaxAmount currencyID=\\\"ALL\\\">0</TaxAmount><ns3:TaxCategory><ID>O</ID><TaxExemptionReasonCode>vatex-eu-o</TaxExemptionReasonCode><ns3:TaxScheme><ID>VAT</ID></ns3:TaxScheme></ns3:TaxCategory></ns3:TaxSubtotal></ns3:TaxTotal><ns3:LegalMonetaryTotal><LineExtensionAmount currencyID=\\\"ALL\\\">100.00</LineExtensionAmount><TaxExclusiveAmount currencyID=\\\"ALL\\\">100.00</TaxExclusiveAmount><TaxInclusiveAmount currencyID=\\\"ALL\\\">100.00</TaxInclusiveAmount><PayableAmount currencyID=\\\"ALL\\\">100.00</PayableAmount></ns3:LegalMonetaryTotal><ns3:InvoiceLine><ID>1</ID><InvoicedQuantity unitCode=\\\"H87\\\">10.00</InvoicedQuantity><LineExtensionAmount currencyID=\\\"ALL\\\">100.00</LineExtensionAmount><ns3:Item><Description>Desc</Description><Name>Banana</Name><ns3:ClassifiedTaxCategory><ID>O</ID><ns3:TaxScheme><ID>VAT</ID></ns3:TaxScheme></ns3:ClassifiedTaxCategory></ns3:Item><ns3:Price><PriceAmount currencyID=\\\"ALL\\\">10.00</PriceAmount><BaseQuantity>1</BaseQuantity></ns3:Price></ns3:InvoiceLine></ns8:Invoice></RegisterEinvoiceRequest>\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/plugins/alf/request/DEMO01/RegisterEinvoiceRequest",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"plugins",
+						"alf",
+						"request",
+						"DEMO01",
+						"RegisterEinvoiceRequest"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "RegisterWTNRequest - valid",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "dms-api-key",
+						"value": "123",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"request\":\"<RegisterWTNRequest xmlns=\\\"https://eFiskalizimi.tatime.gov.al/FiscalizationService/schema\\\" xmlns:ns2=\\\"http://www.w3.org/2000/09/xmldsig#\\\" Id=\\\"Request\\\" Version=\\\"3\\\"><Header SendDateTime=\\\"2021-04-20T11:44:15+02:00\\\" UUID=\\\"a8e6b3d0-f880-4a78-808b-e17bdfec7f18\\\"/><WTN BusinUnitCode=\\\"bb123bb123\\\" DestinAddr=\\\"Destination address 1\\\" DestinCity=\\\"Tirana\\\" DestinDateTime=\\\"2021-04-20T11:44:15+02:00\\\" DestinPoint=\\\"STORE\\\" ValueOfGoods=\\\"100.00\\\" IsEscortRequired=\\\"false\\\" IsGoodsFlammable=\\\"false\\\" IssueDateTime=\\\"2021-04-20T11:44:15+02:00\\\" OperatorCode=\\\"oo123oo123\\\" SoftCode=\\\"cc476bs902\\\" StartAddr=\\\"Start address 1\\\" StartCity=\\\"Tirana\\\" StartDateTime=\\\"2021-04-14T17:58:15+02:00\\\" StartPoint=\\\"WAREHOUSE\\\" Transaction=\\\"SALES\\\" Type=\\\"WTN\\\" VehOwnership=\\\"OWNER\\\" VehPlates=\\\"12345678\\\" WTNNum=\\\"1/2019\\\" WTNOrdNum=\\\"1\\\"><Issuer Address=\\\"Seller address\\\" NUIS=\\\"L01714012M\\\" Name=\\\"Seller name\\\" Town=\\\"Seller town\\\"/><Items><I C=\\\"501234567890\\\" N=\\\"Item 1 name\\\" Q=\\\"4.0\\\" U=\\\"piece\\\"/><I C=\\\"501234567890\\\" N=\\\"Item 2 name\\\" Q=\\\"19.0\\\" U=\\\"piece\\\"/></Items></WTN></RegisterWTNRequest>\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://dynamicsmobile-agent-east1.us-east-1.elasticbeanstalk.com/api/plugins/alf/request/DEMO01/RegisterWTNRequest",
+					"protocol": "http",
+					"host": [
+						"dynamicsmobile-agent-east1",
+						"us-east-1",
+						"elasticbeanstalk",
+						"com"
+					],
+					"path": [
+						"api",
+						"plugins",
+						"alf",
+						"request",
+						"DEMO01",
+						"RegisterWTNRequest"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "CalculateWTNIC - valid",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "dms-api-key",
+						"value": "123",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"request\":\"<DmsCalculateWTNIC IssuerNuis=\\\"12344\\\" BusinUnitCode=\\\"bb123bb123\\\" IssueDateTime=\\\"2021-04-13T15:02:00+02:00\\\" WTNOrdNum=\\\"3\\\" SoftCode=\\\"cc476bs902\\\" TCRCode=\\\"wk592ag291\\\" />\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://dynamicsmobile-agent-east1.us-east-1.elasticbeanstalk.com/api/plugins/alf/request/DEMO01/DmsCalculateWTNIC",
+					"protocol": "http",
+					"host": [
+						"dynamicsmobile-agent-east1",
+						"us-east-1",
+						"elasticbeanstalk",
+						"com"
+					],
+					"path": [
+						"api",
+						"plugins",
+						"alf",
+						"request",
+						"DEMO01",
+						"DmsCalculateWTNIC"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GetTaxPayersRequest - valid",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "dms-api-key",
+						"value": "123",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"request\":\"<GetTaxpayersRequest xmlns=\\\"https://Einvoice.tatime.gov.al/EinvoiceService/schema\\\" xmlns:ns2=\\\"http://www.w3.org/2000/09/xmldsig#\\\" Id=\\\"Request\\\" Version=\\\"1\\\"><Header SendDateTime=\\\"2020-09-10T15:45:24+02:00\\\" UUID=\\\"e7f25589-3882-4270-ae0c-05d2da18fb73\\\"/><Filter><Name>Comp</Name></Filter></GetTaxpayersRequest>\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://agent.portal.dynamicsmobile.com/api/plugins/alf/request/DEMO01/GetTaxpayersRequest",
+					"protocol": "https",
+					"host": [
+						"agent",
+						"portal",
+						"dynamicsmobile",
+						"com"
+					],
+					"path": [
+						"api",
+						"plugins",
+						"alf",
+						"request",
+						"DEMO01",
+						"GetTaxpayersRequest"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GetEInvoices-valid",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "dms-api-key",
+						"value": "123",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"request\": \"<GetEinvoicesRequest xmlns=\\\"https://Einvoice.tatime.gov.al/EinvoiceService/schema\\\" xmlns:ns2=\\\"http://www.w3.org/2000/09/xmldsig#\\\"Id=\\\"Request\\\" Version=\\\"1\\\"> <Header SendDateTime=\\\"2020-09-10T15:45:24+02:00\\\" UUID=\\\"e7f25589-3882-4270-ae0c-05d2da18fb73\\\"/> <EIC>e8e25589-3882-4270-ae0c-05d2da18fb73</EIC></GetEinvoicesRequest>\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://agent.portal.dynamicsmobile.com/api/plugins/alf/request/DEMO01/GetEinvoicesRequest",
+					"protocol": "https",
+					"host": [
+						"agent",
+						"portal",
+						"dynamicsmobile",
+						"com"
+					],
+					"path": [
+						"api",
+						"plugins",
+						"alf",
+						"request",
+						"DEMO01",
+						"GetEinvoicesRequest"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Change Einvoice status-valid",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "dms-api-key",
+						"value": "123",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"request\":\"<EinvoiceChangeStatusRequest xmlns=\\\"https://Einvoice.tatime.gov.al/EinvoiceService/schema\\\"xmlns:ns2=\\\"http://www.w3.org/2000/09/xmldsig#\\\" Id=\\\"Request\\\" Version=\\\"1\\\"> <Header SendDateTime=\\\"2020-09-10T15:45:24+02:00\\\" UUID=\\\"e7f25589-3882-4270-ae0c-05d2da18fb73\\\"/> <EICs> <EIC>e8e25589-3882-4270-ae0c-05d2da18fb73</EIC> <EIC>a6e25467-2771-4280-bc0c-12d3da18fb73</EIC> </EICs> <EinStatus>ACCEPTED</EinStatus> </EinvoiceChangeStatusRequest>\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/plugins/alf/request/DEMO01/EinvoiceChangeStatusRequest",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"plugins",
+						"alf",
+						"request",
+						"DEMO01",
+						"EinvoiceChangeStatusRequest"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "RegisterEInvoiceRequest2 - valid",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "dms-api-key",
+						"value": "123",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"request\":\"<RegisterEinvoiceRequest xmlns=\\\"https://Einvoice.tatime.gov.al/EinvoiceService/schema\\\" xmlns:ns2=\\\"http://www.w3.org/2000/09/xmldsig#\\\" Id=\\\"Request\\\" Version=\\\"1\\\"><Header SendDateTime=\\\"2020-11-02T21:29:18+01:00\\\" UUID=\\\"71f9dae8-5cc8-45a8-97e8-b9cdee37a0ef\\\"/><Invoice FIC=\\\"cbc6ec40-0303-4777-95da-1e3e8f96c182\\\" IIC=\\\"d8972bf86ed66d811fe0e62215e7d7fe\\\" IICSignature=\\\"5bd6f3556e04d2a8da7cf9dc1728d7668a2fcf55beb3ed6c7f1fd0d781850840dc2a4f71f08cbdd176805f092f6167ad021da0f13e46cf40940c8fda9b629a9346d4ff5e82909ee30f63c85f21e33941e9c41832f12a53baaecf6c5165225728648ff5abea669292447d68aacc5626447bd60a83d1e5771fb2a1f8c906cd38d992901fefdff91cc9a85e5f2bfe86466b8e9a04f5666fa6d46ce417b433079d51f3c345c8764d5feb67b6c6333d08296724ae18ae8e288f53774d181c7690f2eaee4ad9bfad0ac2c40df94ebd66723a1cc9ec14eba9ed2ec01646c97f6f76f3f82527c524ed7956aac9d37c83c097790eefc53100a48c31c6e3b7f01810baea4c\\\" IsEinvoice=\\\"true\\\" BusinUnitCode=\\\"bb123bb123\\\" IssueDateTime=\\\"2021-05-14T12:10:00+02:00\\\" InvNum=\\\"6020/2021\\\" InvOrdNum=\\\"6020\\\" IsIssuerInVAT=\\\"true\\\" IsReverseCharge=\\\"false\\\" IsSimplifiedInv=\\\"false\\\" OperatorCode=\\\"ry292lr768\\\" SoftCode=\\\"cc476bs902\\\" TCRCode=\\\"wk592ag291\\\" TotPrice=\\\"40.00\\\" TotPriceWoVAT=\\\"32.00\\\" TotVATAmt=\\\"8.00\\\" TypeOfInv=\\\"NONCASH\\\"><PayMethods><PayMethod Amt=\\\"40.00\\\" Type=\\\"ACCOUNT\\\"/></PayMethods><Seller Address=\\\"Seller address\\\" Country=\\\"ALB\\\" Name=\\\"Intelligent Systems Albania\\\" IDNum=\\\"L01714012M\\\" IDType=\\\"NUIS\\\"  Town=\\\"Tirana\\\"/><Buyer IDType=\\\"NUIS\\\" IDNum=\\\"K41914024V\\\" Name=\\\"BT SOLUTIONS\\\" /><Items><I C=\\\"501234567890\\\" N=\\\"Item name\\\" PA=\\\"40.00\\\" PB=\\\"32.00\\\" Q=\\\"2.0\\\" R=\\\"0\\\" RR=\\\"true\\\" U=\\\"piece\\\" UPB=\\\"32.00\\\" UPA=\\\"40.00\\\" VA=\\\"8.00\\\" VR=\\\"25.00\\\"/></Items><SameTaxes><SameTax NumOfItems=\\\"2\\\" PriceBefVAT=\\\"32.00\\\" VATAmt=\\\"8.00\\\" VATRate=\\\"25.00\\\"/></SameTaxes></Invoice></RegisterEinvoiceRequest>\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/plugins/alf/request/DEMO01/RegisterEinvoiceRequest",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"plugins",
+						"alf",
+						"request",
+						"DEMO01",
+						"RegisterEinvoiceRequest"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
