@@ -221,16 +221,28 @@ function handleRegisterEInvoiceResponse(appArea: string, requestXml: string, par
     catch (error) {
 
     }
-    const RegisterEInvoiceResponse = parsedResponse.documentElement.getElementsByTagName('ns2:RegisterEinvoiceResponse');
+    let RegisterEInvoiceResponse = parsedResponse.documentElement.getElementsByTagName('ns2:RegisterEinvoiceResponse');
     if (!isSuccessReponse) {
         throw parsedResponse.documentElement.toString();
     }
-    else
-        if (!RegisterEInvoiceResponse || RegisterEInvoiceResponse.length != 1) {
-            throw new Error('ERROR: Invalid response for RegisterEinvoiceRequest! '+parsedResponse.documentElement.toString());
+    else {
+        if (!RegisterEInvoiceResponse || RegisterEInvoiceResponse.length != 1) {        
+         RegisterEInvoiceResponse = parsedResponse.documentElement.getElementsByTagName('RegisterEinvoiceResponse');
         }
-    const Header = parsedResponse.documentElement.getElementsByTagName('ns2:Header');
-    const eic = parsedResponse.documentElement.getElementsByTagName('ns2:EIC');
+
+        if (!RegisterEInvoiceResponse || RegisterEInvoiceResponse.length != 1) {
+            throw new Error('ERROR: Invalid response for RegisterEinvoiceRequest! ' + parsedResponse.documentElement.toString());
+        }
+    }
+    let Header = parsedResponse.documentElement.getElementsByTagName('ns2:Header');
+    if (!Header || Header.length != 1) {
+        Header = parsedResponse.documentElement.getElementsByTagName('Header');
+    }
+
+    let eic = parsedResponse.documentElement.getElementsByTagName('ns2:EIC');
+    if (!eic || eic.length != 1) {
+        eic = parsedResponse.documentElement.getElementsByTagName('EIC');
+    }
     return {
         eic: eic && eic.length > 0 ? eic[0].textContent : '',
         requestUUID: Header && Header.length > 0 ? Header[0].getAttribute('RequestUUID') : '',
