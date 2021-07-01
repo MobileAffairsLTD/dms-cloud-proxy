@@ -1,5 +1,5 @@
 const https = require('follow-redirects').https;
-import * as fs from 'fs';
+
 
 export function executeRequest(signedXml: string, isProduction: boolean): Promise<string> {
     return new Promise<any>((resolve, reject) => {

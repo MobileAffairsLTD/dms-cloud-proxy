@@ -7,8 +7,7 @@ interface ApiResponse {
 
 
 export class ApiControlerBase {
-
-  
+ 
     constructor(protected configuraiton: ConfigurationObject){
 
     }

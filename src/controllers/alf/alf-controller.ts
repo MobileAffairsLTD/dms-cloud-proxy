@@ -1,7 +1,6 @@
 import { ApiControlerBase } from "../api-controller-base";
 import { ConfigurationObject } from "../../application/configuration";
 import { computeSignedRequest } from "./alf-requestSignature";
-import * as path from 'path'
 import { executeRequest, executeRequestEinvoice } from "./alf-request";
 import { processResponseByRequestType } from "./alf-requestType-response";
 import { processByRequestType } from "./alf-requestType-request";

@@ -8,10 +8,6 @@ export function getPrivateCertificate(appArea: string): string {
 } 
 
 export function getPublicKey(appArea: string): string{
-    // const publicKeyPath = path.resolve(`./${appArea}-public.pem`);
-    // const p = path.resolve(publicKeyPath);
-    // return fs.readFileSync(p,'utf8');
-
     //extracts public certificate from the private certificate
     const certificate: string = this.getPrivateCertificate(appArea);
     const beginCertString = '-----BEGIN CERTIFICATE-----';

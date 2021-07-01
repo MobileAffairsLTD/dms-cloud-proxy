@@ -189,12 +189,17 @@ function handleRegisterEInvoiceResponse(appArea, requestXml, parsedResponse, isS
     var parsedRequest = new DOMParser().parseFromString(requestXml, 'text/xml');
     var fault = undefined;
     var code = undefined;
+    try {
+        console.log('RegisterEInvoiceResponse: ' + parsedResponse.documentElement.toString());
+    }
+    catch (error) {
+    }
     var RegisterEInvoiceResponse = parsedResponse.documentElement.getElementsByTagName('ns2:RegisterEinvoiceResponse');
     if (!isSuccessReponse) {
         throw parsedResponse.documentElement.toString();
     }
     else if (!RegisterEInvoiceResponse || RegisterEInvoiceResponse.length != 1) {
-        throw new Error('Invalid response for RegisterEinvoiceResponse');
+        throw new Error('ERROR: Invalid response for RegisterEinvoiceRequest! ' + parsedResponse.documentElement.toString());
     }
     var Header = parsedResponse.documentElement.getElementsByTagName('ns2:Header');
     var eic = parsedResponse.documentElement.getElementsByTagName('ns2:EIC');

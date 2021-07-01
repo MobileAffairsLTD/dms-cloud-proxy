@@ -136,10 +136,6 @@ export function handleDmsCalculateIICResponse(appArea: string, requestXml: strin
     if (!parsedRequest.documentElement.getAttribute('BusinUnitCode')) {
         throw new Error('IIC calculation erorr: Invoice.BusinUnitCode attribute is required');
     }
-    //TCRCode can be 0 for 
-    // if(!parsedRequest.documentElement.getAttribute('TCRCode')){
-    //     throw new Error('IIC calculation erorr: Invoice.TCRCode attribute is required');
-    // }
     if (!parsedRequest.documentElement.getAttribute('SoftCode')) {
         throw new Error('IIC calculation erorr: Invoice.SoftCode attribute is required');
     }
@@ -210,8 +206,6 @@ function handleGetTaxPayersResponse(appArea: string, requestXml: string, parsedR
     }
 
     return {
-        //fic: FIC && FIC.length > 0 ? FIC[0].textContent : '',
-        //iic: parsedRequest.documentElement.getElementsByTagName('Invoice')[0].getAttribute('IIC'),
         taxPayers: taxPayers,
         requestUUID: Header && Header.length > 0 ? Header[0].getAttribute('RequestUUID') : '',
     }

@@ -1,6 +1,5 @@
 import { ApiControlerBase } from "./api-controller-base";
-import { check } from "express-validator";
-import { Configuration, ConfigurationObject } from "../application/configuration";
+import { ConfigurationObject } from "../application/configuration";
 import { DynamicsBusinessCentralClient } from "../adapters/ms-business-central-adapter";
 
 export class LiveLinkEntityController extends ApiControlerBase {

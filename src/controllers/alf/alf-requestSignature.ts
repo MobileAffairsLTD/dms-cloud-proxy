@@ -1,15 +1,7 @@
 import { SignedXml } from 'xml-crypto';
-import * as  fs from 'fs';
-import * as path from 'path';
 import * as crypto from 'crypto';
 import { getPrivateCertificate, getPublicKey } from './alf-certificate-storage';
 
-
-// var xmldsigjs = require("xmldsigjs");
-// import { Crypto as WebCrypto } from "node-webcrypto-ossl";
-
-// const webCrypto = new WebCrypto();
-// xmldsigjs.Application.setEngine("OpenSSL", webCrypto);
 
 
 function X509KeyInfo(appArea: string) {
@@ -28,12 +20,6 @@ function X509KeyInfo(appArea: string) {
 }
 
 export function computeSignedRequest(requestName: string, requestXml: string, appArea: string): string {
-
-
-    //     var xml = `<RegisterTCRRequest xmlns="https://eFiskalizimi.tatime.gov.al/FiscalizationService/schema" xmlns:ns2="http://www.w3.org/2000/09/xmldsig#" Id="Request" Version="3">
-    // <Header SendDateTime="2021-04-10T02:43:00+02:00" UUID="e2caa8bc-91bf-429c-8919-e833367784c0" />
-    // <TCR BusinUnitCode="ge484ak993" IssuerNUIS="L01714012M" MaintainerCode="zk772ct263" SoftCode="cc476bs902" TCRIntID="1" ValidFrom="2021-04-10" Type="REGULAR" />
-    // </RegisterTCRRequest>`
 
     var sig = new SignedXml();
     sig.keyInfoProvider = new X509KeyInfo(appArea);
@@ -62,19 +48,6 @@ export function computeEinvoiceSignature(rootTag: string, requestXml: string, ap
     return sig.getSignatureXml();
 }
 
-// export function computeEinvoiceSignature(rootTag: string,requestXml: string, appArea: string): string {    
-//     var sig = new SignedXml();
-//     sig.keyInfoProvider = new X509KeyInfo(appArea);
-//     sig.signingKey = getPrivateCertificate(appArea)
-//     sig.signatureAlgorithm = 'http://www.w3.org/2000/09/xmldsig#rsa-sha1';
-//     sig.canonicalizationAlgorithm = 'http://www.w3.org/TR/2001/REC-xml-c14n-20010315';
-//     sig.addReference(`//*[local-name(.)='${rootTag}']`,            
-//     ['http://www.w3.org/2000/09/xmldsig#enveloped-signature'],
-//         "http://www.w3.org/2000/09/xmldsig#sha1");      
-//     sig.computeSignature(requestXml),{prefix:'ds'};
-//     return sig.getSignatureXml();
-// }
-
 function preparePem(pem) {
     return pem
         // remove BEGIN/END
@@ -97,67 +70,6 @@ function str2ab(str) {
     }
     return buf;
 }
-
-// async function SignXml(xmlString, appArea): Promise<any> {
-//     const crypto = new WebCrypto();
-//     const hash = 'SHA-256';
-//     const alg = {
-//         name: "RSASSA-PKCS1-v1_5",
-//         hash
-//     }
-//     // Read cert
-//     const certPem = fs.readFileSync(`./${appArea}-public.pem`, { encoding: "utf8" });
-//     const certDer = pem2der(certPem);
-//     // Read key
-//     const keyPem = fs.readFileSync(`./${appArea}-private.pem`, { encoding: "utf8" });
-//     const keyDer = pem2der(keyPem)
-//     const key = await crypto.subtle.importKey("pkcs8", keyDer, alg, false, ["sign"]);
-//     var xml = xmldsigjs.Parse(xmlString);
-//     var xadesXml = new xmldsigjs.SignedXml();
-//     const x509 = preparePem(certPem);
-//     const signature = await xadesXml.Sign(     // Signing document
-//         alg,                                    // algorithm
-//         key,                                    // key
-//         xml,                                    // document
-//         {                                       // options
-//             references: [
-//                 { uri:"",hash, transforms: ["exc-c14n", "enveloped"] }
-//             ],
-//             // policy: {
-//             //     hash,
-//             //     identifier: {
-//             //         qualifier: "OIDAsURI",
-//             //         value: "quilifier.uri",
-//             //     },
-//             //     // qualifiers: [
-//             //     //     {
-//             //     //         noticeRef: {
-//             //     //             organization: "PeculiarVentures",
-//             //     //             noticeNumbers: [1, 2, 3, 4, 5]
-//             //     //         }
-//             //     //     }
-//             //     // ]
-//             // },
-//             // productionPlace: {
-//             //     country: "Russia",
-//             //     state: "Marij El",
-//             //     city: "Yoshkar-Ola",
-//             //     code: "424000",
-//             // },
-//             signingCertificate: x509,
-//             x509: [x509]
-//         });
-//     const s = signature.GetXml()
-//     const oSerializer = new XMLSerializer(); 
-//     const sXML = oSerializer.serializeToString(s);
-//     return sXML
-// }
-
-// export async function computeEinvoiceSignature(rootTag: string, requestXml: string, appArea: string): Promise<string> {
-//     const sdoc = await SignXml(requestXml, appArea);
-//     return sdoc;
-// }
-
 
 
 

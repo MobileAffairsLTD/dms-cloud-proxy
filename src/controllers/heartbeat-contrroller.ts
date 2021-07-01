@@ -1,5 +1,4 @@
 import { ApiControlerBase } from "./api-controller-base";
-import { check } from "express-validator";
 import { Configuration, ConfigurationObject } from "../application/configuration";
 import { AppAreaAdapter } from "../adapters/apparea-adapter";
 
@@ -10,8 +9,6 @@ export class HeartbeatController extends ApiControlerBase {
     }
 
     downloadCloudConfiguration = async (req, res): Promise<any> => {
-        //const entityName = req.params.entity;    
-
 
         try {
             const request = await AppAreaAdapter.createRequest({ host: 'api.portal.dynamicsmobile.com', path: '/', headers: { Authorization: '' } });

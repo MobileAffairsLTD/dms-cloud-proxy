@@ -4,7 +4,7 @@ exports.getPublicKey = exports.getPrivateCertificate = void 0;
 var path = require("path");
 var fs = require("fs");
 function getPrivateCertificate(appArea) {
-    var certificatePath = path.resolve("./" + appArea + ".pem");
+    var certificatePath = path.resolve("./alf-certificates/" + appArea + ".pem");
     var p = path.resolve(certificatePath);
     return fs.readFileSync(p, 'utf8');
 }
@@ -18,7 +18,6 @@ function getPublicKey(appArea) {
     var beginCertString = '-----BEGIN CERTIFICATE-----';
     var endCertString = '-----END CERTIFICATE-----';
     var privateCert = certificate.substring(certificate.indexOf(beginCertString), certificate.indexOf(endCertString) + endCertString.length);
-    console.log(privateCert);
     return privateCert;
 }
 exports.getPublicKey = getPublicKey;
