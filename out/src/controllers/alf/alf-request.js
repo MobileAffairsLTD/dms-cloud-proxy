@@ -1,5 +1,5 @@
 "use strict";
-exports.__esModule = true;
+Object.defineProperty(exports, "__esModule", { value: true });
 exports.executeRequestEinvoice = exports.executeRequest = void 0;
 var https = require('follow-redirects').https;
 function executeRequest(signedXml, isProduction) {

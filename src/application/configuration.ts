@@ -19,7 +19,7 @@ export interface BackendConfigurationObject {
 }
 
 export interface AppAreaConfigurationObject {
-    cloudApiKey: string;
+    apiKey: string;
     settings: { backend: BackendConfigurationObject; }
 }
 

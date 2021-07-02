@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
-    
+    "target": "es5",
+    "module": "commonjs",
     "skipLibCheck": false,
     "incremental": true,
     "sourceMap": true,
@@ -13,7 +14,6 @@
       "src",
       "./__tests__/"
     ],
-    "baseUrl": "./",
-    "outDir": "./out"
+    "outDir": "out"
   }
 }

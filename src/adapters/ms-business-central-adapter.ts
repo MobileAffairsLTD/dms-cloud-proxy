@@ -61,6 +61,7 @@ export class DynamicsBusinessCentralClient {
                 workstation: me.workstation,
                 domain: me.domain
             }, function (err: any, res: any) {
+                try {
                 if (err)
                     reject(err);
                 if (!res)
@@ -70,6 +71,11 @@ export class DynamicsBusinessCentralClient {
                         reject(JSON.parse(res.body));
                     else
                         resolve(JSON.parse(res.body).value);
+                }
+                catch(err2){
+                    //returned body was not json
+                    reject();
+                }
             });
         });
     }

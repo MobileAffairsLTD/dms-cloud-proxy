@@ -1,5 +1,5 @@
 "use strict";
-exports.__esModule = true;
+Object.defineProperty(exports, "__esModule", { value: true });
 exports.processResponseByRequestType = exports.handleDmsCalculateIICResponse = void 0;
 var alf_certificate_storage_1 = require("./alf-certificate-storage");
 var alf_requestSignature_1 = require("./alf-requestSignature");
@@ -16,7 +16,7 @@ function handleRegisterTCRResponse(appArea, requestXml, parsedResponse, isSucces
     var TCRCode = parsedResponse.documentElement.getElementsByTagName('TCRCode');
     return {
         tcrCode: TCRCode && TCRCode.length > 0 ? TCRCode[0].textContent : '',
-        requestUUID: Header && Header.length > 0 ? Header[0].getAttribute('RequestUUID') : ''
+        requestUUID: Header && Header.length > 0 ? Header[0].getAttribute('RequestUUID') : '',
     };
 }
 function handleRegisterCashDepositResponse(appArea, requestXml, parsedResponse, isSuccessReponse) {
@@ -31,7 +31,7 @@ function handleRegisterCashDepositResponse(appArea, requestXml, parsedResponse, 
     var FCDC = parsedResponse.documentElement.getElementsByTagName('FCDC');
     return {
         fcdc: FCDC && FCDC.length > 0 ? FCDC[0].textContent : null,
-        requestUUID: Header && Header.length > 0 ? Header[0].getAttribute('RequestUUID') : ''
+        requestUUID: Header && Header.length > 0 ? Header[0].getAttribute('RequestUUID') : '',
     };
 }
 function handleRegisterInvoiceResponse(appArea, requestXml, parsedResponse, isSuccessReponse) {
@@ -57,7 +57,7 @@ function handleRegisterInvoiceResponse(appArea, requestXml, parsedResponse, isSu
         fic: FIC && FIC.length > 0 ? FIC[0].textContent : '',
         iic: parsedRequest.documentElement.getElementsByTagName('Invoice')[0].getAttribute('IIC'),
         iicSignature: parsedRequest.documentElement.getElementsByTagName('Invoice')[0].getAttribute('IICSignature'),
-        requestUUID: Header && Header.length > 0 ? Header[0].getAttribute('RequestUUID') : ''
+        requestUUID: Header && Header.length > 0 ? Header[0].getAttribute('RequestUUID') : '',
     };
 }
 function handleRegisterWTNResponse(appArea, requestXml, parsedResponse, isSuccessReponse) {
@@ -82,7 +82,7 @@ function handleRegisterWTNResponse(appArea, requestXml, parsedResponse, isSucces
     return {
         fwtnic: FWTNIC && FWTNIC.length > 0 ? FWTNIC[0].textContent : '',
         wtnic: parsedRequest.documentElement.getElementsByTagName('WTN')[0].getAttribute('WTNIC'),
-        requestUUID: Header && Header.length > 0 ? Header[0].getAttribute('RequestUUID') : ''
+        requestUUID: Header && Header.length > 0 ? Header[0].getAttribute('RequestUUID') : '',
     };
 }
 function handleDmsCalculateIICResponse(appArea, requestXml) {
@@ -112,10 +112,6 @@ function handleDmsCalculateIICResponse(appArea, requestXml) {
     if (!parsedRequest.documentElement.getAttribute('BusinUnitCode')) {
         throw new Error('IIC calculation erorr: Invoice.BusinUnitCode attribute is required');
     }
-    //TCRCode can be 0 for 
-    // if(!parsedRequest.documentElement.getAttribute('TCRCode')){
-    //     throw new Error('IIC calculation erorr: Invoice.TCRCode attribute is required');
-    // }
     if (!parsedRequest.documentElement.getAttribute('SoftCode')) {
         throw new Error('IIC calculation erorr: Invoice.SoftCode attribute is required');
     }
@@ -160,7 +156,7 @@ function handleDmsCalculateWTNICResponse(appArea, requestXml, parsedResponse, is
     var _a = alf_requestSignature_1.calculateISC(alf_certificate_storage_1.getPrivateCertificate(appArea), iicInput), iscHash = _a.iscHash, iscSignature = _a.iscSignature;
     return {
         wtnic: iscHash,
-        wtnicSignature: iscSignature
+        wtnicSignature: iscSignature,
     };
 }
 function handleGetTaxPayersResponse(appArea, requestXml, parsedResponse, isSuccessReponse) {
@@ -179,10 +175,8 @@ function handleGetTaxPayersResponse(appArea, requestXml, parsedResponse, isSucce
         });
     }
     return {
-        //fic: FIC && FIC.length > 0 ? FIC[0].textContent : '',
-        //iic: parsedRequest.documentElement.getElementsByTagName('Invoice')[0].getAttribute('IIC'),
         taxPayers: taxPayers,
-        requestUUID: Header && Header.length > 0 ? Header[0].getAttribute('RequestUUID') : ''
+        requestUUID: Header && Header.length > 0 ? Header[0].getAttribute('RequestUUID') : '',
     };
 }
 function handleRegisterEInvoiceResponse(appArea, requestXml, parsedResponse, isSuccessReponse) {
@@ -198,28 +192,39 @@ function handleRegisterEInvoiceResponse(appArea, requestXml, parsedResponse, isS
     if (!isSuccessReponse) {
         throw parsedResponse.documentElement.toString();
     }
-    else if (!RegisterEInvoiceResponse || RegisterEInvoiceResponse.length != 1) {
-        throw new Error('ERROR: Invalid response for RegisterEinvoiceRequest! ' + parsedResponse.documentElement.toString());
+    else {
+        if (!RegisterEInvoiceResponse || RegisterEInvoiceResponse.length != 1) {
+            RegisterEInvoiceResponse = parsedResponse.documentElement.getElementsByTagName('RegisterEinvoiceResponse');
+        }
+        if (!RegisterEInvoiceResponse || RegisterEInvoiceResponse.length != 1) {
+            throw new Error('ERROR: Invalid response for RegisterEinvoiceRequest! ' + parsedResponse.documentElement.toString());
+        }
     }
     var Header = parsedResponse.documentElement.getElementsByTagName('ns2:Header');
+    if (!Header || Header.length != 1) {
+        Header = parsedResponse.documentElement.getElementsByTagName('Header');
+    }
     var eic = parsedResponse.documentElement.getElementsByTagName('ns2:EIC');
+    if (!eic || eic.length != 1) {
+        eic = parsedResponse.documentElement.getElementsByTagName('EIC');
+    }
     return {
         eic: eic && eic.length > 0 ? eic[0].textContent : '',
-        requestUUID: Header && Header.length > 0 ? Header[0].getAttribute('RequestUUID') : ''
+        requestUUID: Header && Header.length > 0 ? Header[0].getAttribute('RequestUUID') : '',
     };
 }
 function handleGetEInvoicesResponse(appArea, requestXml, parsedResponse, isSuccessReponse) {
     var parsedRequest = new DOMParser().parseFromString(requestXml, 'text/xml');
     var Header = parsedResponse.documentElement.getElementsByTagName('Header');
     return {
-        requestUUID: Header && Header.length > 0 ? Header[0].getAttribute('RequestUUID') : ''
+        requestUUID: Header && Header.length > 0 ? Header[0].getAttribute('RequestUUID') : '',
     };
 }
 function handleEinvoiceChangeStatusResponse(appArea, requestXml, parsedResponse, isSuccessReponse) {
     var parsedRequest = new DOMParser().parseFromString(requestXml, 'text/xml');
     var Header = parsedResponse.documentElement.getElementsByTagName('Header');
     return {
-        requestUUID: Header && Header.length > 0 ? Header[0].getAttribute('RequestUUID') : ''
+        requestUUID: Header && Header.length > 0 ? Header[0].getAttribute('RequestUUID') : '',
     };
 }
 function processResponseByRequestType(appArea, requestType, transformedRequestXml, response, isSuccessReponse) {
