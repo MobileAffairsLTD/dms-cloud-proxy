@@ -41,8 +41,18 @@ var authJWT = function (func) {
 exports.authJWT = authJWT;
 var authApiKey = function (func) {
     return function (req, res, next) {
+        var appArea = req.params.appArea;
+        var apiKey = configuration.apiKey;
+        //support for per-apparea apiKey
+        if (appArea) {
+            apiKey = configuration.appArea[appArea].apiKey;
+            if (!apiKey) {
+                //fallback to the primary api key
+                apiKey = configuration.apiKey;
+            }
+        }
         try {
-            if (req.headers['dms-api-key'] === configuration.apiKey) {
+            if (req.headers['dms-api-key'] === apiKey) {
                 return func(req, res, next);
             }
         }

@@ -1,21 +1,22 @@
 import * as httpntlm from '../libs/httpntlm/httpntlm';
 const parser = require("fast-xml-parser").default;
 import he from 'he';
+import { BackendAdapterBase } from './BackendAdapterBase';
 
 
-export class DynamicsBusinessCentralClient {
+export class DynamicsBusinessCentralClient extends BackendAdapterBase {
 
     constructor(
-        protected authType: string,
-        protected protocol: string,
-        protected host: string,
-        protected port: number | null,
-        protected path: string,
-        protected username: string,
-        protected password: string,
-        protected domain: string,
-        protected workstation: string) {
-
+        authType: string,
+        protocol: string,
+        host: string,
+        port: number | null,
+        path: string,
+        username: string,
+        password: string,
+        domain: string,
+        workstation: string) {
+        super(authType, protocol, host, port, path, username, password, domain, workstation);
     }
 
     public executeGet(company: string | null, entityName: string, filter: string | null, sort: string | null, max: number | null, page: number | null, apply: string): Promise<string> {

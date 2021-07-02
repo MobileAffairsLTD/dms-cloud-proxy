@@ -3,7 +3,7 @@
     "apiKey": "123",
     "appArea": {
         "RA202051203845": {
-            "apiKey": "",
+            "apiKey": "123",
             "settings": {},
             "backend": {
                 "type": "bc",
@@ -19,19 +19,19 @@
             }
         },
         "DEMO01": {
-            "apiKey": "12222",
             "settings": {   
+                "apiKey": "123",
                 "backend": {
-                    "type": "bc1",
+                    "type": "navsql",
                     "authType": "NTLM",
-                    "host": "maisso04.dynamicsmobile.isystems.bg",
-                    "port": 7947,
-                    "protocol": "http",
+                    "host": "sql2019.isystems.bg",
+                    "port": 1433,
+                    "protocol": "sql",
                     "domain": "dynamicsmobile.isystems.bg",
                     "workstation": "dynamicsmobile.isystems.bg",
-                    "path": "INT_NUCR/ODataV4",
-                    "userName": "e.kerimbov",
-                    "password": "#Ker1mbov001"
+                    "path": "VLM",
+                    "userName": "navmobile",
+                    "password": "1234567"
                 }
             }
         }

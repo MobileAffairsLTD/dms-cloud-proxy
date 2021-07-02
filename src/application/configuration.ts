@@ -4,10 +4,18 @@ import * as  path from "path";
 
 const configPath = path.resolve('./config.json');
 
+//backend types
+
+export const betBC = 'bc';
+export const betD365FO = 'd365fo';
+export const betNavSql = 'navsql' 
+
+//backend auth types
+export const beautNTLM = 'NTLM';
 
 export interface BackendConfigurationObject {
-    backendType: "bc" | "d365fo"
-    authType: "NTLM";
+    type: typeof betBC | typeof betD365FO | typeof betNavSql;
+    authType: typeof beautNTLM;
     host: string;
     port: number;
     protocol: string;

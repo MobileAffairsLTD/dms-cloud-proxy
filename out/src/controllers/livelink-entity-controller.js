@@ -54,12 +54,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.LiveLinkEntityController = void 0;
 var api_controller_base_1 = require("./api-controller-base");
 var ms_business_central_adapter_1 = require("../adapters/ms-business-central-adapter");
+var BackendAdapterFactory_1 = require("../adapters/BackendAdapterFactory");
 var LiveLinkEntityController = /** @class */ (function (_super) {
     __extends(LiveLinkEntityController, _super);
     function LiveLinkEntityController(configuraiton) {
         var _this = _super.call(this, configuraiton) || this;
         _this.get = function (req, res) { return __awaiter(_this, void 0, void 0, function () {
-            var appArea, appAreaConfig, entityName, filter, sort, apply, max, page, company, client, result, err_1;
+            var appArea, entityName, filter, sort, apply, max, page, company, client, result, err_1;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -67,10 +68,6 @@ var LiveLinkEntityController = /** @class */ (function (_super) {
                         appArea = req.params.appArea;
                         if (!appArea) {
                             throw 'appArea parameter is required!';
-                        }
-                        appAreaConfig = this.configuraiton.appArea[appArea];
-                        if (!appAreaConfig) {
-                            throw 'appArea parameter value is wrong!';
                         }
                         entityName = req.params.entity;
                         if (!entityName) {
@@ -82,7 +79,7 @@ var LiveLinkEntityController = /** @class */ (function (_super) {
                         max = req.query['$limit'] ? req.query['$limit'] : 100;
                         page = req.query['$page'] ? req.query['$page'] : 0;
                         company = req.query['$company'] ? req.query['$company'] : '';
-                        client = new ms_business_central_adapter_1.DynamicsBusinessCentralClient(appAreaConfig.settings.backend.authType, appAreaConfig.settings.backend.protocol, appAreaConfig.settings.backend.host, appAreaConfig.settings.backend.port, appAreaConfig.settings.backend.path, appAreaConfig.settings.backend.userName, appAreaConfig.settings.backend.password, appAreaConfig.settings.backend.domain, appAreaConfig.settings.backend.workstation);
+                        client = BackendAdapterFactory_1.backendAdapterFactory(appArea, this.configuraiton);
                         return [4 /*yield*/, client.executeGet(company, entityName, filter, sort, max, page, apply)];
                     case 1:
                         result = _a.sent();

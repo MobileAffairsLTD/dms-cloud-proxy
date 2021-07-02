@@ -1,9 +1,15 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Configuration = void 0;
+exports.Configuration = exports.beautNTLM = exports.betNavSql = exports.betD365FO = exports.betBC = void 0;
 var fs = require("fs");
 var path = require("path");
 var configPath = path.resolve('./config.json');
+//backend types
+exports.betBC = 'bc';
+exports.betD365FO = 'd365fo';
+exports.betNavSql = 'navsql';
+//backend auth types
+exports.beautNTLM = 'NTLM';
 var Configuration = /** @class */ (function () {
     function Configuration() {
     }

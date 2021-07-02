@@ -1,20 +1,29 @@
 "use strict";
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DynamicsBusinessCentralClient = void 0;
 var httpntlm = require("../libs/httpntlm/httpntlm");
 var parser = require("fast-xml-parser").default;
 var he_1 = require("he");
-var DynamicsBusinessCentralClient = /** @class */ (function () {
+var BackendAdapterBase_1 = require("./BackendAdapterBase");
+var DynamicsBusinessCentralClient = /** @class */ (function (_super) {
+    __extends(DynamicsBusinessCentralClient, _super);
     function DynamicsBusinessCentralClient(authType, protocol, host, port, path, username, password, domain, workstation) {
-        this.authType = authType;
-        this.protocol = protocol;
-        this.host = host;
-        this.port = port;
-        this.path = path;
-        this.username = username;
-        this.password = password;
-        this.domain = domain;
-        this.workstation = workstation;
+        return _super.call(this, authType, protocol, host, port, path, username, password, domain, workstation) || this;
     }
     DynamicsBusinessCentralClient.prototype.executeGet = function (company, entityName, filter, sort, max, page, apply) {
         if (!entityName)
@@ -323,6 +332,6 @@ var DynamicsBusinessCentralClient = /** @class */ (function () {
         });
     };
     return DynamicsBusinessCentralClient;
-}());
+}(BackendAdapterBase_1.BackendAdapterBase));
 exports.DynamicsBusinessCentralClient = DynamicsBusinessCentralClient;
 //# sourceMappingURL=ms-business-central-adapter.js.map
