@@ -35,21 +35,33 @@ export class DynamicsBusinessCentralClient extends BackendAdapterBase {
         const me = this;
         return new Promise((resolve: any, reject: any): void => {
             let url;
+            if(me.path.startsWith("/")){
+                me.path = me.path.substr(1);
+            }
+
+            //company as a segment  - used in some bc versions
+            // if (!company)
+            //     url = `${me.protocol ? me.protocol : 'http'}://${me.host}:${me.port ? me.port : '80'}/${me.path}/${entityName}?$format=json`;
+            // else
+            //     url = `${me.protocol ? me.protocol : 'http'}://${me.host}:${me.port ? me.port : '80'}/${me.path}/Company('${encodeURIComponent(company)}')/${entityName}?$format=json`;
+
+            //company as url query param  - used in some bc versions
             if (!company)
-                url = `${me.protocol ? me.protocol : 'http'}://${me.host}:${me.port ? me.port : '80'}/${me.path}/${entityName}?$format=json`;
+                url = `${me.protocol ? me.protocol : 'http'}://${me.host}:${me.port ? me.port : '80'}/${me.path}/${encodeURIComponent(entityName)}?$format=json`;
             else
-                url = `${me.protocol ? me.protocol : 'http'}://${me.host}:${me.port ? me.port : '80'}/${me.path}/Company('${encodeURIComponent(company)}')/${entityName}?$format=json`;
+                url = `${me.protocol ? me.protocol : 'http'}://${me.host}:${me.port ? me.port : '80'}/${me.path}/${encodeURIComponent(entityName)}?company=${encodeURIComponent(company)}&$format=json`;
+
 
             if (filter)
-                url += `&$filter=${filter}`;
+                url += `&$filter=${encodeURIComponent(filter)}`;
             if (sort)
-                url += `&$orderby=${sort}`;
+                url += `&$orderby=${encodeURIComponent(sort)}`;
             if (max)
                 url += `&$top=${max}`;
             if (page)
                 url += `&$skip=${page}`;
             if (apply)
-                url += `&$apply=${apply}`;
+                url += `&$apply=${encodeURIComponent(apply)}`;
 
 
 

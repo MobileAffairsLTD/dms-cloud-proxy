@@ -10,13 +10,13 @@ function backendAdapterFactory(appArea, configuration) {
         throw "Application area '" + appArea + "' does not have proper configuration!";
     }
     var client = null;
-    switch (appAreaConfig.settings.backend.type) {
+    switch (appAreaConfig.backend.type) {
         case configuration_1.betBC:
-            client = new ms_business_central_adapter_1.DynamicsBusinessCentralClient(appAreaConfig.settings.backend.authType, appAreaConfig.settings.backend.protocol, appAreaConfig.settings.backend.host, appAreaConfig.settings.backend.port, appAreaConfig.settings.backend.path, appAreaConfig.settings.backend.userName, appAreaConfig.settings.backend.password, appAreaConfig.settings.backend.domain, appAreaConfig.settings.backend.workstation);
+            client = new ms_business_central_adapter_1.DynamicsBusinessCentralClient(appAreaConfig.backend.authType, appAreaConfig.backend.protocol, appAreaConfig.backend.host, appAreaConfig.backend.port, appAreaConfig.backend.path, appAreaConfig.backend.userName, appAreaConfig.backend.password, appAreaConfig.backend.domain, appAreaConfig.backend.workstation);
             break;
         case configuration_1.betNavSql:
         case configuration_1.betBC:
-            client = new navSql_adapter_1.DynamicsNAVSQLBackendAdapter(appAreaConfig.settings.backend.authType, appAreaConfig.settings.backend.protocol, appAreaConfig.settings.backend.host, appAreaConfig.settings.backend.port, appAreaConfig.settings.backend.path, appAreaConfig.settings.backend.userName, appAreaConfig.settings.backend.password, appAreaConfig.settings.backend.domain, appAreaConfig.settings.backend.workstation);
+            client = new navSql_adapter_1.DynamicsNAVSQLBackendAdapter(appAreaConfig.backend.authType, appAreaConfig.backend.protocol, appAreaConfig.backend.host, appAreaConfig.backend.port, appAreaConfig.backend.path, appAreaConfig.backend.userName, appAreaConfig.backend.password, appAreaConfig.backend.domain, appAreaConfig.backend.workstation);
             break;
             ;
         case configuration_1.betD365FO: throw "betD365FO is not supported yet";

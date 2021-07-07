@@ -7,13 +7,14 @@ import * as bodyParser from 'body-parser';
 import { Configuration, ConfigurationObject } from "./configuration";
 import { authApiKey, authJWT } from "../api/auth";
 import { HeartbeatController } from "../controllers/heartbeat-contrroller";
-import { EventLog } from "../utils/event-log";5
+import { EventLog } from "../utils/event-log"; 5
 import * as swaggerUi from 'swagger-ui-express';
 import * as path from 'path';
 const YAML = require('yamljs');
 const swaggerDocument = YAML.load('./swagger.yaml');
-
-
+import * as https from 'https';
+import * as http from 'http';
+import * as fs from 'fs';
 
 const header_APIKEY = 'dms-api-key'
 const msg_ApiKeyMissing = 'api-key header is missing in the request'
@@ -27,6 +28,8 @@ export class Application {
 
     constructor() {
         this._express = express();
+
+
     }
 
     init() {
@@ -99,20 +102,50 @@ export class Application {
         this._express.use('/api', router);
 
         var options = {
-            openapi:'3.0.0',
-            explorer: false            
+            openapi: '3.0.0',
+            explorer: false
         }
 
 
-       
 
-        this._express.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument,options));
+
+        this._express.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument, options));
     }
 
     run() {
-        
-        this._express.listen(this.configuration.port);      
-        console.log('*** DMS is listening on port ',this.configuration.port)
+
+       
+    
+        const me = this;
+        if (this.configuration.ssl) {
+            if(!fs.existsSync('./ssl/private.pem')){
+                const err = 'ERROR: File ./ssl/private.pem does not exists. Can not start in SSL mode.';
+                console.log(err);
+                throw new Error(err);
+            }
+            if(!fs.existsSync('./ssl/certificate.pem')){
+                const err = 'ERROR: File ./ssl/certificate.pem does not exists. Can not start in SSL mode.';
+                console.log(err);
+            }
+            const options = {
+                key: fs.readFileSync('./ssl/private.pem'),
+                cert: fs.readFileSync('./ssl/certificate.pem'),
+            }
+
+            https.createServer(options, this._express).listen(this.configuration.port,  (): void =>{
+                console.log('*** DMS is listening on SSL port ', me.configuration.port)
+            })
+        }
+        else {
+            const options = {};
+            http.createServer(options, this._express).listen(this.configuration.port,  (): void => {
+                console.log('*** DMS is listening on port ', me.configuration.port)
+            })
+        }
+
+        //this._express.listen(this.configuration.port);      
+
+
         //EventLog.logInfoStr(`Dynamics Mobile Cloud Proxy (c) 2009-2021 www.dynamicsmobile.com, on port ${this.configuration.port}`);
 
     }

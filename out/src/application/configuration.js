@@ -5,7 +5,7 @@ var fs = require("fs");
 var path = require("path");
 var configPath = path.resolve('./config.json');
 //backend types
-exports.betBC = 'bc';
+exports.betBC = 'd365bc';
 exports.betD365FO = 'd365fo';
 exports.betNavSql = 'navsql';
 //backend auth types

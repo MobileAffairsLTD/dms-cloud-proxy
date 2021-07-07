@@ -14,6 +14,9 @@ var heartbeat_contrroller_1 = require("../controllers/heartbeat-contrroller");
 var swaggerUi = require("swagger-ui-express");
 var YAML = require('yamljs');
 var swaggerDocument = YAML.load('./swagger.yaml');
+var https = require("https");
+var http = require("http");
+var fs = require("fs");
 var header_APIKEY = 'dms-api-key';
 var msg_ApiKeyMissing = 'api-key header is missing in the request';
 var Application = /** @class */ (function () {
@@ -76,8 +79,32 @@ var Application = /** @class */ (function () {
         this._express.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument, options));
     };
     Application.prototype.run = function () {
-        this._express.listen(this.configuration.port);
-        console.log('*** DMS is listening on port ', this.configuration.port);
+        var me = this;
+        if (this.configuration.ssl) {
+            if (!fs.existsSync('./ssl/private.pem')) {
+                var err = 'ERROR: File ./ssl/private.pem does not exists. Can not start in SSL mode.';
+                console.log(err);
+                throw new Error(err);
+            }
+            if (!fs.existsSync('./ssl/certificate.pem')) {
+                var err = 'ERROR: File ./ssl/certificate.pem does not exists. Can not start in SSL mode.';
+                console.log(err);
+            }
+            var options = {
+                key: fs.readFileSync('./ssl/private.pem'),
+                cert: fs.readFileSync('./ssl/certificate.pem'),
+            };
+            https.createServer(options, this._express).listen(this.configuration.port, function () {
+                console.log('*** DMS is listening on SSL port ', me.configuration.port);
+            });
+        }
+        else {
+            var options = {};
+            http.createServer(options, this._express).listen(this.configuration.port, function () {
+                console.log('*** DMS is listening on port ', me.configuration.port);
+            });
+        }
+        //this._express.listen(this.configuration.port);      
         //EventLog.logInfoStr(`Dynamics Mobile Cloud Proxy (c) 2009-2021 www.dynamicsmobile.com, on port ${this.configuration.port}`);
     };
     return Application;

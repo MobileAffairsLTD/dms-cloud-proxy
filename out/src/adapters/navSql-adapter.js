@@ -62,7 +62,7 @@ var DynamicsNAVSQLBackendAdapter = /** @class */ (function (_super) {
     }
     DynamicsNAVSQLBackendAdapter.prototype.executeGet = function (company, entityName, filter, sort, max, page, apply) {
         return __awaiter(this, void 0, void 0, function () {
-            var me, result, err_1;
+            var maxRecs, where, orderby, result, err_1;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -74,16 +74,27 @@ var DynamicsNAVSQLBackendAdapter = /** @class */ (function (_super) {
                             throw '"host" role setting is required for NAV-SQL LiveLink';
                         if (!this.path)
                             throw '"path" role setting is required for NAV-SQL LiveLink';
-                        me = this;
                         _a.label = 1;
                     case 1:
                         _a.trys.push([1, 4, , 5]);
+                        maxRecs = '';
+                        if (max) {
+                            maxRecs = " top " + maxRecs + " ";
+                        }
+                        where = '';
+                        if (filter) {
+                            where = " WHERE " + filter + " ";
+                        }
+                        orderby = '';
+                        if (sort) {
+                            orderby = " ORDER BY " + sort + " ";
+                        }
                         // make sure that any items are correctly URL encoded in the connection string
                         return [4 /*yield*/, sql.connect("Server=" + this.host + "," + this.port + "?" + this.port + ":'1433';Database=" + this.path + ";User Id=" + this.username + ";Password=" + this.password + ";Encrypt=false")];
                     case 2:
                         // make sure that any items are correctly URL encoded in the connection string
                         _a.sent();
-                        return [4 /*yield*/, sql.query("select top 10 * from [" + (company ? company + '$' : '') + entityName + "]")];
+                        return [4 /*yield*/, sql.query("SELECT " + maxRecs + " * FROM [" + (company ? company + '$' : '') + entityName + "] " + where + " " + orderby)];
                     case 3:
                         result = _a.sent();
                         if (result && result.recordsets && result.recordsets.length > 0) {

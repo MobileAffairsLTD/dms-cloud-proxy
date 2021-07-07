@@ -6,9 +6,9 @@ const configPath = path.resolve('./config.json');
 
 //backend types
 
-export const betBC = 'bc';
+export const betBC = 'd365bc';
 export const betD365FO = 'd365fo';
-export const betNavSql = 'navsql' 
+export const betNavSql = 'navsql'
 
 //backend auth types
 export const beautNTLM = 'NTLM';
@@ -28,11 +28,13 @@ export interface BackendConfigurationObject {
 
 export interface AppAreaConfigurationObject {
     apiKey: string;
-    settings: { backend: BackendConfigurationObject; }
+    settings: {[name:string]: any};
+    backend: BackendConfigurationObject;
 }
 
 export interface ConfigurationObject {
     port: number;
+    ssl: boolean;
     apiKey: string;
     appArea: Record<string, AppAreaConfigurationObject>;
 }

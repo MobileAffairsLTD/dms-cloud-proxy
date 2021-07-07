@@ -10,28 +10,28 @@ export function backendAdapterFactory(appArea: string, configuration: Configurat
         throw `Application area '${appArea}' does not have proper configuration!`;
     }
     let client: BackendAdapterBase = null;
-    switch (appAreaConfig.settings.backend.type) {
+    switch (appAreaConfig.backend.type) {
         case betBC: client = new DynamicsBusinessCentralClient(
-            appAreaConfig.settings.backend.authType,
-            appAreaConfig.settings.backend.protocol,
-            appAreaConfig.settings.backend.host,
-            appAreaConfig.settings.backend.port,
-            appAreaConfig.settings.backend.path,
-            appAreaConfig.settings.backend.userName,
-            appAreaConfig.settings.backend.password,
-            appAreaConfig.settings.backend.domain,
-            appAreaConfig.settings.backend.workstation
+            appAreaConfig.backend.authType,
+            appAreaConfig.backend.protocol,
+            appAreaConfig.backend.host,
+            appAreaConfig.backend.port,
+            appAreaConfig.backend.path,
+            appAreaConfig.backend.userName,
+            appAreaConfig.backend.password,
+            appAreaConfig.backend.domain,
+            appAreaConfig.backend.workstation
         ); break;
         case betNavSql:   case betBC: client = new DynamicsNAVSQLBackendAdapter(
-            appAreaConfig.settings.backend.authType,
-            appAreaConfig.settings.backend.protocol,
-            appAreaConfig.settings.backend.host,
-            appAreaConfig.settings.backend.port,
-            appAreaConfig.settings.backend.path,
-            appAreaConfig.settings.backend.userName,
-            appAreaConfig.settings.backend.password,
-            appAreaConfig.settings.backend.domain,
-            appAreaConfig.settings.backend.workstation
+            appAreaConfig.backend.authType,
+            appAreaConfig.backend.protocol,
+            appAreaConfig.backend.host,
+            appAreaConfig.backend.port,
+            appAreaConfig.backend.path,
+            appAreaConfig.backend.userName,
+            appAreaConfig.backend.password,
+            appAreaConfig.backend.domain,
+            appAreaConfig.backend.workstation
         ); break;;
         case betD365FO: throw `betD365FO is not supported yet`;
         default: throw `Unknown livelink  backendtype '${appAreaConfig.settings.backend.type}' for apparea '${appArea}'`

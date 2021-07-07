@@ -1,12 +1,13 @@
 {
     "port": 8080,
     "apiKey": "123",
+    "ssl":false,
     "appArea": {
         "RA202051203845": {
             "apiKey": "123",
             "settings": {},
             "backend": {
-                "type": "bc",
+                "type": "d365bc",
                 "authType": "NTLM",
                 "host": "maisso04.dynamicsmobile.isystems.bg",
                 "port": 7947,
@@ -16,6 +17,22 @@
                 "path": "INT_NUCR/ODataV4",
                 "userName": "e.kerimbov",
                 "password": "#Ker1mbov001"
+            }
+        },
+        "BIOTDEV": {
+            "apiKey": "123",
+            "settings": {},
+            "backend": {
+                "type": "d365bc",
+                "authType": "NTLM",
+                "host": "maisso04.dynamicsmobile.isystems.bg",
+                "port": 8648,
+                "protocol": "http",
+                "domain": "dynamicsmobile.isystems.bg",
+                "workstation": "dynamicsmobile.isystems.bg",
+                "path": "/BIOTRADE/api/DynamicsMobile/DMDAO/v1.0",
+                "userName": "nm_nas",
+                "password": "Hel!um01"
             }
         },
         "DEMO01": {

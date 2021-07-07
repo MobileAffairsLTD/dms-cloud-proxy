@@ -42,6 +42,18 @@ exports.authJWT = authJWT;
 var authApiKey = function (func) {
     return function (req, res, next) {
         var appArea = req.params.appArea;
+        if (!configuration) {
+            console.log('ERROR: api-key-auth: configuratin object is missing');
+            return res.status(401).send(new response_builder_1.ResponseBuilder().err('Unauthorized'));
+        }
+        if (!configuration.appArea) {
+            console.log('ERROR: api-key-auth: configuratin.appArea object is missing');
+            return res.status(401).send(new response_builder_1.ResponseBuilder().err('Unauthorized'));
+        }
+        if (!configuration.appArea[appArea]) {
+            console.log("ERROR: api-key-auth: invalid apparea: " + appArea);
+            return res.status(401).send(new response_builder_1.ResponseBuilder().err('Unauthorized'));
+        }
         var apiKey = configuration.apiKey;
         //support for per-apparea apiKey
         if (appArea) {
