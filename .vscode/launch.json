@@ -7,9 +7,18 @@
         {
             "type": "node",
             "request": "launch",
-            "name": "Launch Program",
+            "name": "Debug Web",
             "preLaunchTask": "tsc: build - tsconfig.json",                      
-            "program": "${workspaceFolder}/src/app.ts",
+            "program": "${workspaceFolder}/src/web.ts",
+            "cwd": "${workspaceFolder}/out",
+            "outFiles": ["${workspaceFolder}/out/**/*.js"]
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Debug Worker",
+            "preLaunchTask": "tsc: build - tsconfig.json",                      
+            "program": "${workspaceFolder}/src/worker.ts",
             "cwd": "${workspaceFolder}/out",
             "outFiles": ["${workspaceFolder}/out/**/*.js"]
         }

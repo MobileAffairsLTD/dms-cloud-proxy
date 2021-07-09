@@ -81,7 +81,7 @@ var DynamicsBusinessCentralClient = /** @class */ (function (_super) {
                 }
                 catch (err2) {
                     //returned body was not json
-                    reject();
+                    reject(err2);
                 }
             });
         });
@@ -150,7 +150,8 @@ var DynamicsBusinessCentralClient = /** @class */ (function (_super) {
             if (!company)
                 url = (_this.protocol ? _this.protocol : 'http') + "://" + _this.host + ":" + (_this.port ? _this.port : '80') + "/" + _this.path + "/" + entityName + "(" + pkValues + ")";
             else
-                url = (_this.protocol ? _this.protocol : 'http') + "://" + _this.host + ":" + (_this.port ? _this.port : '80') + "/" + _this.path + "/Company('" + encodeURIComponent(company) + "')/" + entityName + "(" + pkValues + ")";
+                //url = `${this.protocol ? this.protocol : 'http'}://${this.host}:${this.port ? this.port : '80'}/${this.path}/Company('${encodeURIComponent(company)}')/${entityName}(${pkValues})`;
+                url = (_this.protocol ? _this.protocol : 'http') + "://" + _this.host + ":" + (_this.port ? _this.port : '80') + "/" + _this.path + "/" + entityName + "(" + pkValues + ")?company=" + encodeURIComponent(company);
             console.log('Dynamics Business Central Client authType: ' + _this.authType);
             console.log('service url:', url);
             delete body["@odata.context"];
@@ -169,7 +170,7 @@ var DynamicsBusinessCentralClient = /** @class */ (function (_super) {
                 if (!res)
                     reject('Server did not return response!');
                 else if (res.statusCode != 200 && res.statusCode != 201)
-                    reject(res.statusCode);
+                    reject(res.statusCode + ' ' + res.body ? res.body : '');
                 else {
                     var r = JSON.parse(res.body);
                     delete r["@odata.context"];
@@ -215,7 +216,7 @@ var DynamicsBusinessCentralClient = /** @class */ (function (_super) {
                 if (!res)
                     reject('Server did not return response!');
                 else if (res.statusCode != 200 && res.statusCode != 201 && res.statusCode != 202 && res.statusCode != 203 && res.statusCode != 204)
-                    reject(res.statusCode);
+                    reject(res.statusCode + ' ' + res.body ? res.body : '');
                 else {
                     resolve({ success: true });
                 }
@@ -248,7 +249,7 @@ var DynamicsBusinessCentralClient = /** @class */ (function (_super) {
                 if (!res)
                     reject('Server did not return response!');
                 else if (res.statusCode != 200)
-                    reject(res.statusCode);
+                    reject(res.statusCode + ' ' + res.body ? res.body : '');
                 else {
                     try {
                         var options = {

@@ -99,12 +99,12 @@ var DynamicsNAVSQLBackendAdapter = /** @class */ (function (_super) {
                         result = _a.sent();
                         if (result && result.recordsets && result.recordsets.length > 0) {
                             if (result.recordsets.length == 1)
-                                return [2 /*return*/, JSON.stringify(result.recordsets[0])];
+                                return [2 /*return*/, result.recordsets[0]];
                             else
-                                return [2 /*return*/, JSON.stringify(result.recordsets)];
+                                return [2 /*return*/, result.recordsets];
                         }
                         else {
-                            return [2 /*return*/, JSON.stringify([])];
+                            return [2 /*return*/, []];
                         }
                         return [3 /*break*/, 5];
                     case 4:

@@ -19,7 +19,7 @@ export class DynamicsNAVSQLBackendAdapter extends BackendAdapterBase {
         super(authType, protocol, host, port, path, username, password, domain, workstation);
     }
 
-    public async executeGet(company: string | null, entityName: string, filter: string | null, sort: string | null, max: number | null, page: number | null, apply: string): Promise<string> {
+    public async executeGet(company: string | null, entityName: string, filter: string | null, sort: string | null, max: number | null, page: number | null, apply: string): Promise<Array<any>> {
         if (!entityName)
             throw 'entityName parameter is required for NAV-SQL LiveLink';
 
@@ -52,12 +52,12 @@ export class DynamicsNAVSQLBackendAdapter extends BackendAdapterBase {
             const result = await sql.query (`SELECT ${maxRecs} * FROM [${company?company+'$':''}${entityName}] ${where} ${orderby}`);
             if(result && result.recordsets && result.recordsets.length>0){
                 if(result.recordsets.length==1)
-                    return JSON.stringify(result.recordsets[0]);
+                    return result.recordsets[0];
                 else 
-                    return JSON.stringify(result.recordsets);        
+                    return result.recordsets;        
             }
             else {
-                return JSON.stringify([]);
+                return [];
             }
                             
         } catch (err) {

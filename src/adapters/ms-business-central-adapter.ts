@@ -19,7 +19,7 @@ export class DynamicsBusinessCentralClient extends BackendAdapterBase {
         super(authType, protocol, host, port, path, username, password, domain, workstation);
     }
 
-    public executeGet(company: string | null, entityName: string, filter: string | null, sort: string | null, max: number | null, page: number | null, apply: string): Promise<string> {
+    public executeGet(company: string | null, entityName: string, filter: string | null, sort: string | null, max: number | null, page: number | null, apply: string): Promise<Array<any>> {
         if (!entityName)
             throw 'entityName parameter is required for BC LiveLink';
 
@@ -87,13 +87,13 @@ export class DynamicsBusinessCentralClient extends BackendAdapterBase {
                 }
                 catch(err2){
                     //returned body was not json
-                    reject();
+                    reject(err2);
                 }
             });
         });
     }
 
-    public executeCreate(company: string | null, entityName: string, body: string): Promise<string> {
+    public executeCreate(company: string | null, entityName: string, body: any): Promise<string> {
         if (!entityName)
             throw 'entityName parameter is required for BC LiveLink';
 
@@ -146,7 +146,7 @@ export class DynamicsBusinessCentralClient extends BackendAdapterBase {
         });
     }
 
-    public executeUpdate(company: string | null, entityName: string, pkValues: string, body: string | null): Promise<string> {
+    public executeUpdate(company: string | null, entityName: string, pkValues: string, body: any): Promise<string> {
         if (!entityName)
             throw 'entityName parameter is required for BC LiveLink';
 
@@ -171,7 +171,8 @@ export class DynamicsBusinessCentralClient extends BackendAdapterBase {
             if (!company)
                 url = `${this.protocol ? this.protocol : 'http'}://${this.host}:${this.port ? this.port : '80'}/${this.path}/${entityName}(${pkValues})`;
             else
-                url = `${this.protocol ? this.protocol : 'http'}://${this.host}:${this.port ? this.port : '80'}/${this.path}/Company('${encodeURIComponent(company)}')/${entityName}(${pkValues})`;
+                //url = `${this.protocol ? this.protocol : 'http'}://${this.host}:${this.port ? this.port : '80'}/${this.path}/Company('${encodeURIComponent(company)}')/${entityName}(${pkValues})`;
+                url = `${this.protocol ? this.protocol : 'http'}://${this.host}:${this.port ? this.port : '80'}/${this.path}/${entityName}(${pkValues})?company=${encodeURIComponent(company)}`;
 
             console.log('Dynamics Business Central Client authType: ' + this.authType);
             console.log('service url:', url);
@@ -193,7 +194,7 @@ export class DynamicsBusinessCentralClient extends BackendAdapterBase {
                     reject('Server did not return response!')
                 else
                     if (res.statusCode != 200 && res.statusCode != 201)
-                        reject(res.statusCode);
+                        reject(res.statusCode+' '+res.body?res.body:'');
                     else {
                         const r = JSON.parse(res.body);
                         delete r["@odata.context"];
@@ -249,7 +250,7 @@ export class DynamicsBusinessCentralClient extends BackendAdapterBase {
                     reject('Server did not return response!')
                 else
                     if (res.statusCode != 200 && res.statusCode != 201 && res.statusCode != 202 && res.statusCode != 203 && res.statusCode != 204)
-                        reject(res.statusCode);
+                    reject(res.statusCode+' '+res.body?res.body:'');
                     else {
                         resolve({ success: true });
                     }
@@ -291,7 +292,7 @@ export class DynamicsBusinessCentralClient extends BackendAdapterBase {
                     reject('Server did not return response!')
                 else
                     if (res.statusCode != 200)
-                        reject(res.statusCode);
+                    reject(res.statusCode+' '+res.body?res.body:'');
                     else {
                         try {
 

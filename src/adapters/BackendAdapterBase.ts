@@ -14,7 +14,7 @@ export class BackendAdapterBase {
     }
 
 
-    public  executeGet(company: string | null, entityName: string, filter: string | null, sort: string | null, max: number | null, page: number | null, apply: string): Promise<string> {
+    public  executeGet(company: string | null, entityName: string, filter: string | null, sort: string | null, max: number | null, page: number | null, apply: string): Promise<Array<any>> {
         return null;
     }
     
@@ -22,11 +22,11 @@ export class BackendAdapterBase {
         return null;
     }
 
-    public  executeUpdate(company: string | null, entityName: string, pkValues: string, body: string | null): Promise<string> {
+    public  executeUpdate(company: string | null, entityName: string, pkValues: string, body: any | null): Promise<string> {
         return null;
     }
 
-    public  executeDelete(company: string | null, entityName: string, pkValues: string, body: string | null): Promise<string> {
+    public  executeDelete(company: string | null, entityName: string, pkValues: string, body: any | null): Promise<string> {
         return null;
     }
 
