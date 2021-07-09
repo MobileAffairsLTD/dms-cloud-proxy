@@ -19,11 +19,11 @@ function X509KeyInfo(appArea: string) {
     }
 }
 
-export function computeSignedRequest(requestName: string, requestXml: string, appArea: string): string {
+export async function computeSignedRequest(apiKey: string, requestName: string, requestXml: string, appArea: string): Promise<string> {
 
     var sig = new SignedXml();
     sig.keyInfoProvider = new X509KeyInfo(appArea);
-    sig.signingKey = getPrivateCertificate(appArea)
+    sig.signingKey = await getPrivateCertificate(apiKey, appArea)
     sig.signatureAlgorithm = 'http://www.w3.org/2001/04/xmldsig-more#rsa-sha256';
     sig.canonicalizationAlgorithm = 'http://www.w3.org/2001/10/xml-exc-c14n#';
     sig.addReference(`//*[local-name(.)='${requestName}']`,
@@ -34,10 +34,10 @@ export function computeSignedRequest(requestName: string, requestXml: string, ap
     return sig.getSignedXml();
 }
 
-export function computeEinvoiceSignature(rootTag: string, requestXml: string, appArea: string): string {
+export async function computeEinvoiceSignature(apiKey: string, rootTag: string, requestXml: string, appArea: string): Promise<string> {
     var sig = new SignedXml();
     sig.keyInfoProvider = new X509KeyInfo(appArea);
-    sig.signingKey = getPrivateCertificate(appArea)
+    sig.signingKey = getPrivateCertificate(apiKey, appArea)
     sig.signatureAlgorithm = 'http://www.w3.org/2001/04/xmldsig-more#rsa-sha256';
     sig.canonicalizationAlgorithm = 'http://www.w3.org/2001/10/xml-exc-c14n#';
     sig.addReference(`//*[local-name(.)='${rootTag}']`,

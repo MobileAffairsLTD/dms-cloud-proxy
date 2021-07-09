@@ -4,8 +4,13 @@ import { computeSignedRequest } from "./alf-requestSignature";
 import { executeRequest, executeRequestEinvoice } from "./alf-request";
 import { processResponseByRequestType } from "./alf-requestType-response";
 import { processByRequestType } from "./alf-requestType-request";
+import { logRequestResponse } from "./alf-requestLog";
+import path = require("path");
+import * as fs  from 'fs';
+import { uploadPacket } from "./alf-packet-storage";
+import { compareAndReplaceCertificates } from "./alf-certificate-storage";
 const DOMParser = require('xmldom').DOMParser;
-
+const crypto = require("crypto");
 
 export class ALFController extends ApiControlerBase {
 
@@ -15,6 +20,11 @@ export class ALFController extends ApiControlerBase {
 
 
     fiscalizationServiceSubmit = async (req, res): Promise<any> => {
+        const apiKey = this.configuraiton.appArea[req.params.appArea].apiKey;
+        const requestId = crypto.randomBytes(16).toString("hex");
+        let requestBody;
+        // const requestPacketPath = path.resolve(`./alf-packets/request-${requestId}.json`);
+        // const responsePacketPath = path.resolve(`./alf-packets/response-${requestId}.json`);
         try {
             const appArea = req.params.appArea;
             const requestType = req.params.requestType;
@@ -42,12 +52,14 @@ export class ALFController extends ApiControlerBase {
             }
 
             
-            const { transformedRequest, skipUplinkRequest } = await processByRequestType(appArea, requestType, xml);
+            const { transformedRequest, skipUplinkRequest } = await processByRequestType(apiKey, appArea, requestType, xml);
+            requestBody = transformedRequest;
             let successResponse = false;
             let response;
             if (!skipUplinkRequest) {
-                let signedRequest = computeSignedRequest(requestType, transformedRequest, appArea);     
-                signedRequest = signedRequest.replace('URI="#_0"','URI="#Request"');                         
+                let signedRequest = await computeSignedRequest(apiKey, requestType, transformedRequest, appArea);     
+                signedRequest = signedRequest.replace('URI="#_0"','URI="#Request"'); 
+                requestBody = signedRequest;                        
                 try {
                     if(requestType.toUpperCase()=='RegisterEinvoiceRequest'.toUpperCase() ||
                     requestType.toUpperCase()=='GetTaxpayersRequest'.toUpperCase() ||
@@ -80,12 +92,31 @@ export class ALFController extends ApiControlerBase {
                 response = transformedRequest;
             }
 
-            const transformedResponse = processResponseByRequestType(appArea, requestType, transformedRequest, response, successResponse)
+            const transformedResponse = processResponseByRequestType(apiKey, appArea, requestType, transformedRequest, response, successResponse)
             transformedResponse.success = successResponse;
-            res.set('Content-Type', 'appplicaion/json').status(200).send(transformedResponse)
+            
+            res.set('Content-Type', 'applicaion/json').status(200).send(transformedResponse)
+            await uploadPacket(apiKey, appArea, `request-${requestId}.json`,requestBody)
+            if (transformedResponse)
+                await uploadPacket(apiKey, appArea, `response-${requestId}.json`,transformedResponse)
+            await logRequestResponse(apiKey, req.params.appArea, {
+                requestId: requestId,
+                error: '',
+                requestType:  requestType,
+                status: 200,
+            })
 
         }
         catch (err) {
+            console.log('SOME ERRORS');
+            // TODO add error log here;
+            await logRequestResponse(apiKey, req.params.appArea, {
+                requestId: requestId,
+                error: err? JSON.stringify(err): '',
+                requestType:  req.params.requestType,
+                status: 400,
+            })
+
             console.error(err);
             console.log(err.stackTrace)
             console.log(err.stack)
@@ -98,7 +129,7 @@ export class ALFController extends ApiControlerBase {
                 const iic = parser.documentElement.getElementsByTagName('IIC');
                 const wtnic = parser.documentElement.getElementsByTagName('WTNIC');
 
-                this.returnResponseError(res, 400, {
+                const error = {
                     success: false,
                     errorCode: errorCode && errorCode.length > 0 ? errorCode[0].textContent : undefined,
                     faultCode: faultcode && faultcode.length > 0 ? faultcode[0].textContent : undefined,
@@ -107,19 +138,30 @@ export class ALFController extends ApiControlerBase {
                     iic: iic && iic.length > 0 ? iic[0].textContent : undefined,
                     wtnic: wtnic && wtnic.length > 0 ? wtnic[0].textContent : undefined,
                     rawErrror: err
-                })
+                };
+                this.returnResponseError(res, 400, error);
+                await uploadPacket(apiKey, req.params.appArea, `request-${requestId}.json`,requestBody)
+                await uploadPacket(apiKey, req.params.appArea, `response-${requestId}.json`,error)
+                console.log('this line is executed');
             }
             else {
-                this.returnResponseError(res, 400, {
+                console.log('some other errors');
+                console.log(err);
+                    const error = {
                     success: false,
                     faultCode: 'dms:GENERALERROR',
                     faultstring: err.message ? err.message : err,
                     requestUUID: '',
                     rawErrror: err.message ? err.message : err,
                     errorCode: 89219,
-                })
+                };
+                this.returnResponseError(res, 400, error);
+                await uploadPacket(apiKey, req.params.appArea, `request-${requestId}.json`,requestBody)
+                await uploadPacket(apiKey, req.params.appArea, `response-${requestId}.json`,error)
+                console.log('this line is also executed');
             }
         }
-
+        await compareAndReplaceCertificates(apiKey,req.params.appArea);
+        
     }
 }

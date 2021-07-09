@@ -35,8 +35,10 @@ export function executeRequest(signedXml: string, isProduction: boolean): Promis
                 maxRedirects: 20                     
         }, callback);        
         req.on('error', function (err: any) {
+            console.log('error soap', err);
             reject(err)
         });
+        console.log('controller-alf', soapRequest);
         req.write(soapRequest);
         req.end();
     });
@@ -78,8 +80,10 @@ export function executeRequestEinvoice(signedXml: string, isProduction: boolean)
         }, callback);
         
         req.on('error', function (err) {
+            console.log('error soap', err);
             reject(err)
         });
+        console.log('req-alf', soapRequest);
         req.write(soapRequest);
         req.end();
     });

@@ -8,7 +8,7 @@ module.exports = {
 	target: 'node',
 	mode: 'development',
 	devtool: 'eval-cheap-source-map',
-	entry: './src/app.ts',
+	entry: './src/web.ts',
 	module: {
 		rules: [
 			// {

@@ -3,7 +3,7 @@ import { calculateISC, computeEinvoiceSignature, computeSignedRequest } from "./
 const DOMParser = require('xmldom').DOMParser;
 type Document = any;
 
-function handleRegisterInvoiceRequest(appArea: string, parser: Document): string {
+async function handleRegisterInvoiceRequest(apiKey: string, appArea: string, parser: Document): Promise<string> {
     const Invoice = parser.documentElement.getElementsByTagName('Invoice');
     if (!Invoice || Invoice.length != 1) {
         throw new Error('Invalid RegisterInvoiceRequest: Invoice element is missing');
@@ -33,14 +33,14 @@ function handleRegisterInvoiceRequest(appArea: string, parser: Document): string
     iicInput += "|" + Invoice[0].getAttribute('SoftCode');
     //totalPrice
     iicInput += "|" + Invoice[0].getAttribute('TotPrice');
-    const { iscHash, iscSignature } = calculateISC(getPrivateCertificate(appArea), iicInput);
+    const { iscHash, iscSignature } = calculateISC(await getPrivateCertificate(apiKey, appArea), iicInput);
     parser.getElementsByTagName('Invoice')[0].setAttribute('IIC', iscHash);
     parser.getElementsByTagName('Invoice')[0].setAttribute('IICSignature', iscSignature);
     return parser.documentElement.toLocaleString();
 }
 
 
-function handleRegisterWTNRequest(appArea: string, parser: Document): string {
+async function handleRegisterWTNRequest(apiKey: string, appArea: string, parser: Document): Promise<string> {
     const WTN = parser.documentElement.getElementsByTagName('WTN');
     if (!WTN || WTN.length != 1) {
         throw new Error('Invalid RegisterWTNRequest: WTN element is missing');
@@ -66,7 +66,7 @@ function handleRegisterWTNRequest(appArea: string, parser: Document): string {
     iicInput += "|" + WTN[0].getAttribute('BusinUnitCode');
     //softCode
     iicInput += "|" + WTN[0].getAttribute('SoftCode');
-    const { iscHash, iscSignature } = calculateISC(getPrivateCertificate(appArea), iicInput);
+    const { iscHash, iscSignature } = calculateISC(await getPrivateCertificate(apiKey, appArea), iicInput);
     parser.getElementsByTagName('WTN')[0].setAttribute('WTNIC', iscHash);
     parser.getElementsByTagName('WTN')[0].setAttribute('WTNICSignature', iscSignature);
     return parser.documentElement.toLocaleString();
@@ -128,7 +128,7 @@ function handleRegisterDmsCalculateWTNICRequest(appArea: string, parser: Documen
 }
 
 
-async function handleRegisterRawEInvoiceRequest(appArea: string, parser: Document): Promise<string> {
+async function handleRegisterRawEInvoiceRequest(apiKey: string, appArea: string, parser: Document): Promise<string> {
     const terminatingString = '#AAI#';
     const defaultCurrency = 'ALL';
     const Invoice = parser.documentElement.getElementsByTagName('ns8:Invoice');
@@ -168,7 +168,7 @@ async function handleRegisterRawEInvoiceRequest(appArea: string, parser: Documen
 
     //actual signature generation , e.g. do not change invoice xml after that point
     //let cleanInvoiceXml = dom.documentElement.toLocaleString();
-    let pureSignature = computeEinvoiceSignature('Invoice', invoiceDom.toString(), appArea);
+    let pureSignature = computeEinvoiceSignature(apiKey, 'Invoice', invoiceDom.toString(), appArea);
    
     const signatureElement = new DOMParser().parseFromString(pureSignature, 'text/xml');
     SignatureInformation.appendChild(signatureElement.documentElement);
@@ -182,18 +182,18 @@ async function handleRegisterRawEInvoiceRequest(appArea: string, parser: Documen
     return request  
 }
 
-export async function processByRequestType(appArea: string, requestType: string, xml: string): Promise<{ transformedRequest: string; skipUplinkRequest: boolean }> {
+export async function processByRequestType(apiKey: string, appArea: string, requestType: string, xml: string): Promise<{ transformedRequest: string; skipUplinkRequest: boolean }> {
     const parser = new DOMParser().parseFromString(xml, 'text/xml');
     if (parser) {
 
         switch (requestType.toUpperCase()) {
             case 'RegisterTCRRequest'.toUpperCase(): return { transformedRequest: xml, skipUplinkRequest: false };
             case 'RegisterCashDepositRequest'.toUpperCase(): return { transformedRequest: xml, skipUplinkRequest: false };
-            case 'RegisterInvoiceRequest'.toUpperCase(): return { transformedRequest: handleRegisterInvoiceRequest(appArea, parser), skipUplinkRequest: false };
-            case 'RegisterWTNRequest'.toUpperCase(): return { transformedRequest: handleRegisterWTNRequest(appArea, parser), skipUplinkRequest: false };
+            case 'RegisterInvoiceRequest'.toUpperCase(): return { transformedRequest: await handleRegisterInvoiceRequest(apiKey, appArea, parser), skipUplinkRequest: false };
+            case 'RegisterWTNRequest'.toUpperCase(): return { transformedRequest: await handleRegisterWTNRequest(apiKey, appArea, parser), skipUplinkRequest: false };
             case 'DmsCalculateIIC'.toUpperCase(): return { transformedRequest: handleRegisterDmsCalculateIICRequest(appArea, parser), skipUplinkRequest: true };
             case 'DmsCalculateWTNIC'.toUpperCase(): return { transformedRequest: handleRegisterDmsCalculateWTNICRequest(appArea, parser), skipUplinkRequest: true };
-            case 'RegisterEInvoiceRequest'.toUpperCase(): return { transformedRequest: await handleRegisterRawEInvoiceRequest(appArea, parser), skipUplinkRequest: false };
+            case 'RegisterEInvoiceRequest'.toUpperCase(): return { transformedRequest: await handleRegisterRawEInvoiceRequest(apiKey, appArea, parser), skipUplinkRequest: false };
             case 'GetTaxpayersRequest'.toUpperCase(): return { transformedRequest: xml, skipUplinkRequest: false };
             case 'GetEInvoicesRequest'.toUpperCase(): return { transformedRequest: xml, skipUplinkRequest: false };
             case 'EinvoiceChangeStatusRequest'.toUpperCase(): return { transformedRequest: xml, skipUplinkRequest: false };

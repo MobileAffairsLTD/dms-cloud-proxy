@@ -105,7 +105,7 @@ function handleRegisterWTNResponse(appArea: string, requestXml: string, parsedRe
 }
 
 
-export function handleDmsCalculateIICResponse(appArea: string, requestXml: string): Record<string, any> {
+export async function handleDmsCalculateIICResponse(apiKey: string, appArea: string, requestXml: string): Promise<Record<string, any>> {
     const parsedRequest = new DOMParser().parseFromString(requestXml, 'text/xml');
 
     let nuis = parsedRequest.documentElement.getAttribute('NUIS');
@@ -159,14 +159,14 @@ export function handleDmsCalculateIICResponse(appArea: string, requestXml: strin
     iicInput += "|" + parsedRequest.documentElement.getAttribute('SoftCode');
     //totalPrice
     iicInput += "|" + parsedRequest.documentElement.getAttribute('TotPrice');
-    const { iscHash, iscSignature } = calculateISC(getPrivateCertificate(appArea), iicInput);
+    const { iscHash, iscSignature } = calculateISC(await getPrivateCertificate(apiKey, appArea), iicInput);
     return {
         iic: iscHash,
         iicSignature: iscSignature
     }
 }
 
-function handleDmsCalculateWTNICResponse(appArea: string, requestXml: string, parsedResponse: Document, isSuccessReponse: boolean): Record<string, any> {
+async function handleDmsCalculateWTNICResponse(apiKey: string, appArea: string, requestXml: string, parsedResponse: Document, isSuccessReponse: boolean): Promise<Record<string, any>> {
     const parsedRequest = new DOMParser().parseFromString(requestXml, 'text/xml');
     let iicInput = '';
     //issuerNuis
@@ -179,7 +179,7 @@ function handleDmsCalculateWTNICResponse(appArea: string, requestXml: string, pa
     iicInput += "|" + parsedRequest.documentElement.getAttribute('BusinUnitCode');
     //softCode
     iicInput += "|" + parsedRequest.documentElement.getAttribute('SoftCode');
-    const { iscHash, iscSignature } = calculateISC(getPrivateCertificate(appArea), iicInput);
+    const { iscHash, iscSignature } = calculateISC(await getPrivateCertificate(apiKey, appArea), iicInput);
     return {
         wtnic: iscHash,
         wtnicSignature: iscSignature,
@@ -271,7 +271,7 @@ function handleEinvoiceChangeStatusResponse(appArea: string, requestXml: string,
     }
 }
 
-export function processResponseByRequestType(appArea: string, requestType: string, transformedRequestXml: string, response: string, isSuccessReponse: boolean): any {
+export function processResponseByRequestType(apiKey: string, appArea: string, requestType: string, transformedRequestXml: string, response: string, isSuccessReponse: boolean): any {
     const parsedResponse = new DOMParser().parseFromString(response, 'text/xml');
     let transformedResponse = null;
     if (parsedResponse) {
@@ -281,8 +281,8 @@ export function processResponseByRequestType(appArea: string, requestType: strin
             case 'RegisterCashDepositRequest'.toUpperCase(): transformedResponse = handleRegisterCashDepositResponse(appArea, transformedRequestXml, parsedResponse, isSuccessReponse); break;
             case 'RegisterInvoiceRequest'.toUpperCase(): transformedResponse = handleRegisterInvoiceResponse(appArea, transformedRequestXml, parsedResponse, isSuccessReponse); break;
             case 'RegisterWTNRequest'.toUpperCase(): transformedResponse = handleRegisterWTNResponse(appArea, transformedRequestXml, parsedResponse, isSuccessReponse); break;
-            case 'DmsCalculateIIC'.toUpperCase(): transformedResponse = handleDmsCalculateIICResponse(appArea, transformedRequestXml); break;
-            case 'DmsCalculateWTNIC'.toUpperCase(): transformedResponse = handleDmsCalculateWTNICResponse(appArea, transformedRequestXml, parsedResponse, isSuccessReponse); break;
+            case 'DmsCalculateIIC'.toUpperCase(): transformedResponse = handleDmsCalculateIICResponse(apiKey, appArea, transformedRequestXml); break;
+            case 'DmsCalculateWTNIC'.toUpperCase(): transformedResponse = handleDmsCalculateWTNICResponse(apiKey, appArea, transformedRequestXml, parsedResponse, isSuccessReponse); break;
             case 'RegisterEInvoiceRequest'.toUpperCase(): transformedResponse = handleRegisterEInvoiceResponse(appArea, transformedRequestXml, parsedResponse, isSuccessReponse); break;
             case 'GetTaxpayersRequest'.toUpperCase(): transformedResponse = handleGetTaxPayersResponse(appArea, transformedRequestXml, parsedResponse, isSuccessReponse); break;
             case 'GetEInvoicesRequest'.toUpperCase(): transformedResponse = handleGetEInvoicesResponse(appArea, transformedRequestXml, parsedResponse, isSuccessReponse); break;
