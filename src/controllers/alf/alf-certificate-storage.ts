@@ -1,12 +1,12 @@
-import * as path  from 'path';
-import * as fs  from 'fs';
+import * as path from 'path';
+import * as fs from 'fs';
 import { CloudAdapter } from '../../adapters/cloud-adapter';
 
 
 export function getLocalPrivateCertificate(appArea: string): string {
     const certificatePath = path.resolve(`./alf-certificates/${appArea}-alf-certificate.pem`);
     const p = path.resolve(certificatePath);
-    const certificate = fs.readFileSync(p,'utf8');
+    const certificate = fs.readFileSync(p, 'utf8');
     return certificate;
 }
 
@@ -27,17 +27,17 @@ export function getLocalPrivateCertificateDate(appArea: string): Date {
     const stats = fs.statSync(p);
     const mtime = stats.mtime;
     return mtime;
-} 
+}
 
-export function getPublicKey(appArea: string): string{
+export function getPublicKey(appArea: string): string {
     //extracts public certificate from the private certificate
     const certificate: string = this.getLocalPrivateCertificate(appArea);
     const beginCertString = '-----BEGIN CERTIFICATE-----';
     const endCertString = '-----END CERTIFICATE-----';
-    
-    const privateCert =  certificate.substring(certificate.indexOf(beginCertString),certificate.indexOf(endCertString)+endCertString.length);
+
+    const privateCert = certificate.substring(certificate.indexOf(beginCertString), certificate.indexOf(endCertString) + endCertString.length);
     return privateCert;
-} 
+}
 export async function downloadPrivateCertificateFromCloud(apiKey: string, appArea: string): Promise<string> {
     const cloudAdapter = new CloudAdapter(appArea, apiKey);
     const certificatePath = path.resolve(`./alf-certificates/${appArea}-alf-certificate.pem`);
@@ -56,7 +56,7 @@ export async function overwriteLocalPrivateCertificate(appArea: string, privateC
     const certificatePath = path.resolve(`./alf-certificates/${appArea}-alf-certificate.pem`);
     const p = path.resolve(certificatePath);
     try {
-        fs.writeFileSync(p,privateCertificate);
+        fs.writeFileSync(p, privateCertificate);
     } catch (err) {
         console.log(err);
     }
@@ -65,9 +65,12 @@ export async function overwriteLocalPrivateCertificate(appArea: string, privateC
 export async function compareAndReplaceCertificates(apiKey: string, appArea: string) {
     const cloudAdapter = new CloudAdapter(appArea, apiKey);
     const cloudCertificateDate = await cloudAdapter.getALFCertificateDate();
-    const localCertificateDate = await getLocalPrivateCertificateDate(appArea);
+    const localCertificateDate = getLocalPrivateCertificateDate(appArea);
+    console.log('cloudCert', cloudCertificateDate);
+    console.log('localCert', localCertificateDate);
     if (cloudCertificateDate > localCertificateDate) {
+        console.log('changing local certificate');
         const privateCertificate = await downloadPrivateCertificateFromCloud(apiKey, appArea);
-        await overwriteLocalPrivateCertificate(appArea,privateCertificate);
+        await overwriteLocalPrivateCertificate(appArea, privateCertificate);
     }
 }

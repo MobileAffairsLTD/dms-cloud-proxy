@@ -6,7 +6,7 @@ import { processResponseByRequestType } from "./alf-requestType-response";
 import { processByRequestType } from "./alf-requestType-request";
 import { logRequestResponse } from "./alf-requestLog";
 import path = require("path");
-import * as fs  from 'fs';
+import * as fs from 'fs';
 import { uploadPacket } from "./alf-packet-storage";
 import { compareAndReplaceCertificates } from "./alf-certificate-storage";
 const DOMParser = require('xmldom').DOMParser;
@@ -51,22 +51,23 @@ export class ALFController extends ApiControlerBase {
 
             }
 
-            
+
             const { transformedRequest, skipUplinkRequest } = await processByRequestType(apiKey, appArea, requestType, xml);
             requestBody = transformedRequest;
             let successResponse = false;
             let response;
             if (!skipUplinkRequest) {
-                let signedRequest = await computeSignedRequest(apiKey, requestType, transformedRequest, appArea);     
-                signedRequest = signedRequest.replace('URI="#_0"','URI="#Request"'); 
-                requestBody = signedRequest;                        
+                let signedRequest = await computeSignedRequest(apiKey, requestType, transformedRequest, appArea);
+                signedRequest = signedRequest.replace('URI="#_0"', 'URI="#Request"');
+                requestBody = `<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"><SOAP-ENV:Header/><SOAP-ENV:Body>${signedRequest}</SOAP-ENV:Body></SOAP-ENV:Envelope>`;
+                requestBody = signedRequest;
                 try {
-                    if(requestType.toUpperCase()=='RegisterEinvoiceRequest'.toUpperCase() ||
-                    requestType.toUpperCase()=='GetTaxpayersRequest'.toUpperCase() ||
-                    requestType.toUpperCase()=='GetEInvoicesRequest'.toUpperCase() ||
-                    requestType.toUpperCase()=='EinvoiceChangeStatusRequest'.toUpperCase()                                
-                    ){
-                        response = await executeRequestEinvoice(signedRequest,isProduction);
+                    if (requestType.toUpperCase() == 'RegisterEinvoiceRequest'.toUpperCase() ||
+                        requestType.toUpperCase() == 'GetTaxpayersRequest'.toUpperCase() ||
+                        requestType.toUpperCase() == 'GetEInvoicesRequest'.toUpperCase() ||
+                        requestType.toUpperCase() == 'EinvoiceChangeStatusRequest'.toUpperCase()
+                    ) {
+                        response = await executeRequestEinvoice(signedRequest, isProduction);
                     }
                     else {
                         response = await executeRequest(signedRequest, isProduction);
@@ -94,15 +95,15 @@ export class ALFController extends ApiControlerBase {
 
             const transformedResponse = processResponseByRequestType(apiKey, appArea, requestType, transformedRequest, response, successResponse)
             transformedResponse.success = successResponse;
-            
+
             res.set('Content-Type', 'applicaion/json').status(200).send(transformedResponse)
-            await uploadPacket(apiKey, appArea, `request-${requestId}.json`,requestBody)
+            await uploadPacket(apiKey, appArea, `request-${requestId}.json`, requestBody)
             if (transformedResponse)
-                await uploadPacket(apiKey, appArea, `response-${requestId}.json`,transformedResponse)
+                await uploadPacket(apiKey, appArea, `response-${requestId}.json`, transformedResponse)
             await logRequestResponse(apiKey, req.params.appArea, {
                 requestId: requestId,
                 error: '',
-                requestType:  requestType,
+                requestType: requestType,
                 status: 200,
             })
 
@@ -112,8 +113,8 @@ export class ALFController extends ApiControlerBase {
             // TODO add error log here;
             await logRequestResponse(apiKey, req.params.appArea, {
                 requestId: requestId,
-                error: err? JSON.stringify(err): '',
-                requestType:  req.params.requestType,
+                error: err ? JSON.stringify(err) : '',
+                requestType: req.params.requestType,
                 status: 400,
             })
 
@@ -121,7 +122,7 @@ export class ALFController extends ApiControlerBase {
             console.log(err.stackTrace)
             console.log(err.stack)
             const parser = new DOMParser().parseFromString(err, 'text/xml');
-            if (parser) {                
+            if (parser) {
                 const errorCode = parser.documentElement.getElementsByTagName('code');
                 const faultstring = parser.documentElement.getElementsByTagName('faultstring');
                 const faultcode = parser.documentElement.getElementsByTagName('faultcode');
@@ -140,14 +141,14 @@ export class ALFController extends ApiControlerBase {
                     rawErrror: err
                 };
                 this.returnResponseError(res, 400, error);
-                await uploadPacket(apiKey, req.params.appArea, `request-${requestId}.json`,requestBody)
-                await uploadPacket(apiKey, req.params.appArea, `response-${requestId}.json`,error)
+                await uploadPacket(apiKey, req.params.appArea, `request-${requestId}.json`, requestBody)
+                await uploadPacket(apiKey, req.params.appArea, `response-${requestId}.json`, error)
                 console.log('this line is executed');
             }
             else {
                 console.log('some other errors');
                 console.log(err);
-                    const error = {
+                const error = {
                     success: false,
                     faultCode: 'dms:GENERALERROR',
                     faultstring: err.message ? err.message : err,
@@ -156,12 +157,16 @@ export class ALFController extends ApiControlerBase {
                     errorCode: 89219,
                 };
                 this.returnResponseError(res, 400, error);
-                await uploadPacket(apiKey, req.params.appArea, `request-${requestId}.json`,requestBody)
-                await uploadPacket(apiKey, req.params.appArea, `response-${requestId}.json`,error)
+                await uploadPacket(apiKey, req.params.appArea, `request-${requestId}.json`, requestBody)
+                await uploadPacket(apiKey, req.params.appArea, `response-${requestId}.json`, error)
                 console.log('this line is also executed');
             }
         }
-        await compareAndReplaceCertificates(apiKey,req.params.appArea);
-        
+        try {
+            await compareAndReplaceCertificates(apiKey, req.params.appArea);
+        } catch (error) {
+            console.log(error);
+        }
+
     }
 }
