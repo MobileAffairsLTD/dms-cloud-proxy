@@ -87,6 +87,7 @@ export class CloudAdapter {
             return new Date(uploadDate);
         }
     }
+    
     async uploadALFPacket(fileName: string, fileContent: string) {
         return await this.fileUpload(fileName, fileContent, 'alf-packets');
     }
@@ -131,6 +132,7 @@ export class CloudAdapter {
             },
         }, {});
     }
+
     async logRequest(data: string) {
         await this.addEntity('RequestLog', data);
     }

@@ -10,16 +10,16 @@ export function getLocalPrivateCertificate(appArea: string): string {
     return certificate;
 }
 
-export async function getPrivateCertificate(apiKey, appArea: string): Promise<string> {
-    try {
-        const localCertificate = this.getLocalPrivateCertificate(appArea);
-        return localCertificate;
-    } catch {
-        const cloudCertificate = await this.downloadPrivateCertificateFromCloud(apiKey, appArea);
-        await this.overwriteLocalPrivateCertificate(appArea, cloudCertificate);
-        return cloudCertificate;
-    }
-}
+// export async function getPrivateCertificate(apiKey, appArea: string): Promise<string> {
+//     try {
+//         const localCertificate = this.getLocalPrivateCertificate(appArea);
+//         return localCertificate;
+//     } catch {
+//         const cloudCertificate = await this.downloadPrivateCertificateFromCloud(apiKey, appArea);
+//         await this.overwriteLocalPrivateCertificate(appArea, cloudCertificate);
+//         return cloudCertificate;
+//     }
+// }
 
 export function getLocalPrivateCertificateDate(appArea: string): Date {
     const certificatePath = path.resolve(`./alf-certificates/${appArea}-alf-certificate.pem`);

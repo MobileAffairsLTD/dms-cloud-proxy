@@ -18,9 +18,35 @@ export class ALFController extends ApiControlerBase {
         super(configuraiton);
     }
 
+    async LogRequestAndCheckCert(apiKey: string, requestId: any, status: number, req: { params: { appArea: string; requestType: any; }; }, requestBody: any, requestResponse: any) {
+        try {
+            await compareAndReplaceCertificates(apiKey, req.params.appArea);
+        } catch (error) {
+            console.log(`Unable to compare and replace certificates: ${error}`)
+        };
+        try {
+            await logRequestResponse(apiKey, req.params.appArea, {
+                requestId: requestId,
+                error: (status != 200) ? requestResponse : '',
+                requestType: req.params.requestType,
+                status: status,
+            })  
+        } catch (error) {
+            console.log(`Unable to log request/response: ${error}`);
+        };
+        try {
+            await uploadPacket(apiKey, req.params.appArea, `request-${requestId}.json`, requestBody);
+            await uploadPacket(apiKey, req.params.appArea, `response-${requestId}.json`, requestResponse);
+        } catch (error) {
+            console.log(`unable to upload request/response packet: ${error}`);
+        }
+    }
 
     fiscalizationServiceSubmit = async (req, res): Promise<any> => {
         const apiKey = this.configuraiton.appArea[req.params.appArea].apiKey;
+        if (!apiKey) {
+            throw new Error('Missing APIKey in configuration.')
+        }
         const requestId = crypto.randomBytes(16).toString("hex");
         let requestBody;
         // const requestPacketPath = path.resolve(`./alf-packets/request-${requestId}.json`);
@@ -57,7 +83,7 @@ export class ALFController extends ApiControlerBase {
             let successResponse = false;
             let response;
             if (!skipUplinkRequest) {
-                let signedRequest = await computeSignedRequest(apiKey, requestType, transformedRequest, appArea);
+                let signedRequest = await computeSignedRequest(requestType, transformedRequest, appArea);
                 signedRequest = signedRequest.replace('URI="#_0"', 'URI="#Request"');
                 requestBody = `<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"><SOAP-ENV:Header/><SOAP-ENV:Body>${signedRequest}</SOAP-ENV:Body></SOAP-ENV:Envelope>`;
                 requestBody = signedRequest;
@@ -96,28 +122,11 @@ export class ALFController extends ApiControlerBase {
             const transformedResponse = processResponseByRequestType(apiKey, appArea, requestType, transformedRequest, response, successResponse)
             transformedResponse.success = successResponse;
 
-            res.set('Content-Type', 'applicaion/json').status(200).send(transformedResponse)
-            await uploadPacket(apiKey, appArea, `request-${requestId}.json`, requestBody)
-            if (transformedResponse)
-                await uploadPacket(apiKey, appArea, `response-${requestId}.json`, transformedResponse)
-            await logRequestResponse(apiKey, req.params.appArea, {
-                requestId: requestId,
-                error: '',
-                requestType: requestType,
-                status: 200,
-            })
+            res.set('Content-Type', 'applicaion/json').status(200).send(transformedResponse);
+            await this.LogRequestAndCheckCert(apiKey, requestId, 200, req, requestBody, transformedResponse ? transformedResponse : '');    
 
         }
         catch (err) {
-            console.log('SOME ERRORS');
-            // TODO add error log here;
-            await logRequestResponse(apiKey, req.params.appArea, {
-                requestId: requestId,
-                error: err ? JSON.stringify(err) : '',
-                requestType: req.params.requestType,
-                status: 400,
-            })
-
             console.error(err);
             console.log(err.stackTrace)
             console.log(err.stack)
@@ -141,12 +150,9 @@ export class ALFController extends ApiControlerBase {
                     rawErrror: err
                 };
                 this.returnResponseError(res, 400, error);
-                await uploadPacket(apiKey, req.params.appArea, `request-${requestId}.json`, requestBody)
-                await uploadPacket(apiKey, req.params.appArea, `response-${requestId}.json`, error)
-                console.log('this line is executed');
+                await this.LogRequestAndCheckCert(apiKey, requestId, 400, req, requestBody, error);
             }
             else {
-                console.log('some other errors');
                 console.log(err);
                 const error = {
                     success: false,
@@ -157,16 +163,8 @@ export class ALFController extends ApiControlerBase {
                     errorCode: 89219,
                 };
                 this.returnResponseError(res, 400, error);
-                await uploadPacket(apiKey, req.params.appArea, `request-${requestId}.json`, requestBody)
-                await uploadPacket(apiKey, req.params.appArea, `response-${requestId}.json`, error)
-                console.log('this line is also executed');
+                await this.LogRequestAndCheckCert(apiKey, requestId, 400, req, requestBody, error);
             }
         }
-        try {
-            await compareAndReplaceCertificates(apiKey, req.params.appArea);
-        } catch (error) {
-            console.log(error);
-        }
-
     }
 }

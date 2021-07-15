@@ -1,4 +1,4 @@
-import { getPrivateCertificate } from "./alf-certificate-storage";
+import { getLocalPrivateCertificate } from "./alf-certificate-storage";
 import { calculateISC } from "./alf-requestSignature";
 
 const DOMParser = require('xmldom').DOMParser;
@@ -105,7 +105,7 @@ function handleRegisterWTNResponse(appArea: string, requestXml: string, parsedRe
 }
 
 
-export async function handleDmsCalculateIICResponse(apiKey: string, appArea: string, requestXml: string): Promise<Record<string, any>> {
+export function handleDmsCalculateIICResponse(apiKey: string, appArea: string, requestXml: string): Record<string, any> {
     const parsedRequest = new DOMParser().parseFromString(requestXml, 'text/xml');
 
     let nuis = parsedRequest.documentElement.getAttribute('NUIS');
@@ -159,7 +159,7 @@ export async function handleDmsCalculateIICResponse(apiKey: string, appArea: str
     iicInput += "|" + parsedRequest.documentElement.getAttribute('SoftCode');
     //totalPrice
     iicInput += "|" + parsedRequest.documentElement.getAttribute('TotPrice');
-    const { iscHash, iscSignature } = calculateISC(await getPrivateCertificate(apiKey, appArea), iicInput);
+    const { iscHash, iscSignature } = calculateISC(getLocalPrivateCertificate(appArea), iicInput);
     return {
         iic: iscHash,
         iicSignature: iscSignature
@@ -179,7 +179,7 @@ async function handleDmsCalculateWTNICResponse(apiKey: string, appArea: string, 
     iicInput += "|" + parsedRequest.documentElement.getAttribute('BusinUnitCode');
     //softCode
     iicInput += "|" + parsedRequest.documentElement.getAttribute('SoftCode');
-    const { iscHash, iscSignature } = calculateISC(await getPrivateCertificate(apiKey, appArea), iicInput);
+    const { iscHash, iscSignature } = calculateISC(getLocalPrivateCertificate(appArea), iicInput);
     return {
         wtnic: iscHash,
         wtnicSignature: iscSignature,
@@ -226,8 +226,8 @@ function handleRegisterEInvoiceResponse(appArea: string, requestXml: string, par
         throw parsedResponse.documentElement.toString();
     }
     else {
-        if (!RegisterEInvoiceResponse || RegisterEInvoiceResponse.length != 1) {        
-         RegisterEInvoiceResponse = parsedResponse.documentElement.getElementsByTagName('RegisterEinvoiceResponse');
+        if (!RegisterEInvoiceResponse || RegisterEInvoiceResponse.length != 1) {
+            RegisterEInvoiceResponse = parsedResponse.documentElement.getElementsByTagName('RegisterEinvoiceResponse');
         }
 
         if (!RegisterEInvoiceResponse || RegisterEInvoiceResponse.length != 1) {
