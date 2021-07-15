@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "f07bb296-7e04-44c9-8bc9-893679f6763f",
+		"_postman_id": "bab02f95-f8ae-487c-a724-d36a878646db",
 		"name": "Albanian Fiscalization",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -12,7 +12,7 @@
 				"header": [
 					{
 						"key": "dms-api-key",
-						"value": "123",
+						"value": "pBr8bp6LuWHH9ZXnxK7pjixVXf432YeHguvRC9Vz",
 						"type": "text"
 					}
 				],
@@ -26,20 +26,18 @@
 					}
 				},
 				"url": {
-					"raw": "http://dynamicsmobile-agent-east1.us-east-1.elasticbeanstalk.com/api/plugins/alf/request/DEMO01/DmsCalculateIIC",
+					"raw": "http://localhost:8080/api/plugins/alf/request/RA202051203845/DmsCalculateIIC",
 					"protocol": "http",
 					"host": [
-						"dynamicsmobile-agent-east1",
-						"us-east-1",
-						"elasticbeanstalk",
-						"com"
+						"localhost"
 					],
+					"port": "8080",
 					"path": [
 						"api",
 						"plugins",
 						"alf",
 						"request",
-						"DEMO01",
+						"RA202051203845",
 						"DmsCalculateIIC"
 					]
 				}
@@ -53,7 +51,7 @@
 				"header": [
 					{
 						"key": "dms-api-key",
-						"value": "123",
+						"value": "pBr8bp6LuWHH9ZXnxK7pjixVXf432YeHguvRC9Vz",
 						"type": "text"
 					}
 				],
@@ -67,20 +65,18 @@
 					}
 				},
 				"url": {
-					"raw": "http://dynamicsmobile-agent-east1.us-east-1.elasticbeanstalk.com/api/plugins/alf/request/DEMO01/RegisterTCRRequest",
+					"raw": "http://localhost:8080/api/plugins/alf/request/RA202051203845/RegisterTCRRequest",
 					"protocol": "http",
 					"host": [
-						"dynamicsmobile-agent-east1",
-						"us-east-1",
-						"elasticbeanstalk",
-						"com"
+						"localhost"
 					],
+					"port": "8080",
 					"path": [
 						"api",
 						"plugins",
 						"alf",
 						"request",
-						"DEMO01",
+						"RA202051203845",
 						"RegisterTCRRequest"
 					]
 				}
@@ -94,7 +90,7 @@
 				"header": [
 					{
 						"key": "dms-api-key",
-						"value": "123",
+						"value": "pBr8bp6LuWHH9ZXnxK7pjixVXf432YeHguvRC9Vz",
 						"type": "text"
 					}
 				],
@@ -108,20 +104,18 @@
 					}
 				},
 				"url": {
-					"raw": "http://dynamicsmobile-agent-east1.us-east-1.elasticbeanstalk.com/api/plugins/alf/request/DEMO01/RegisterCashDepositRequest",
+					"raw": "http://localhost:8080/api/plugins/alf/request/RA202051203845/RegisterCashDepositRequest",
 					"protocol": "http",
 					"host": [
-						"dynamicsmobile-agent-east1",
-						"us-east-1",
-						"elasticbeanstalk",
-						"com"
+						"localhost"
 					],
+					"port": "8080",
 					"path": [
 						"api",
 						"plugins",
 						"alf",
 						"request",
-						"DEMO01",
+						"RA202051203845",
 						"RegisterCashDepositRequest"
 					]
 				}
@@ -135,7 +129,7 @@
 				"header": [
 					{
 						"key": "dms-api-key",
-						"value": "123",
+						"value": "pBr8bp6LuWHH9ZXnxK7pjixVXf432YeHguvRC9Vz",
 						"type": "text"
 					}
 				],
@@ -149,20 +143,18 @@
 					}
 				},
 				"url": {
-					"raw": "http://dynamicsmobile-agent-east1.us-east-1.elasticbeanstalk.com/api/plugins/alf/request/DEMO01/RegisterInvoiceRequest",
+					"raw": "http://localhost:8080/api/plugins/alf/request/RA202051203845/RegisterInvoiceRequest",
 					"protocol": "http",
 					"host": [
-						"dynamicsmobile-agent-east1",
-						"us-east-1",
-						"elasticbeanstalk",
-						"com"
+						"localhost"
 					],
+					"port": "8080",
 					"path": [
 						"api",
 						"plugins",
 						"alf",
 						"request",
-						"DEMO01",
+						"RA202051203845",
 						"RegisterInvoiceRequest"
 					]
 				}
@@ -176,7 +168,7 @@
 				"header": [
 					{
 						"key": "dms-api-key",
-						"value": "123",
+						"value": "pBr8bp6LuWHH9ZXnxK7pjixVXf432YeHguvRC9Vz",
 						"type": "text"
 					}
 				],
@@ -190,7 +182,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:8080/api/plugins/alf/request/DEMO01/RegisterEinvoiceRequest",
+					"raw": "http://localhost:8080/api/plugins/alf/request/RA202051203845/RegisterEinvoiceRequest",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -201,7 +193,7 @@
 						"plugins",
 						"alf",
 						"request",
-						"DEMO01",
+						"RA202051203845",
 						"RegisterEinvoiceRequest"
 					]
 				}
@@ -215,7 +207,7 @@
 				"header": [
 					{
 						"key": "dms-api-key",
-						"value": "123",
+						"value": "pBr8bp6LuWHH9ZXnxK7pjixVXf432YeHguvRC9Vz",
 						"type": "text"
 					}
 				],
@@ -229,7 +221,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:8080/api/plugins/alf/request/DEMO01/RegisterEinvoiceRequest",
+					"raw": "http://localhost:8080/api/plugins/alf/request/RA202051203845/RegisterEinvoiceRequest",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -240,7 +232,7 @@
 						"plugins",
 						"alf",
 						"request",
-						"DEMO01",
+						"RA202051203845",
 						"RegisterEinvoiceRequest"
 					]
 				}
@@ -254,7 +246,7 @@
 				"header": [
 					{
 						"key": "dms-api-key",
-						"value": "123",
+						"value": "pBr8bp6LuWHH9ZXnxK7pjixVXf432YeHguvRC9Vz",
 						"type": "text"
 					}
 				],
@@ -268,20 +260,18 @@
 					}
 				},
 				"url": {
-					"raw": "http://dynamicsmobile-agent-east1.us-east-1.elasticbeanstalk.com/api/plugins/alf/request/DEMO01/RegisterWTNRequest",
+					"raw": "http://localhost:8080/api/plugins/alf/request/RA202051203845/RegisterWTNRequest",
 					"protocol": "http",
 					"host": [
-						"dynamicsmobile-agent-east1",
-						"us-east-1",
-						"elasticbeanstalk",
-						"com"
+						"localhost"
 					],
+					"port": "8080",
 					"path": [
 						"api",
 						"plugins",
 						"alf",
 						"request",
-						"DEMO01",
+						"RA202051203845",
 						"RegisterWTNRequest"
 					]
 				}
@@ -295,7 +285,7 @@
 				"header": [
 					{
 						"key": "dms-api-key",
-						"value": "123",
+						"value": "pBr8bp6LuWHH9ZXnxK7pjixVXf432YeHguvRC9Vz",
 						"type": "text"
 					}
 				],
@@ -309,20 +299,18 @@
 					}
 				},
 				"url": {
-					"raw": "http://dynamicsmobile-agent-east1.us-east-1.elasticbeanstalk.com/api/plugins/alf/request/DEMO01/DmsCalculateWTNIC",
+					"raw": "http://localhost:8080/api/plugins/alf/request/RA202051203845/DmsCalculateWTNIC",
 					"protocol": "http",
 					"host": [
-						"dynamicsmobile-agent-east1",
-						"us-east-1",
-						"elasticbeanstalk",
-						"com"
+						"localhost"
 					],
+					"port": "8080",
 					"path": [
 						"api",
 						"plugins",
 						"alf",
 						"request",
-						"DEMO01",
+						"RA202051203845",
 						"DmsCalculateWTNIC"
 					]
 				}
@@ -336,7 +324,7 @@
 				"header": [
 					{
 						"key": "dms-api-key",
-						"value": "123",
+						"value": "pBr8bp6LuWHH9ZXnxK7pjixVXf432YeHguvRC9Vz",
 						"type": "text"
 					}
 				],
@@ -350,20 +338,18 @@
 					}
 				},
 				"url": {
-					"raw": "https://agent.portal.dynamicsmobile.com/api/plugins/alf/request/DEMO01/GetTaxpayersRequest",
-					"protocol": "https",
+					"raw": "http://localhost:8080/api/plugins/alf/request/RA202051203845/GetTaxpayersRequest",
+					"protocol": "http",
 					"host": [
-						"agent",
-						"portal",
-						"dynamicsmobile",
-						"com"
+						"localhost"
 					],
+					"port": "8080",
 					"path": [
 						"api",
 						"plugins",
 						"alf",
 						"request",
-						"DEMO01",
+						"RA202051203845",
 						"GetTaxpayersRequest"
 					]
 				}
@@ -377,13 +363,13 @@
 				"header": [
 					{
 						"key": "dms-api-key",
-						"value": "123",
+						"value": "pBr8bp6LuWHH9ZXnxK7pjixVXf432YeHguvRC9Vz",
 						"type": "text"
 					}
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"request\": \"<GetEinvoicesRequest xmlns=\\\"https://Einvoice.tatime.gov.al/EinvoiceService/schema\\\" xmlns:ns2=\\\"http://www.w3.org/2000/09/xmldsig#\\\"Id=\\\"Request\\\" Version=\\\"1\\\"> <Header SendDateTime=\\\"2020-09-10T15:45:24+02:00\\\" UUID=\\\"e7f25589-3882-4270-ae0c-05d2da18fb73\\\"/> <EIC>e8e25589-3882-4270-ae0c-05d2da18fb73</EIC></GetEinvoicesRequest>\"\r\n}",
+					"raw": "{\r\n    \"request\": \"<GetEInvoicesRequest xmlns=\\\"https://Einvoice.tatime.gov.al/EinvoiceService/schema\\\" xmlns:ns2=\\\"http://www.w3.org/2000/09/xmldsig#\\\"Id=\\\"Request\\\" Version=\\\"1\\\"> <Header SendDateTime=\\\"2020-09-10T15:45:24+02:00\\\" UUID=\\\"e7f25589-3882-4270-ae0c-05d2da18fb73\\\"/> <EIC>e8e25589-3882-4270-ae0c-05d2da18fb73</EIC></GetEInvoicesRequest>\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -391,21 +377,19 @@
 					}
 				},
 				"url": {
-					"raw": "https://agent.portal.dynamicsmobile.com/api/plugins/alf/request/DEMO01/GetEinvoicesRequest",
-					"protocol": "https",
+					"raw": "http://localhost:8080/api/plugins/alf/request/RA202051203845/GetEInvoicesRequest",
+					"protocol": "http",
 					"host": [
-						"agent",
-						"portal",
-						"dynamicsmobile",
-						"com"
+						"localhost"
 					],
+					"port": "8080",
 					"path": [
 						"api",
 						"plugins",
 						"alf",
 						"request",
-						"DEMO01",
-						"GetEinvoicesRequest"
+						"RA202051203845",
+						"GetEInvoicesRequest"
 					]
 				}
 			},
@@ -418,13 +402,13 @@
 				"header": [
 					{
 						"key": "dms-api-key",
-						"value": "123",
+						"value": "pBr8bp6LuWHH9ZXnxK7pjixVXf432YeHguvRC9Vz",
 						"type": "text"
 					}
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"request\":\"<EinvoiceChangeStatusRequest xmlns=\\\"https://Einvoice.tatime.gov.al/EinvoiceService/schema\\\"xmlns:ns2=\\\"http://www.w3.org/2000/09/xmldsig#\\\" Id=\\\"Request\\\" Version=\\\"1\\\"> <Header SendDateTime=\\\"2020-09-10T15:45:24+02:00\\\" UUID=\\\"e7f25589-3882-4270-ae0c-05d2da18fb73\\\"/> <EICs> <EIC>e8e25589-3882-4270-ae0c-05d2da18fb73</EIC> <EIC>a6e25467-2771-4280-bc0c-12d3da18fb73</EIC> </EICs> <EinStatus>ACCEPTED</EinStatus> </EinvoiceChangeStatusRequest>\"\r\n}",
+					"raw": "{\r\n    \"request\":\"<EinvoiceChangeStatusRequest xmlns=\\\"https://Einvoice.tatime.gov.al/EinvoiceService/schema\\\" xmlns:ns2=\\\"http://www.w3.org/2000/09/xmldsig#\\\" Id=\\\"Request\\\" Version=\\\"1\\\"> <Header SendDateTime=\\\"2020-09-10T15:45:24+02:00\\\" UUID=\\\"e7f25589-3882-4270-ae0c-05d2da18fb73\\\"/> <EICs> <EIC>e8e25589-3882-4270-ae0c-05d2da18fb73</EIC> <EIC>a6e25467-2771-4280-bc0c-12d3da18fb73</EIC> </EICs> <EinStatus>ACCEPTED</EinStatus> </EinvoiceChangeStatusRequest>\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -432,7 +416,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:8080/api/plugins/alf/request/DEMO01/EinvoiceChangeStatusRequest",
+					"raw": "http://localhost:8080/api/plugins/alf/request/RA202051203845/EinvoiceChangeStatusRequest",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -443,7 +427,7 @@
 						"plugins",
 						"alf",
 						"request",
-						"DEMO01",
+						"RA202051203845",
 						"EinvoiceChangeStatusRequest"
 					]
 				}
@@ -457,7 +441,7 @@
 				"header": [
 					{
 						"key": "dms-api-key",
-						"value": "123",
+						"value": "pBr8bp6LuWHH9ZXnxK7pjixVXf432YeHguvRC9Vz",
 						"type": "text"
 					}
 				],
@@ -471,7 +455,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:8080/api/plugins/alf/request/DEMO01/RegisterEinvoiceRequest",
+					"raw": "http://localhost:8080/api/plugins/alf/request/RA202051203845/RegisterEinvoiceRequest",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -482,8 +466,136 @@
 						"plugins",
 						"alf",
 						"request",
-						"DEMO01",
+						"RA202051203845",
 						"RegisterEinvoiceRequest"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Query RequestLog",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "x-api-key",
+						"value": "pBr8bp6LuWHH9ZXnxK7pjixVXf432YeHguvRC9Vz",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{}"
+				},
+				"url": {
+					"raw": "api.portal.dynamicsmobile.com/livelink/entity/RA202051203845/ALF/RequestLog/query",
+					"host": [
+						"api",
+						"portal",
+						"dynamicsmobile",
+						"com"
+					],
+					"path": [
+						"livelink",
+						"entity",
+						"RA202051203845",
+						"ALF",
+						"RequestLog",
+						"query"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add RequestLog",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "x-api-key",
+						"value": "pBr8bp6LuWHH9ZXnxK7pjixVXf432YeHguvRC9Vz",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "// {\r\n//                 \"requestId\": \"transformedResponse.requestUUID\",\r\n//                 \"error\": \"test\",\r\n//                 \"requestType\":  \"requestType\",\r\n//                 \"status\": 400\r\n//             }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "api.portal.dynamicsmobile.com/livelink/entity/RA202051203845/ALF/RequestLog/add",
+					"host": [
+						"api",
+						"portal",
+						"dynamicsmobile",
+						"com"
+					],
+					"path": [
+						"livelink",
+						"entity",
+						"RA202051203845",
+						"ALF",
+						"RequestLog",
+						"add"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Download certificate",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-api-key",
+						"value": "pBr8bp6LuWHH9ZXnxK7pjixVXf432YeHguvRC9Vz",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/octet-stream",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "api.portal.dynamicsmobile.com/storage/file2/RA202051203845/RA202051203845-alf-certificate.pem?root=cert",
+					"host": [
+						"api",
+						"portal",
+						"dynamicsmobile",
+						"com"
+					],
+					"path": [
+						"storage",
+						"file2",
+						"RA202051203845",
+						"RA202051203845-alf-certificate.pem"
+					],
+					"query": [
+						{
+							"key": "root",
+							"value": "cert"
+						}
 					]
 				}
 			},
