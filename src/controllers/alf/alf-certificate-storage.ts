@@ -4,9 +4,14 @@ import { CloudAdapter } from '../../adapters/cloud-adapter';
 
 
 export function getLocalPrivateCertificate(appArea: string): string {
+    let certificate = '';
+    try {
     const certificatePath = path.resolve(`./alf-certificates/${appArea}-alf-certificate.pem`);
     const p = path.resolve(certificatePath);
-    const certificate = fs.readFileSync(p, 'utf8');
+    certificate = fs.readFileSync(p, 'utf8');
+    } catch (error) {
+        throw new Error('Internal error. Missing local certificate.');
+    }
     return certificate;
 }
 
@@ -65,7 +70,12 @@ export async function overwriteLocalPrivateCertificate(appArea: string, privateC
 export async function compareAndReplaceCertificates(apiKey: string, appArea: string) {
     const cloudAdapter = new CloudAdapter(appArea, apiKey);
     const cloudCertificateDate = await cloudAdapter.getALFCertificateDate();
-    const localCertificateDate = getLocalPrivateCertificateDate(appArea);
+    let localCertificateDate = new Date(0);
+    try {
+        localCertificateDate = getLocalPrivateCertificateDate(appArea);
+    } catch (error) {
+        console.log('Missing local certificate');
+    }
     // console.log('cloudCert', cloudCertificateDate);
     // console.log('localCert', localCertificateDate);
     if (cloudCertificateDate > localCertificateDate) {
