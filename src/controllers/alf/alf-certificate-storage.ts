@@ -66,8 +66,8 @@ export async function compareAndReplaceCertificates(apiKey: string, appArea: str
     const cloudAdapter = new CloudAdapter(appArea, apiKey);
     const cloudCertificateDate = await cloudAdapter.getALFCertificateDate();
     const localCertificateDate = getLocalPrivateCertificateDate(appArea);
-    console.log('cloudCert', cloudCertificateDate);
-    console.log('localCert', localCertificateDate);
+    // console.log('cloudCert', cloudCertificateDate);
+    // console.log('localCert', localCertificateDate);
     if (cloudCertificateDate > localCertificateDate) {
         console.log('changing local certificate');
         const privateCertificate = await downloadPrivateCertificateFromCloud(apiKey, appArea);

@@ -38,7 +38,6 @@ export function executeRequest(signedXml: string, isProduction: boolean): Promis
             console.log('error soap', err);
             reject(err)
         });
-        console.log('controller-alf', soapRequest);
         req.write(soapRequest);
         req.end();
     });
@@ -83,7 +82,6 @@ export function executeRequestEinvoice(signedXml: string, isProduction: boolean)
             console.log('error soap', err);
             reject(err)
         });
-        console.log('req-alf', soapRequest);
         req.write(soapRequest);
         req.end();
     });

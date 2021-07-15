@@ -89,7 +89,7 @@ function handleRegisterDmsCalculateIICRequest(appArea: string, parser: Document)
     if (!parsedRequest.documentElement.getAttribute('BusinUnitCode')) {
         errors.push('Attribute BusinUnitCode is required');
     }
-   
+
     if (!parsedRequest.documentElement.getAttribute('SoftCode')) {
         errors.push('Attribute SoftCode is required');
     }
@@ -137,49 +137,43 @@ function handleRegisterRawEInvoiceRequest(appArea: string, parser: Document): st
     }
 
     const invoiceDom = new DOMParser().parseFromString(Invoice.toString(), 'text/xml');
-     
+
     const Header = parser.documentElement.getElementsByTagName('Header');
     if (!Header || Header.length != 1) {
         throw new Error('Invalid RegisterEInvoiceRequest: Header element is missing');
     }
 
 
-    if(parser.documentElement.childNodes.length<2){
+    if (parser.documentElement.childNodes.length < 2) {
         throw new Error('Invalid RegisterEInvoiceRequest: Header and Invoice elements are requird');
     }
 
-     
-   
-    let custId =  invoiceDom.documentElement.getElementsByTagName('CustomizationID');
-    if(custId.length>0){
+    let custId = invoiceDom.documentElement.getElementsByTagName('CustomizationID');
+    if (custId.length > 0) {
         custId = custId[0]
     }
-    else 
+    else
         custId = undefined;
-    
 
-    const UBLExtensions = appendEmptyXmlElement( invoiceDom.documentElement, 'ns2:UBLExtensions', custId);
+    const UBLExtensions = appendEmptyXmlElement(invoiceDom.documentElement, 'ns2:UBLExtensions', custId);
     const UBLExtension = appendEmptyXmlElement(UBLExtensions, 'ns2:UBLExtension');
     const ExtensionContent = appendEmptyXmlElement(UBLExtension, 'ns2:ExtensionContent');
     const UBLDocumentSignatures = appendEmptyXmlElement(ExtensionContent, 'ns7:UBLDocumentSignatures');
     const SignatureInformation = appendEmptyXmlElement(UBLDocumentSignatures, 'ns6:SignatureInformation');
 
 
-
     //actual signature generation , e.g. do not change invoice xml after that point
     //let cleanInvoiceXml = dom.documentElement.toLocaleString();
     let pureSignature = computeEinvoiceSignature('Invoice', invoiceDom.toString(), appArea);
-   
     const signatureElement = new DOMParser().parseFromString(pureSignature, 'text/xml');
     SignatureInformation.appendChild(signatureElement.documentElement);
-
 
     let finalEInvoiceXml = invoiceDom.documentElement.toString();
     const buff = Buffer.from(finalEInvoiceXml);
     const invoiceAsBase64 = buff.toString('base64');
     const request = `<RegisterEinvoiceRequest xmlns="https://Einvoice.tatime.gov.al/EinvoiceService/schema" xmlns:ns2="http://www.w3.org/2000/09/xmldsig#" Id="Request" Version="1">${Header[0].toString()}<EinvoiceEnvelope><UblInvoice>${invoiceAsBase64}</UblInvoice></EinvoiceEnvelope></RegisterEinvoiceRequest>`;
 
-    return request  
+    return request
 }
 
 export function processByRequestType(apiKey: string, appArea: string, requestType: string, xml: string): { transformedRequest: string; skipUplinkRequest: boolean } {

@@ -20,7 +20,6 @@ function X509KeyInfo(appArea: string) {
 }
 
 export function computeSignedRequest(requestName: string, requestXml: string, appArea: string): Promise<string> {
-
     var sig = new SignedXml();
     sig.keyInfoProvider = new X509KeyInfo(appArea);
     sig.signingKey = getLocalPrivateCertificate(appArea);
@@ -34,7 +33,7 @@ export function computeSignedRequest(requestName: string, requestXml: string, ap
     return sig.getSignedXml();
 }
 
-export async function computeEinvoiceSignature(rootTag: string, requestXml: string, appArea: string): Promise<string> {
+export function computeEinvoiceSignature(rootTag: string, requestXml: string, appArea: string): string {
     var sig = new SignedXml();
     sig.keyInfoProvider = new X509KeyInfo(appArea);
     sig.signingKey = getLocalPrivateCertificate(appArea);

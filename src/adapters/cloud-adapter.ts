@@ -76,14 +76,14 @@ export class CloudAdapter {
 
     async getALFCertificateDate(): Promise<Date> {
         let certificateMetaData = await this.getEntity('Certificate');
-        console.log(typeof certificateMetaData);
+        // console.log(typeof certificateMetaData);
         certificateMetaData = JSON.parse(certificateMetaData);
 
-        console.log('cert001', certificateMetaData);
-        console.log('cert002', certificateMetaData[0]);
+        // console.log('cert001', certificateMetaData);
+        // console.log('cert002', certificateMetaData[0]);
         if (certificateMetaData.length > 0) {
             const uploadDate = certificateMetaData[0].uploadDate;
-            console.log(uploadDate);
+            // console.log(uploadDate);
             return new Date(uploadDate);
         }
     }

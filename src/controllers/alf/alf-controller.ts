@@ -27,7 +27,7 @@ export class ALFController extends ApiControlerBase {
         try {
             await logRequestResponse(apiKey, req.params.appArea, {
                 requestId: requestId,
-                error: (status != 200) ? requestResponse : '',
+                error: (status != 200) ? JSON.stringify(requestResponse) : '',
                 requestType: req.params.requestType,
                 status: status,
             })  
@@ -127,9 +127,9 @@ export class ALFController extends ApiControlerBase {
 
         }
         catch (err) {
-            console.error(err);
-            console.log(err.stackTrace)
-            console.log(err.stack)
+            console.error(`Request error: ${err}`);
+            console.log(`Request error stack trace: ${err.stackTrace}`);
+            console.log(`Request error stack: ${err.stack}`);
             const parser = new DOMParser().parseFromString(err, 'text/xml');
             if (parser) {
                 const errorCode = parser.documentElement.getElementsByTagName('code');
@@ -153,7 +153,7 @@ export class ALFController extends ApiControlerBase {
                 await this.LogRequestAndCheckCert(apiKey, requestId, 400, req, requestBody, error);
             }
             else {
-                console.log(err);
+                console.log(`Not parsable request error: ${err}`);
                 const error = {
                     success: false,
                     faultCode: 'dms:GENERALERROR',
