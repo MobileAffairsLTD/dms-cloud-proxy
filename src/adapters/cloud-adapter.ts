@@ -36,8 +36,9 @@ export class CloudAdapter {
     private static async createRequest(options: { method: string, host: string; path?: string; port?: number; protocol?: string, headers?: Record<string, string> }, body?: any): Promise<string> {
         let data;
         if (body) {
-            data = new TextEncoder().encode(
-                JSON.stringify(body));
+            // data = new TextEncoder().encode(
+            //     JSON.stringify(body));
+            data = JSON.stringify(body);
             options.headers['Content-Length'] = data.length.toString();
         }
         return new Promise<any>((resolve, reject) => {
