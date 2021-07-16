@@ -111,11 +111,12 @@ export async function sendLocalPushPacketsToERP(appArea: string, configuration: 
             //we will create it artifically
             //it may happen when the cloud packets are manually
             //created in the local folder   
-            if (!fs.existsSync(fullMetaFilePath)) {                                
-                let cloudPacketMeta: CloudPacket = {
+            let cloudPacketMeta: CloudPacket;
+            if (!fs.existsSync(fullMetaFilePath)) {
+                cloudPacketMeta = {
                     appArea: appArea,
                     appCode: '',
-                    companyId:  this.configuration.appArea[appArea].defaultCompany,
+                    companyId: this.configuration.appArea[appArea].defaultCompany,
                     id: '',
                     onDate: (new Date()).toISOString(),
                     packetType: 'data',
@@ -124,15 +125,26 @@ export async function sendLocalPushPacketsToERP(appArea: string, configuration: 
                     url: '',
                     userName: 'unknown'
                 }
-                const tokens  =  fullCloudFilePath.split('.');
-                if(tokens.length>2){
-                    cloudPacketMeta.userName =  tokens[0]; 
+                const tokens = fullCloudFilePath.split('.');
+                if (tokens.length > 2) {
+                    cloudPacketMeta.userName = tokens[0];
                 }
-                fs.writeFileSync(fullMetaFilePath, JSON.stringify(cloudPacketMeta),'utf8');
-
             }
-            
-            await erpAgent.postToSyncLog(appArea, fullCloudFilePath, fullMetaFilePath);
+            else {
+                cloudPacketMeta = JSON.parse(fs.readFileSync(fullMetaFilePath, 'utf8'));
+            }
+
+            await erpAgent.postToSyncLog(appArea, fullCloudFilePath, cloudPacketMeta);
+
+            //cleanup
+            if (fs.existsSync(fullCloudFilePath)) {
+                fs.unlinkSync(fullCloudFilePath);
+            }
+
+            if (fs.existsSync(fullMetaFilePath)) {
+                fs.unlinkSync(fullMetaFilePath);
+            }
+
         } catch (err) {
             console.error(`${appArea}:: ERROR! Unable to send cloud packets to ERP: ${err}`);
         }

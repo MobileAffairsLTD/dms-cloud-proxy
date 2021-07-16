@@ -2,6 +2,7 @@
 import * as  fs from "fs";
 import { config } from "node:process";
 import * as  path from "path";
+import { backendAdapterFactory } from "../adapters/BackendAdapterFactory";
 
 const configPath = path.resolve('./config.json');
 
@@ -28,7 +29,7 @@ export interface BackendConfigurationObject {
     workstation: string;
     path: string;
     userName: string;
-    password: string;   
+    password: string;
 }
 
 export interface AppAreaConfigurationObject {
@@ -36,6 +37,7 @@ export interface AppAreaConfigurationObject {
     settings: { [name: string]: any };
     backend: BackendConfigurationObject;
     defaultCompany: string;
+    disabled: boolean;
 }
 
 export interface ConfigurationObject {
@@ -44,9 +46,9 @@ export interface ConfigurationObject {
     slFieldStatus: string;
 
     sleepInterval: number;
-    
+
     localCloudPackets: string;
-    
+
     port: number;
     ssl: boolean;
     apiKey: string;
@@ -82,7 +84,7 @@ export class Configuration {
                 fs.mkdirSync(configuration.localCloudPackets);
             }
 
-            
+
 
             if (!configuration.slSyncLogEntityName) {
                 configuration.slSyncLogEntityName = 'crSyncLogEntries';
@@ -97,22 +99,12 @@ export class Configuration {
             }
 
             //appareas validation
-
             const appAreaList = Object.getOwnPropertyNames(configuration.appArea);
-            appAreaList.forEach((appArea: string ) => {
-                if(!configuration.appArea[appArea].defaultCompany){
-                    throw new Error(`AppArea ${appArea}.defaultCompany prop is missing!`);
+            appAreaList.forEach((appArea: string) => {
+                if (configuration.appArea[appArea] && configuration.appArea[appArea].disabled != true) {
+                    const client = backendAdapterFactory(appArea, configuration);
+                    client.validateConfiguration(appArea);
                 }
-                
-                if(!configuration.appArea[appArea].apiKey){
-                    throw new Error(`AppArea ${appArea}.apiKey prop is missing!`);
-                } 
-
-                
-                if(!configuration.appArea[appArea].backend){
-                    throw new Error(`AppArea ${appArea}.backend prop is missing!`);
-                } 
-
             });
             return configuration;
         }

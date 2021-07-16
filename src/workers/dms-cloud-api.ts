@@ -155,7 +155,6 @@ export class DmsCloudClient {
     }
 
     async downloadImage(packet: CloudPacket, localFolderPath: string): Promise<any> {
-``
         // if(!fs.existsSync(localFolderPath)){
         //     fs.mkdirSync(localFolderPath);
         // }

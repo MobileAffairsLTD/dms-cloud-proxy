@@ -14,7 +14,7 @@ export class DmsWorker {
 
 
         const configuration = Configuration.load();
-        
+
 
 
         console.log(`DMS Agent Worker started ${(new Date()).toISOString()}`);
@@ -23,34 +23,35 @@ export class DmsWorker {
             await new Promise(async (resolve, reject) => setTimeout(async function () {
                 //obtain apparea list from the configuration file
                 const appAreaList = Object.getOwnPropertyNames(configuration.appArea);
-                
+
                 //work with every apparea from the list
                 for (let i = 0; i < appAreaList.length; i++) {
-                    
                     const appArea = appAreaList[i];
-                    
-                    //download big files from cloud
-                    if (options.cloudBigFileDownload) {
-                        await downloadPendingCloudSyncLog(appArea, configuration, 'image');
-                    }
+                    if (configuration.appArea[appArea].disabled != true) {
 
-                    //download sync packets from cloud
-                    if (options.cloudPacketDownload) {
-                        await downloadPendingCloudSyncLog(appArea, configuration,'data');
-                    }
+                        //download big files from cloud
+                        if (options.cloudBigFileDownload) {
+                            await downloadPendingCloudSyncLog(appArea, configuration, 'image');
+                        }
 
-                    //send downloaded packets to ERP
-                    if (options.sendCloudPacketsToERP) {
-                        await sendLocalPushPacketsToERP(appArea, configuration);
-                    }
+                        //download sync packets from cloud
+                        if (options.cloudPacketDownload) {
+                            await downloadPendingCloudSyncLog(appArea, configuration, 'data');
+                        }
 
-                    //poll for pending ERP packets
-                    if (options.downloadERPPackets) {
-                        await pollPendingERPSyncLog(appArea, configuration);
-                    }
-                    //send ERP packets to cloud
-                    if (options.uploadERPPacketsToCloud) {
-                        await sendLocalPullPacketsToCloud(appArea, configuration);
+                        //send downloaded packets to ERP
+                        if (options.sendCloudPacketsToERP) {
+                            await sendLocalPushPacketsToERP(appArea, configuration);
+                        }
+
+                        //poll for pending ERP packets
+                        if (options.downloadERPPackets) {
+                            await pollPendingERPSyncLog(appArea, configuration);
+                        }
+                        //send ERP packets to cloud
+                        if (options.uploadERPPacketsToCloud) {
+                            await sendLocalPullPacketsToCloud(appArea, configuration);
+                        }
                     }
                 }
                 resolve(0);

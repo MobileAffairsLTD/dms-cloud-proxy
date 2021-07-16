@@ -402,17 +402,15 @@ export class DynamicsBusinessCentralClient extends BackendAdapterBase {
 
     }
 
-    public async postToSyncLog(appArea: string, fullCloudFilePath: string, fullMetaFilePath: string): Promise<void> {
+    public async postToSyncLog(appArea: string, fullCloudFilePath: string, cloudPacketMeta: CloudPacket): Promise<void> {
         
-        const  cloudPacketMeta = JSON.parse(fs.readFileSync(fullMetaFilePath, 'utf8'));
-        
-
         //prepare BC packet
+        //it is expected that BC will download the packet manually
         const syncPacket = {
             //entryNo: 1
             entryTimeStamp: (new Date()).toISOString(),
             //errorDescription: ""
-            path: '',                
+            path: cloudPacketMeta.url,                
             direction: "Push",
             packetType: "Data",
             priority: 0,
@@ -420,16 +418,9 @@ export class DynamicsBusinessCentralClient extends BackendAdapterBase {
             deviceSetupCode: cloudPacketMeta.userName,
             company: cloudPacketMeta.companyId
         }
-
         //send to erp
         await this.executeCreate(cloudPacketMeta.companyId, this.configuration.slSyncLogEntityName, syncPacket);
         
-        //cleanup
-        if(fs.existsSync(fullCloudFilePath)){
-            fs.unlinkSync(fullCloudFilePath);
-        }
-        if(fs.existsSync(fullMetaFilePath)){
-            fs.unlinkSync(fullMetaFilePath);
-        }
+        
     }
 }
