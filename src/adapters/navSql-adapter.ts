@@ -2,6 +2,7 @@ import * as httpntlm from '../libs/httpntlm/httpntlm';
 const parser = require("fast-xml-parser").default;
 import he from 'he';
 import { BackendAdapterBase } from './BackendAdapterBase';
+import { ConfigurationObject } from '../application/configuration';
 const sql = require('mssql')
 
 export class DynamicsNAVSQLBackendAdapter extends BackendAdapterBase {
@@ -15,8 +16,9 @@ export class DynamicsNAVSQLBackendAdapter extends BackendAdapterBase {
         username: string,
         password: string,
         domain: string,
-        workstation: string) {
-        super(authType, protocol, host, port, path, username, password, domain, workstation);
+        workstation: string,
+        configuration: ConfigurationObject) {
+        super(authType, protocol, host, port, path, username, password, domain, workstation,configuration);
     }
 
     public async executeGet(company: string | null, entityName: string, filter: string | null, sort: string | null, max: number | null, page: number | null, apply: string): Promise<Array<any>> {

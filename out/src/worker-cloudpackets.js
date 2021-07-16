@@ -4,9 +4,9 @@ var worker_core_1 = require("./workers/worker-core");
 var worker = new worker_core_1.DmsWorker();
 worker.execute({
     cloudBigFileDownload: true,
-    cloudPacketDownload: true,
-    downloadERPPackets: true,
-    sendCloudPacketsToERP: true,
-    uploadERPPacketsToCloud: true
+    cloudPacketDownload: false,
+    downloadERPPackets: false,
+    sendCloudPacketsToERP: false,
+    uploadERPPacketsToCloud: false
 });
-//# sourceMappingURL=worker.js.map
+//# sourceMappingURL=worker-cloudpackets.js.map

@@ -1,3 +1,4 @@
+
 # Logs
 logs
 *.log
@@ -102,3 +103,8 @@ dist
 
 # TernJS port file
 .tern-port
+src/adapters/BackendAdapterBase.ts
+.gitignore
+out/localpackets/**/*
+out/src/**/*
+out/node_modules/**/*

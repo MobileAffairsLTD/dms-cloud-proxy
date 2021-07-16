@@ -1,8 +1,11 @@
 import * as httpntlm from '../libs/httpntlm/httpntlm';
 const parser = require("fast-xml-parser").default;
-import he from 'he';
+import * as fs from 'fs';
+import * as path from 'path';
 import { BackendAdapterBase } from './BackendAdapterBase';
-
+import { ConfigurationObject } from '../application/configuration';
+import he from 'he';
+import { CloudPacket } from '../workers/dms-cloud-api';
 
 export class DynamicsBusinessCentralClient extends BackendAdapterBase {
 
@@ -15,8 +18,9 @@ export class DynamicsBusinessCentralClient extends BackendAdapterBase {
         username: string,
         password: string,
         domain: string,
-        workstation: string) {
-        super(authType, protocol, host, port, path, username, password, domain, workstation);
+        workstation: string,
+        configuration: ConfigurationObject) {
+        super(authType, protocol, host, port, path, username, password, domain, workstation, configuration);
     }
 
     public executeGet(company: string | null, entityName: string, filter: string | null, sort: string | null, max: number | null, page: number | null, apply: string): Promise<Array<any>> {
@@ -35,7 +39,7 @@ export class DynamicsBusinessCentralClient extends BackendAdapterBase {
         const me = this;
         return new Promise((resolve: any, reject: any): void => {
             let url;
-            if(me.path.startsWith("/")){
+            if (me.path.startsWith("/")) {
                 me.path = me.path.substr(1);
             }
 
@@ -75,17 +79,17 @@ export class DynamicsBusinessCentralClient extends BackendAdapterBase {
                 domain: me.domain
             }, function (err: any, res: any) {
                 try {
-                if (err)
-                    reject(err);
-                if (!res)
-                    reject('Server did not return response!')
-                else
-                    if (res.statusCode != 200)
-                        reject(JSON.parse(res.body));
+                    if (err)
+                        reject(err);
+                    if (!res)
+                        reject('Server did not return response!')
                     else
-                        resolve(JSON.parse(res.body).value);
+                        if (res.statusCode != 200)
+                            reject(JSON.parse(res.body));
+                        else
+                            resolve(JSON.parse(res.body).value);
                 }
-                catch(err2){
+                catch (err2) {
                     //returned body was not json
                     reject(err2);
                 }
@@ -109,17 +113,20 @@ export class DynamicsBusinessCentralClient extends BackendAdapterBase {
         if (!this.path)
             throw '"path" role setting is required for BC LiveLink';
 
+        if(this.path[0]=='/')//remove leading backslash
+            this.path = this.path.substring(1);
 
         return new Promise((resolve: any, reject: any): void => {
             let url;
             if (!company)
                 url = `${this.protocol ? this.protocol : 'http'}://${this.host}:${this.port ? this.port : '80'}/${this.path}/${entityName}`;
             else
-                url = `${this.protocol ? this.protocol : 'http'}://${this.host}:${this.port ? this.port : '80'}/${this.path}/Company('${encodeURIComponent(company)}')/${entityName}`;
+                //url = `${this.protocol ? this.protocol : 'http'}://${this.host}:${this.port ? this.port : '80'}/${this.path}/Company('${encodeURIComponent(company)}')/${entityName}`;
+                url = `${this.protocol ? this.protocol : 'http'}://${this.host}:${this.port ? this.port : '80'}/${this.path}/${entityName}?company=${encodeURIComponent(company)}`;
 
-            console.log('Dynamics Business Central Client authType: ' + this.authType);
-            console.log('url: ', url);
-            console.log('post: ', body);
+            // console.log('Dynamics Business Central Client authType: ' + this.authType);
+            // console.log('url: ', url);
+            // console.log('post: ', body);
             (httpntlm as any).post({
                 url: url,
                 username: this.username,
@@ -135,7 +142,7 @@ export class DynamicsBusinessCentralClient extends BackendAdapterBase {
                     reject('Server did not return response!')
                 else
                     if (res.statusCode != 200 && res.statusCode != 201)
-                        reject(res.statusCode);
+                        reject(`${res.statusCode}.${res.statusText?res.statusText:res.body}`);
                     else {
                         const r = JSON.parse(res.body);
                         delete r["@odata.context"];
@@ -174,8 +181,8 @@ export class DynamicsBusinessCentralClient extends BackendAdapterBase {
                 //url = `${this.protocol ? this.protocol : 'http'}://${this.host}:${this.port ? this.port : '80'}/${this.path}/Company('${encodeURIComponent(company)}')/${entityName}(${pkValues})`;
                 url = `${this.protocol ? this.protocol : 'http'}://${this.host}:${this.port ? this.port : '80'}/${this.path}/${entityName}(${pkValues})?company=${encodeURIComponent(company)}`;
 
-            console.log('Dynamics Business Central Client authType: ' + this.authType);
-            console.log('service url:', url);
+            //console.log('Dynamics Business Central Client authType: ' + this.authType);
+            //console.log('service url:', url);
             delete body["@odata.context"];
             delete body["@odata.etag"];
 
@@ -194,7 +201,7 @@ export class DynamicsBusinessCentralClient extends BackendAdapterBase {
                     reject('Server did not return response!')
                 else
                     if (res.statusCode != 200 && res.statusCode != 201)
-                        reject(res.statusCode+' '+res.body?res.body:'');
+                        reject(res.statusCode + ' ' + res.body ? res.body : '');
                     else {
                         const r = JSON.parse(res.body);
                         delete r["@odata.context"];
@@ -250,7 +257,7 @@ export class DynamicsBusinessCentralClient extends BackendAdapterBase {
                     reject('Server did not return response!')
                 else
                     if (res.statusCode != 200 && res.statusCode != 201 && res.statusCode != 202 && res.statusCode != 203 && res.statusCode != 204)
-                    reject(res.statusCode+' '+res.body?res.body:'');
+                        reject(res.statusCode + ' ' + res.body ? res.body : '');
                     else {
                         resolve({ success: true });
                     }
@@ -292,7 +299,7 @@ export class DynamicsBusinessCentralClient extends BackendAdapterBase {
                     reject('Server did not return response!')
                 else
                     if (res.statusCode != 200)
-                    reject(res.statusCode+' '+res.body?res.body:'');
+                        reject(res.statusCode + ' ' + res.body ? res.body : '');
                     else {
                         try {
 
@@ -390,5 +397,30 @@ export class DynamicsBusinessCentralClient extends BackendAdapterBase {
 
             });
         });
+
+
+
+    }
+
+    public async postToSyncLog(appArea: string, fullCloudFilePath: string, cloudPacketMeta: CloudPacket): Promise<void> {
+        
+        //prepare BC packet
+        //it is expected that BC will download the packet manually
+        const syncPacket = {
+            //entryNo: 1
+            entryTimeStamp: (new Date()).toISOString(),
+            //errorDescription: ""
+            path: cloudPacketMeta.url,                
+            direction: "Push",
+            packetType: "Data",
+            priority: 0,
+            status: "Pending",
+            deviceSetupCode: cloudPacketMeta.userName,
+            company: cloudPacketMeta.companyId
+        }
+        //send to erp
+        await this.executeCreate(cloudPacketMeta.companyId, this.configuration.slSyncLogEntityName, syncPacket);
+        
+        
     }
 }

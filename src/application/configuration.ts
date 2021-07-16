@@ -1,6 +1,8 @@
 
 import * as  fs from "fs";
+import { config } from "node:process";
 import * as  path from "path";
+import { backendAdapterFactory } from "../adapters/BackendAdapterFactory";
 
 const configPath = path.resolve('./config.json');
 
@@ -13,7 +15,11 @@ export const betNavSql = 'navsql'
 //backend auth types
 export const beautNTLM = 'NTLM';
 
+const defaultSleepInterval = 10000; //sleep interval in milliseconds between hits
+
+
 export interface BackendConfigurationObject {
+
     type: typeof betBC | typeof betD365FO | typeof betNavSql;
     authType: typeof beautNTLM;
     host: string;
@@ -28,11 +34,21 @@ export interface BackendConfigurationObject {
 
 export interface AppAreaConfigurationObject {
     apiKey: string;
-    settings: {[name:string]: any};
+    settings: { [name: string]: any };
     backend: BackendConfigurationObject;
+    defaultCompany: string;
+    disabled: boolean;
 }
 
 export interface ConfigurationObject {
+    slSyncLogEntityName: string;
+    slFieldEntryNo: string;
+    slFieldStatus: string;
+
+    sleepInterval: number;
+
+    localCloudPackets: string;
+
     port: number;
     ssl: boolean;
     apiKey: string;
@@ -49,12 +65,55 @@ export class Configuration {
         const configJson = fs.readFileSync(configPath, 'utf8');
 
         try {
-            return JSON.parse(configJson);
+            const configuration: ConfigurationObject = JSON.parse(configJson);
+
+            //handle sleep interval
+            if (!isFinite(configuration.sleepInterval) || isNaN(configuration.sleepInterval)) {
+                configuration.sleepInterval = defaultSleepInterval;
+            }
+            if (configuration.sleepInterval < defaultSleepInterval) {
+                configuration.sleepInterval = defaultSleepInterval;
+            }
+
+            //handle local packets path
+            if (!configuration.localCloudPackets) {
+                configuration.localCloudPackets = './localpackets';
+            }
+            if (!fs.existsSync(configuration.localCloudPackets)) {
+                console.log(`Creating local cloud packets folder: ${configuration.localCloudPackets}`);
+                fs.mkdirSync(configuration.localCloudPackets);
+            }
+
+
+
+            if (!configuration.slSyncLogEntityName) {
+                configuration.slSyncLogEntityName = 'crSyncLogEntries';
+            }
+
+            if (!configuration.slFieldStatus) {
+                configuration.slFieldStatus = 'status';
+            }
+
+            if (!configuration.slFieldEntryNo) {
+                configuration.slFieldEntryNo = 'entryNo';
+            }
+
+            //appareas validation
+            const appAreaList = Object.getOwnPropertyNames(configuration.appArea);
+            appAreaList.forEach((appArea: string) => {
+                if (configuration.appArea[appArea] && configuration.appArea[appArea].disabled != true) {
+                    const client = backendAdapterFactory(appArea, configuration);
+                    client.validateConfiguration(appArea);
+                }
+            });
+            return configuration;
         }
         catch (err) {
-            console.log(`${configPath} has invalid json format. Terminating...`);
+            console.error(`Invalid ${configPath}: ${err}`);
             process.exit(1)
         }
+
+
 
     }
 

@@ -36,25 +36,21 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.pollAllERPSyncLog = void 0;
+exports.sendLocalPullPacketsToCloud = exports.sendLocalPushPacketsToERP = exports.downloadPendingCloudSyncLog = exports.pollPendingERPSyncLog = void 0;
 var BackendAdapterFactory_1 = require("../adapters/BackendAdapterFactory");
-var configuration_1 = require("../application/configuration");
-function pollAllERPSyncLog() {
+var dms_cloud_api_1 = require("./dms-cloud-api");
+var fs = require("fs");
+var path = require("path");
+function pollPendingERPSyncLog(appArea, configuration) {
     return __awaiter(this, void 0, void 0, function () {
-        var syncLogEntityName, slFieldStatus, slFieldEntryNo, appArea, company, configuration, adapter, pendingPullPacketsFilter, recs, i, syncLogRecord, err_1;
+        var adapter, pendingPullPacketsFilter, recs, i, syncLogRecord, err_1;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
                     _a.trys.push([0, 6, , 7]);
-                    syncLogEntityName = 'crSyncLogEntries';
-                    slFieldStatus = 'status';
-                    slFieldEntryNo = 'entryNo';
-                    appArea = 'BIOTDEV';
-                    company = 'BIOTRADE_COSM';
-                    configuration = configuration_1.Configuration.load();
                     adapter = BackendAdapterFactory_1.backendAdapterFactory(appArea, configuration);
                     pendingPullPacketsFilter = '';
-                    return [4 /*yield*/, adapter.executeGet(company, syncLogEntityName, pendingPullPacketsFilter, '', 100, 0, null)];
+                    return [4 /*yield*/, adapter.executeGet(configuration.appArea[appArea].defaultCompany, configuration.slSyncLogEntityName, pendingPullPacketsFilter, '', 100, 0, null)];
                 case 1:
                     recs = _a.sent();
                     i = 0;
@@ -62,33 +58,126 @@ function pollAllERPSyncLog() {
                 case 2:
                     if (!(i < recs.length)) return [3 /*break*/, 5];
                     syncLogRecord = recs[i];
-                    console.log("Processing pull synclog #" + syncLogRecord[slFieldEntryNo] + " ");
-                    syncLogRecord[slFieldStatus] = 'Success';
-                    return [4 /*yield*/, adapter.executeUpdate(company, syncLogEntityName, syncLogRecord[slFieldEntryNo], syncLogRecord)];
+                    console.log("Processing pull synclog #" + syncLogRecord[configuration.slFieldEntryNo] + " ");
+                    syncLogRecord[configuration.slFieldStatus] = 'Success';
+                    return [4 /*yield*/, adapter.executeUpdate(configuration.appArea[appArea].defaultCompany, configuration.slSyncLogEntityName, syncLogRecord[configuration.slFieldEntryNo], syncLogRecord)];
                 case 3:
                     _a.sent();
                     _a.label = 4;
                 case 4:
                     i++;
                     return [3 /*break*/, 2];
-                case 5:
-                    // packetType: Data
-                    // directopm: Pull
-                    // company
-                    // deviceSetupCode
-                    // entryNo
-                    // status
-                    //path
-                    console.log('synclog ', recs);
-                    return [3 /*break*/, 7];
+                case 5: return [3 /*break*/, 7];
                 case 6:
                     err_1 = _a.sent();
-                    console.error(err_1);
+                    console.error(appArea + ":: ERROR! Unable to download ERP packets: " + err_1);
                     return [3 /*break*/, 7];
                 case 7: return [2 /*return*/];
             }
         });
     });
 }
-exports.pollAllERPSyncLog = pollAllERPSyncLog;
+exports.pollPendingERPSyncLog = pollPendingERPSyncLog;
+function downloadPendingCloudSyncLog(appArea, configuration, type) {
+    return __awaiter(this, void 0, void 0, function () {
+        var cloudClient, pendindCloudPackets, successPackets, i, cloudPacket, err_2, i, err_3;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    _a.trys.push([0, 9, , 10]);
+                    cloudClient = new dms_cloud_api_1.DmsCloudClient(configuration);
+                    console.log(appArea + ":: Obtianing list of pending cloud packets..");
+                    return [4 /*yield*/, cloudClient.getPendingPullPacketsList(appArea, type)];
+                case 1:
+                    pendindCloudPackets = _a.sent();
+                    console.log(appArea + ":: " + pendindCloudPackets.length + " pending cloud packet obtained");
+                    successPackets = [];
+                    i = 0;
+                    _a.label = 2;
+                case 2:
+                    if (!(i < pendindCloudPackets.length)) return [3 /*break*/, 8];
+                    cloudPacket = pendindCloudPackets[i];
+                    if (!(cloudPacket.packetType == 'image')) return [3 /*break*/, 4];
+                    //image processing
+                    console.log(appArea + ":: Downloading cloud image:  " + cloudPacket.url);
+                    return [4 /*yield*/, cloudClient.downloadImage(cloudPacket, configuration.localCloudPackets)];
+                case 3:
+                    _a.sent();
+                    successPackets.push(cloudPacket);
+                    return [3 /*break*/, 7];
+                case 4:
+                    _a.trys.push([4, 6, , 7]);
+                    console.log(appArea + ":: Downloading cloud packet:  " + cloudPacket.url);
+                    return [4 /*yield*/, cloudClient.downloadPacket(cloudPacket, configuration.localCloudPackets)];
+                case 5:
+                    _a.sent();
+                    successPackets.push(cloudPacket);
+                    return [3 /*break*/, 7];
+                case 6:
+                    err_2 = _a.sent();
+                    console.error(appArea + ":: Cloud packet download error " + cloudPacket.url + " : " + err_2);
+                    return [3 /*break*/, 7];
+                case 7:
+                    i++;
+                    return [3 /*break*/, 2];
+                case 8:
+                    //mark packets as processed in the cloud 
+                    for (i = 0; i < successPackets.length; i++) {
+                        //successPackets[i]
+                    }
+                    return [3 /*break*/, 10];
+                case 9:
+                    err_3 = _a.sent();
+                    console.error(appArea + ":: ERROR! Unable to download cloud packets: " + err_3);
+                    return [3 /*break*/, 10];
+                case 10: return [2 /*return*/];
+            }
+        });
+    });
+}
+exports.downloadPendingCloudSyncLog = downloadPendingCloudSyncLog;
+function sendLocalPushPacketsToERP(appArea, configuration) {
+    return __awaiter(this, void 0, void 0, function () {
+        var appAreaFolderPath, cloudFiles, erpAgent, i, cloudFile, err_4;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    appAreaFolderPath = path.join(configuration.localCloudPackets, appArea);
+                    if (!fs.existsSync(appAreaFolderPath))
+                        return [2 /*return*/];
+                    cloudFiles = fs.readdirSync(appAreaFolderPath);
+                    erpAgent = BackendAdapterFactory_1.backendAdapterFactory(appArea, configuration);
+                    i = 0;
+                    _a.label = 1;
+                case 1:
+                    if (!(i < cloudFiles.length)) return [3 /*break*/, 6];
+                    _a.label = 2;
+                case 2:
+                    _a.trys.push([2, 4, , 5]);
+                    cloudFile = cloudFiles[i];
+                    return [4 /*yield*/, erpAgent.postToSyncLog(appArea, cloudFile)];
+                case 3:
+                    _a.sent();
+                    return [3 /*break*/, 5];
+                case 4:
+                    err_4 = _a.sent();
+                    console.error(appArea + ":: ERROR! Unable to send cloud packets to ERP: " + err_4);
+                    return [3 /*break*/, 5];
+                case 5:
+                    i++;
+                    return [3 /*break*/, 1];
+                case 6: return [2 /*return*/];
+            }
+        });
+    });
+}
+exports.sendLocalPushPacketsToERP = sendLocalPushPacketsToERP;
+function sendLocalPullPacketsToCloud(appArea, configuration) {
+    return __awaiter(this, void 0, void 0, function () {
+        return __generator(this, function (_a) {
+            return [2 /*return*/];
+        });
+    });
+}
+exports.sendLocalPullPacketsToCloud = sendLocalPullPacketsToCloud;
 //# sourceMappingURL=worker-api.js.map

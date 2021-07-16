@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BackendAdapterBase = void 0;
 var BackendAdapterBase = /** @class */ (function () {
-    function BackendAdapterBase(authType, protocol, host, port, path, username, password, domain, workstation) {
+    function BackendAdapterBase(authType, protocol, host, port, path, username, password, domain, workstation, configuration) {
         this.authType = authType;
         this.protocol = protocol;
         this.host = host;
@@ -12,6 +12,7 @@ var BackendAdapterBase = /** @class */ (function () {
         this.password = password;
         this.domain = domain;
         this.workstation = workstation;
+        this.configuration = configuration;
     }
     BackendAdapterBase.prototype.executeGet = function (company, entityName, filter, sort, max, page, apply) {
         return null;
@@ -26,6 +27,10 @@ var BackendAdapterBase = /** @class */ (function () {
         return null;
     };
     BackendAdapterBase.prototype.executeMetadata = function (company, entityName) {
+        return null;
+    };
+    BackendAdapterBase.prototype.postToSyncLog = function (appArea, cloudFilePath) {
+        console.log("postToSyncLog: " + cloudFilePath);
         return null;
     };
     return BackendAdapterBase;

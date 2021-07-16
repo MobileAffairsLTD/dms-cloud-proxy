@@ -1,10 +1,11 @@
 {
     "port": 8080,
-    "ssl": false,
     "apiKey": "123",
+    "ssl": false,
     "appArea": {
         "RA202051203845": {
             "apiKey": "pBr8bp6LuWHH9ZXnxK7pjixVXf432YeHguvRC9Vz",
+            "defaultCompany":"C1",
             "settings": {},
             "backend": {
                 "type": "d365bc",
@@ -20,7 +21,8 @@
             }
         },
         "BIOTDEV": {
-            "apiKey": "123",
+            "defaultCompany":"BIOTRADE_COSM",
+            "apiKey": "RA6Cn7YCh264k9NGYaE5vW57l4nJBOZeDkiUoKJW",
             "settings": {},
             "backend": {
                 "type": "d365bc",
@@ -36,20 +38,20 @@
             }
         },
         "DEMO01": {
-            "settings": {   
-                "apiKey": "123",
-                "backend": {
-                    "type": "navsql",
-                    "authType": "NTLM",
-                    "host": "sql2019.isystems.bg",
-                    "port": 1433,
-                    "protocol": "sql",
-                    "domain": "dynamicsmobile.isystems.bg",
-                    "workstation": "dynamicsmobile.isystems.bg",
-                    "path": "VLM",
-                    "userName": "navmobile",
-                    "password": "1234567"
-                }
+            "defaultCompany":"D1",
+            "apiKey": "123",
+            "settings": {},
+            "backend": {
+                "type": "navsql",
+                "authType": "NTLM",
+                "host": "sql2019.isystems.bg",
+                "port": 1433,
+                "protocol": "sql",
+                "domain": "dynamicsmobile.isystems.bg",
+                "workstation": "dynamicsmobile.isystems.bg",
+                "path": "VLM",
+                "userName": "navmobile",
+                "password": "1234567"
             }
         }
     }
