@@ -1,0 +1,1 @@
+{"version":3,"file":"worker-cloudfiles.js","sourceRoot":"","sources":["../../src/worker-cloudfiles.ts"],"names":[],"mappings":";;AACA,qDAAkD;AAEjD,IAAM,MAAM,GAAG,IAAI,uBAAS,EAAE,CAAC;AAC/B,MAAM,CAAC,OAAO,CAAC;IACb,oBAAoB,EAAE,KAAK;IAC3B,mBAAmB,EAAE,IAAI;IACzB,kBAAkB,EAAE,KAAK;IACzB,qBAAqB,EAAE,KAAK;IAC5B,uBAAuB,EAAE,KAAK;CAC/B,CAAC,CAAC"}

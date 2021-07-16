@@ -20,7 +20,8 @@ export function backendAdapterFactory(appArea: string, configuration: Configurat
             appAreaConfig.backend.userName,
             appAreaConfig.backend.password,
             appAreaConfig.backend.domain,
-            appAreaConfig.backend.workstation
+            appAreaConfig.backend.workstation,
+            configuration
         ); break;
         case betNavSql:   case betBC: client = new DynamicsNAVSQLBackendAdapter(
             appAreaConfig.backend.authType,
@@ -31,7 +32,8 @@ export function backendAdapterFactory(appArea: string, configuration: Configurat
             appAreaConfig.backend.userName,
             appAreaConfig.backend.password,
             appAreaConfig.backend.domain,
-            appAreaConfig.backend.workstation
+            appAreaConfig.backend.workstation,
+            configuration
         ); break;;
         case betD365FO: throw `betD365FO is not supported yet`;
         default: throw `Unknown livelink  backendtype '${appAreaConfig.settings.backend.type}' for apparea '${appArea}'`

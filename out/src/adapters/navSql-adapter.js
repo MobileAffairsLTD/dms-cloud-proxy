@@ -57,8 +57,8 @@ var BackendAdapterBase_1 = require("./BackendAdapterBase");
 var sql = require('mssql');
 var DynamicsNAVSQLBackendAdapter = /** @class */ (function (_super) {
     __extends(DynamicsNAVSQLBackendAdapter, _super);
-    function DynamicsNAVSQLBackendAdapter(authType, protocol, host, port, path, username, password, domain, workstation) {
-        return _super.call(this, authType, protocol, host, port, path, username, password, domain, workstation) || this;
+    function DynamicsNAVSQLBackendAdapter(authType, protocol, host, port, path, username, password, domain, workstation, configuration) {
+        return _super.call(this, authType, protocol, host, port, path, username, password, domain, workstation, configuration) || this;
     }
     DynamicsNAVSQLBackendAdapter.prototype.executeGet = function (company, entityName, filter, sort, max, page, apply) {
         return __awaiter(this, void 0, void 0, function () {

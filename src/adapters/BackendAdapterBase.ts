@@ -1,5 +1,6 @@
-export class BackendAdapterBase {
+import { ConfigurationObject } from "../application/configuration";
 
+export class BackendAdapterBase {
     constructor(
         protected authType: string,
         protected protocol: string,
@@ -9,7 +10,8 @@ export class BackendAdapterBase {
         protected username: string,
         protected password: string,
         protected domain: string,
-        protected workstation: string) {
+        protected workstation: string,
+        protected configuration: ConfigurationObject) {
 
     }
 
@@ -18,7 +20,7 @@ export class BackendAdapterBase {
         return null;
     }
     
-    public  executeCreate(company: string | null, entityName: string, body: string): Promise<string> {
+    public  executeCreate(company: string | null, entityName: string, body: any): Promise<string> {
         return null;
     }
 
@@ -33,4 +35,11 @@ export class BackendAdapterBase {
     public  executeMetadata(company: string | null, entityName: string): Promise<string> {
         return null;
     }
+
+    public postToSyncLog(appArea: string, fullCloudFilePath: string, fullMetaFilePath: string): Promise<void> {
+        //console.log(`postToSyncLog: ${cloudFilePath}`);
+        return null;
+     }
+ 
+   
 }

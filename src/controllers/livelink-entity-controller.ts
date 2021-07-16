@@ -75,17 +75,7 @@ export class LiveLinkEntityController extends ApiControlerBase {
 
 
 
-            const client = new DynamicsBusinessCentralClient(
-                appAreaConfig.settings.backend.authType,
-                appAreaConfig.settings.backend.protocol,
-                appAreaConfig.settings.backend.host,
-                appAreaConfig.settings.backend.port,
-                appAreaConfig.settings.backend.path,
-                appAreaConfig.settings.backend.userName,
-                appAreaConfig.settings.backend.password,
-                appAreaConfig.settings.backend.domain,
-                appAreaConfig.settings.backend.workstation
-            );
+            const client = backendAdapterFactory(appArea,this.configuraiton)
 
 
             const result = await client.executeMetadata(company, entityName);

@@ -1,0 +1,1 @@
+{"version":3,"file":"worker-cloudpackets.js","sourceRoot":"","sources":["../../src/worker-cloudpackets.ts"],"names":[],"mappings":";;AACA,qDAAkD;AAEjD,IAAM,MAAM,GAAG,IAAI,uBAAS,EAAE,CAAC;AAC/B,MAAM,CAAC,OAAO,CAAC;IACb,oBAAoB,EAAE,IAAI;IAC1B,mBAAmB,EAAE,KAAK;IAC1B,kBAAkB,EAAE,KAAK;IACzB,qBAAqB,EAAE,KAAK;IAC5B,uBAAuB,EAAE,KAAK;CAC/B,CAAC,CAAC"}
